@@ -1,0 +1,270 @@
+
+
+;-------------------------------------------------------------------------
+; CONSTS: Konstanten für die Typen als Rückgabewerte von typeof(<exp>)
+;-------------------------------------------------------------------------
+#const TYPE_NULL   0
+#const TYPE_ERROR  1
+#const TYPE_INT    2
+#const TYPE_FLOAT  3
+#const TYPE_STRING 4
+#const TYPE_ARRAY  6
+#const TYPE_DICT   7
+
+
+;-------------------------------------------------------------------------
+; CONSTS: Konstanten für Dateizugriffe
+;-------------------------------------------------------------------------
+#const MODE_READ   0
+#const MODE_WRITE  1
+#const MODE_APPEND 2
+
+#const STAT_OK     0
+#const STAT_EOF   -1
+#const STAT_ERROR  1
+
+
+;-------------------------------------------------------------------------
+; FUNC: max(<Val1>,<Val2>)
+; ARGS: <Val1>,<Val2>   Werte von denen das Maximum gesucht wird
+; DESC: Diese Funktion gibt den größeren der beiden Werte zurück
+;-------------------------------------------------------------------------
+#func max $arg1 $arg2
+{
+	#if $arg1<$arg2
+	{
+		#return $arg2
+	}
+	#else
+	{
+		#return $arg1
+	}
+}
+
+;-------------------------------------------------------------------------
+; FUNC: min(<Val1>,<Val2>)
+; ARGS: <Val1>,<Val2>   Werte von denen das Minimum gesucht wird
+; DESC: Diese Funktion gibt den kleineren der beiden Werte zurück
+;-------------------------------------------------------------------------
+#func min $arg1 $arg2
+{
+	#if $arg1>$arg2
+	{
+		#return $arg2
+	}
+	#else
+	{
+		#return $arg1
+	}
+}
+
+;-------------------------------------------------------------------------
+; Hier werden die Attribute zwischengespeichert, dabei gibt es
+; für jede eigene Einheit eine Kopie der Privat-Beschreibung
+;-------------------------------------------------------------------------
+#dict $Attributes
+
+;-------------------------------------------------------------------------
+; PROC: InitAttributes
+; ARGS: -
+; DESC: Hier werden die Privat-Beschreibungen für die Einheiten der Region
+;       in das Dictionary übertragen, Aufruf zu Beginn von OnInit
+;-------------------------------------------------------------------------
+#proc InitAttributes
+{
+    ; Regionsindex
+    $ri=0
+
+    ; Solange noch Regionen existieren
+    #while $ri<report.region.size
+    {
+        ; Einheitenindex
+        $ei=0
+
+        ; Solange Einheiten in der Region sind
+	    #while $ei<report.region[$ri].einheiten
+	    {
+            ; Ist es eine eigene Einheit?
+            #if report.region[$ri].unit[$ei].partei==report.partei
+            {
+                ; Privat-Beschreibung in dem Dictionary merken
+                $Attributes[report.region[$ri].unit[$ei].nummer]=report.region[$ri].unit[$ei].privat
+            }
+            ; nächste Einheit
+            $ei=$ei+1
+        }
+        ; nächste Region
+        $ri=$ri+1
+    }
+}
+
+;-------------------------------------------------------------------------
+; PROC: FinalizeAttributes
+; ARGS: -
+; DESC: Hier wird die Privat-Beschreibung für die aktuelle Einheit als
+;       neuer Beschreibungstext gesetzt, wenn sich was geändert hat.
+;       Aufruf aus EndUnit
+;-------------------------------------------------------------------------
+#proc FinalizeAttributes
+{
+    ; Hat sich die Beschreibung geändert?
+    #if $Attributes[unit.nummer]!=unit.privat
+    {
+        ; Wenn ja, dann neue setzen
+        BESCHREIBE PRIVAT change($Attributes[unit.nummer],' ','~')
+    }
+}
+
+;-------------------------------------------------------------------------
+; PROC: SetAttribute <Name> <Wert>
+;       SetAttribute <ENr> <Name> <Wert>
+; ARGS: <ENr>   Einheitennummer, wird sie weggelassen wird die aktuelle
+;               Einheit verwendet
+;       <Name>  Bezeichner des Attributes, case-insensitiv
+;       <Wert>  Zahl oder String zur Speicherung des Attributes
+; DESC: Diese Prozedur ermöglicht das Setzen von Attributen
+;-------------------------------------------------------------------------
+#proc SetAttribute $Arg1 ...
+{
+    ; Wurde eine Einheitennummer übergeben?
+    #if ARG.SIZE==2
+    {   ; Nein
+
+        ; regulärer Ausdruck um das Attribut mit dem Format '$Name=Value:'
+        ; zu finden (mittels (?i) wird erreicht das die Namen nicht
+        ; case-sensitiv sind
+        $re='(?i)\\$'+$Arg1+'='+'[^:]*:'
+
+        ; neue Privat-Beschreibung erzeugen, als Teil vor plus Attribut
+        ; plus Teil nach dem alten Attribut
+        $Attributes[unit.nummer]=before($Attributes[unit.nummer],$re)+'$'+$Arg1+'='+ARG[1]+':'+after($Attributes[unit.nummer],$re)
+    }
+    #else
+    {   ; Jupp
+
+        ; s.o. nur für Einheiten mit übergebener Einheitennummer
+        $re='(?i)\\$'+ARG[1]+'='+'[^:]*:'
+        $Attributes[$Arg1]=before($Attributes[$Arg1],$re)+'$'+ARG[1]+'='+ARG[2]+':'+after($Attributes[$Arg1],$re)
+    }
+}
+
+;-------------------------------------------------------------------------
+; PROC: RemoveAttribute <Name>
+;       RemoveAttribute <ENr> <Name>
+; ARGS: <ENr>   Einheitennummer, wird sie weggelassen wird die aktuelle
+;               Einheit verwendet
+;       <Name>  Bezeichner des Attributes, case-insensitiv
+; DESC: Diese Prozedur ermöglicht das Löschen von Attributen
+;-------------------------------------------------------------------------
+#proc RemoveAttribute $Arg1 ...
+{
+    ; Wurde eine Einheitennummer übergeben?
+    #if ARG.SIZE==1
+    {   ; Nein
+
+        ; regulärer Ausdruck um das Attribut mit dem Format '$Name=Value:'
+        ; zu finden (mittels (?i) wird erreicht das die Namen nicht
+        ; case-sensitiv sind
+        $re='(?i)\\$'+$Arg1+'='+'[^:]*:'
+
+        ; neue Privat-Beschreibung erzeugen, als Teil vor plus Teil nach
+        ; dem alten Attribut
+        $Attributes[unit.nummer]=before($Attributes[unit.nummer],$re)+after($Attributes[unit.nummer],$re)
+    }
+    #else
+    {   ; Jupp
+
+        ; s.o. nur für Einheiten mit übergebener Einheitennummer
+        $re='(?i)\\$'+ARG[1]+'='+'[^:]*:'
+        $Attributes[$Arg1]=before($Attributes[$Arg1],$re)+after($Attributes[$Arg1],$re)
+    }
+}
+
+;-------------------------------------------------------------------------
+; FUNC: GetAttrStr(<ENr>,<Name>)
+; ARGS: <ENr>   Einheitennummer der abzufragenden Einheit
+;       <Name>  Bezeichner des Attributes, case-insensitiv
+; DESC: Diese Funktion gibt den Wert eines Attributes als String zurück
+;-------------------------------------------------------------------------
+#func GetAttrStr $ENr $Name
+{
+    ; In drei Schritten erst das gesamte Attribut, dann den Wert incl. '=' u.
+    ; ':' und schließlich den Wert solo herauslösen
+    #return crop(crop(crop($Attributes[$ENr],'(?i)\\$'+$Name+'='+'[^:]*:'),'='+'[^:]*:'),'[^:=]*')
+}
+
+;-------------------------------------------------------------------------
+; FUNC: GetAttrInt(<ENr>,<Name>)
+; ARGS: <ENr>   Einheitennummer der abzufragenden Einheit
+;       <Name>  Bezeichner des Attributes, case-insensitiv
+; DESC: Diese Funktion gibt den Wert eines Attributes als Integer zurück
+;-------------------------------------------------------------------------
+#func GetAttrInt $ENr $Name
+{
+    ; Den String holen und in eine Zahl wandeln
+    #return antoi(GetAttrStr($ENr,$Name),10)
+}
+
+
+
+#func EMR_int $Val
+{
+    #return $Val
+}
+
+#func EMR_eq $Val1 $Val2
+{
+    #return $Val1==$Val2
+}
+
+#func EMR_if $CC $Val1 $Val2
+{
+    #if $CC=='0'
+    {
+        #return $Val2
+    }
+    #else
+    {
+        #return $Val1
+    }
+}
+
+#func EMR_faction $PNr
+{
+    $PNr=itoan(antoi($PNr,10),36)
+    #return partei[$PNr].parteiname+' ('+$PNr+')'
+}
+
+#func EMR_unit $ENr
+{
+    $ENr=itoan(antoi($ENr,10),36)
+    #return unit[$ENr].name+' ('+$ENr+')'
+}
+
+#func EMR_building $BNr
+{
+    $BNr=itoan(antoi($BNr,10),36)
+    #return building[$BNr].name+' ('+$BNr+')'
+}
+
+#func EMR_region $RegInfo
+{
+    #if $($RegInfo).z
+    {
+        #return $($RegInfo).name+' ('+$($RegInfo).x+','+$($RegInfo).y+','+$($RegInfo).z+')'
+    }
+    #else
+    {
+        #return $($RegInfo).name+' ('+$($RegInfo).x+','+$($RegInfo).y+')'
+    }
+}
+
+#func EMR_resource $Resource $Wanted
+{
+    #return $Resource
+}
+
+#func EMR_skill $Skill
+{
+    #return $Skill
+}

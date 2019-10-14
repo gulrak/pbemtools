@@ -1,0 +1,143 @@
+[Options]
+EBase = 36
+PBase = 36
+BBase = 36
+
+[Path]
+; Hier können Pfade eingetragen werden, in denen Skriptfiles gesucht werden
+; Die Pfade müssen in Anführungszeichen und mit abschliessendem / bzw. \
+; abgegeben werden
+
+[Terrains]
+; CRT,      MZM, MZO, MAXBAUER, LAND, EISEN, LAEN, STEIN
+"Ozean",    ".", ".",   100,     0,     0,     0,    0
+"Ebene",    "E", "e", 10000,     1,     0,     0,    0
+"Sumpf",    "S", "s",  2000,     1,     0,     0,    0
+"Wueste",   "D", "d",   500,     1,     0,     0,    0
+"Hochland", "H", "h",  4000,     1,     0,     0,    0
+"Berge",    "B", "b",  1000,     1,     1,     1,    1
+"Gletscher","G", "g",   100,     1,     1,     0,    1
+"Wald",     "W", "w", 10000,     1,     0,     0,    0
+"Feuerwand","F", "f",     0,     1,     0,     0,    0
+
+[Resources]
+; NAME,         PPU (Platzbedarf pro Einheit)
+"Baeume",        8
+"Schoesslinge",  4
+"Steine",        0
+"Eisen",         0
+"Laen",          0
+
+[Ships]
+;CRT,             KAP, RNG, TCAP, TCREW, HOLZ
+"Boot",            50,  2,   1,      2,    5
+"Langboot",       500,  3,   1,     10,   50
+"Drachenschiff", 1000,  5,   2,     50,  100
+"Karavelle",     3000,  5,   3,     30,  250
+"Trireme",       2000,  7,   4,    120,  200
+
+[Buildings]
+"Leuchtturm",   3, "Talent", "Baukosten",  2, "Stein",  1, "Holz", 1, "Eisen", 100, "Silber", "Unterhalt",  100, "Silber"
+"Bergwerk",     4, "Talent", "Baukosten",  5, "Stein", 10, "Holz", 1, "Eisen", 250, "Silber", "Unterhalt",  500, "Silber"
+"Steinbruch",   2, "Talent", "Baukosten",  1, "Stein",  5, "Holz", 1, "Eisen", 250, "Silber", "Unterhalt",  250, "Silber"
+"Saegewerk",    3, "Talent", "Baukosten",  5, "Stein",  5, "Holz", 3, "Eisen", 200, "Silber", "Unterhalt",  250, "Silber"
+"Schmiede",     3, "Talent", "Baukosten",  5, "Stein",  5, "Holz", 2, "Eisen", 200, "Silber", "Unterhalt",  300, "Silber", 1, "Holz"
+"Pferdezucht",  2, "Talent", "Baukosten",  2, "Stein",  4, "Holz", 1, "Eisen", 100, "Silber", "Unterhalt",  150, "Silber"
+"Hafen",        3, "Talent", "Baukosten",  5, "Stein",  5, "Holz", "Unterhalt", 250, "Silber"
+"Akademie",     3, "Talent", "Baukosten",  5, "Stein",  5, "Holz", 1, "Eisen", 500, "Silber", "Unterhalt", 1000, "Silber"
+"Magierturm",   5, "Talent", "Baukosten",  5, "Stein",  3, "Holz", 2, "Mallorn", 3, "Eisen", 2, "Laen", 500, "Silber", "Unterhalt", 1000, "Silber"
+"Karawanserei", 2, "Talent", "Baukosten",  1, "Stein",  5, "Holz", 1, "Eisen", 500, "Silber", "Unterhalt", 3000, "Silber", 2, "Pferde"
+"Damm",         4, "Talent", "Baukosten",  5, "Stein", 10, "Holz", 1, "Eisen", 500, "Silber", "Unterhalt", 1000, "Silber", 3, "Holz"
+"Tunnel",       6, "Talent", "Baukosten", 10, "Stein",  5, "Holz", 1, "Eisen", 300, "Silber", "Unterhalt",  100, "Silber", 2, "Stein"
+"Monument",     4, "Talent", "Baukosten",  1, "Stein",  1, "Holz", 1, "Eisen", 400, "Silber"
+"Taverne",      2, "Talent", "Baukosten",  4, "Stein",  3, "Holz", 1, "Eisen", 200, "Silber", "Unterhalt",   -5, "Silber"
+"Grundmauern",  1, "Talent",    1, "Größe", 0, "Bonus", "Baukosten",  1, "Stein", "Unterhalt",   0, "Silber"
+"Befestigung",  2, "Talent",   10, "Größe", 1, "Bonus", "Baukosten",  1, "Stein", "Unterhalt",   0, "Silber"
+"Turm",         3, "Talent",   50, "Größe", 2, "Bonus", "Baukosten",  1, "Stein", "Unterhalt",   0, "Silber"
+"Burg",         4, "Talent",  250, "Größe", 3, "Bonus", "Baukosten",  1, "Stein", "Unterhalt",   0, "Silber"
+"Festung",      5, "Talent", 1250, "Größe", 4, "Bonus", "Baukosten",  1, "Stein", "Unterhalt",   0, "Silber"
+"Zitadelle",    6, "Talent", 6250, "Größe", 5, "Bonus", "Baukosten",  1, "Stein", "Unterhalt",   0, "Silber"
+
+[Races]
+"Mehrzahl",          "Zwerge", "Orks", "Elfen", "Katzen", "Dämonen", "Halblinge", "Menschen", "Goblins", "Insekten", "Trolle", "Meermenschen"
+"Einzahl",            "Zwerg",  "Ork",   "Elf",  "Katze",   "Dämon",  "Halbling",   "Mensch",  "Goblin",   "Insekt",  "Troll",   "Meermensch"
+"Unterhalt",            10,      10,      10,      10,        10,         10,         10,         10,         10,       10,           10
+"Rekrutierungskosten",  90,      50,     130,      90,       150,         80,         75,         40,         80,       90,           80  
+"Trefferpunkte",        24,      24,      18,      20,        50,         18,         20,         16,         24,       30,           20  
+"Rüstung",               0,       0,       0,       0,         2,          0,          0,          0,          2,        1,            0  
+"Magieresistenz",        5,      -5,      10,       0,        15,          5,          0,         -5,          5,       10,            0  
+"Alchemie",              0,      +1,      -1,      -1,        +2,          0,          0,         +1,          0,        0,            0  
+"Armbrustschießen",      0,       0,       0,       0,         0,         +1,          0,          0,         +1,        0,            0  
+"Ausdauer",              0,       0,       0,       0,         0,          0,          0,          0,          0,        0,            0  
+"Bergbau",              +2,      +1,      -2,      -2,         0,         +1,          0,         +1,         +1,       +2,           -2  
+"Bogenschießen",        -1,       0,      +2,       0,         0,         -1,          0,          0,         -2,       -2,            0  
+"Burgenbau",            +2,      +1,      -1,      -1,         0,         +1,          0,         +1,         +2,       +2,           -1  
+"Handeln",              +1,      -3,       0,       0,        -3,         +2,         +1,         -1,         -1,        0,           +2  
+"Hiebwaffen",           +1,       0,       0,       0,        +1,         -1,          0,          0,         -1,       +1,            0  
+"Holzfällen",           -1,      +1,       0,       0,        +1,          0,          0,          0,         +1,        0,            0  
+"Katapultbedienung",    +2,       0,      -2,      -1,         0,         -1,          0,         +1,          0,       +2,            0  
+"Kräuterkunde",         -2,      -2,      +2,      +1,        -3,         +2,         -1,          0,         +1,       -1,            0  
+"Magie",                -2,      -1,      +1,       0,        +1,          0,          0,         -1,          0,        0,            0  
+"Pferdedressur",        -2,      -1,      +1,       0,        -3,         -1,          0,          0,         -3,       -1,            0  
+"Reiten",               -2,       0,       0,       0,        -1,         -1,          0,          0,         -3,       -2,            0  
+"Rüstungsbau",          +2,      +1,      -1,      -1,         0,          0,          0,          0,         +2,       +2,           -1  
+"Schiffbau",            -1,      -1,      -1,      -1,        -1,         -1,         +1,         -2,          0,       -1,           +3  
+"Segeln",               -2,      -1,      -1,      -2,        -1,         -2,         +1,         -2,          0,       -1,           +3  
+"Spionage",              0,      -1,       0,      +2,         0,         +1,          0,          0,          0,       -3,            0  
+"Stangenwaffen",         0,       0,       0,       0,        +1,         -1,          0,          0,         +1,        0,            0  
+"Steinbau",             +2,      +1,      -1,      -1,         0,          0,          0,          0,          0,       +2,            0  
+"Steuereintreiben",     +1,      +1,       0,      +1,        +1,         -1,          0,          0,          0,       +1,            0  
+"Straßenbau",           +2,       0,      -1,      -1,         0,         +1,          0,         -2,         -1,       +2,           -1  
+"Taktik",                0,      +1,       0,       0,        -1,          0,          0,         -2,         -1,       -1,            0  
+"Tarnung",              -1,       0,      +1,      +1,        +1,         +1,          0,         +1,         -1,       -3,            0  
+"Unterhaltung",         -1,      -2,       0,       0,        -3,         +1,          0,         -1,         -2,       -1,            0  
+"Waffenbau",            +2,      +2,       0,       0,        +1,          0,          0,          0,          0,        0,            0  
+"Wagenbau",              0,      -1,       0,       0,        -2,         +2,          0,         -1,          0,        0,            0  
+"Wahrnehmung",           0,       0,      +1,      +2,        +1,         +1,          0,          0,         +1,       -1,            0  
+"Gewicht",              10,      10,      10,      10,        10,         10,         10,         10,         10,       20,           10
+"Kapazität",           5.4,     5.4,     5.4,     5.4,       5.4,        5.4,        5.4,        5.4,        5.4,     10.8,          5.4
+"Wagenzug",              0,       0,       0,       0,         0,          0,          0,          0,          0,        4,            0
+
+[Castles]
+;CRT,           AbGr, BauernBonus
+"Grundmauern",     1,   0
+"Befestigung",    10,   1
+"Turm",           50,   2
+"Burg",          250,   3
+"Festung",      1250,   4
+"Zitadelle",    6250,   5
+
+[Things]
+;CRT,           GE, KAP, PLURAL
+"Armbrust",      1,   0, "Armbrueste"
+"Bihaender",     2,   0, "Bihaender"
+"Bogen",         1,   0, "Boegen"
+"Eisen",         5,   0, "Eisen"
+"Elfenbogen",    1,   0, "Elfenboegen"
+"Hellebarde",    2,   0, "Hellebarden"
+"Holz",          5,   0, "Holz"
+"Katapult",    120,   0, "Katapult"
+"Kettenhemd",    2,   0, "Kettenhemd"
+"Kriegsaxt",     2,   0, "Kriegsaexte"
+"Laen",          2,   0, "Laen"
+"Laenschild",    0,   0, "Laenschilde"
+"Laenschwert",   1,   0, "Laenschwerter"
+"Laenkettenhemd",1,   0, "Laenkettenhemden"
+"Lanze",         2,   0, "Lanzen"
+"Mallorn",       5,   0, "Mallorn"
+"Pferd",        50,  20, "Pferde"
+"Plattenpanzer", 4,   0, "Plattenpanzer"
+"Runenschwert",  1,   0, "Runenschwerter"
+"Schild",        1,   0, "Schilde"
+"Schwert",       1,   0, "Schwerter"
+"Speer",         1,   0, "Speere"
+"Stein",        60,   0, "Steine"
+"Wagen",        40, 140, "Wagen"
+"Balsam",        2,   0, "Baslam"
+"Gewuerz",       2,   0, "Gewuerz"
+"Juwel",         1,   0, "Juwelen"
+"Myrrhe",        2,   0, "Myrrhe"
+"Oel",           3,   0, "Oel"
+"Seide",         3,   0, "Seide"
+"Weihrauch",     2,   0, "Weihrauch"
+"Silber",        0.01,0, "Silber"
