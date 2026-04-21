@@ -1,10 +1,17 @@
 # Vorlage V2.0.0 rc 1
+
+[![Build Status](https://github.com/gulrak/pbemtools/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/gulrak/pbemtools/actions/workflows/build.yml)
+[![GitHub release](https://img.shields.io/github/v/release/gulrak/pbemtools)](https://github.com/gulrak/pbemtools/releases/latest)
+[![Platforms](https://img.shields.io/badge/platforms-Windows%20%7C%20macOS%20%7C%20Linux-blue)](#)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
 ## PBeM-Zugvorlagen-Generator
 Copyright (C) 1999-2026 by Steffen Schümann
 
 **Support:** [Discussions hier](https://github.com/gulrak/pbemtools/discussions) und #vorlage auf dem [Eressea Discord](https://discord.gg/mjjNMS9u)\
 **Web:** https://gulrak.de/pbemtools \
-**Dokumentation:** https://github.com/gulrak/pbemtools/wiki/VorlageDokuAllgemeines
+**Dokumentation:** https://github.com/gulrak/pbemtools/wiki/VorlageDokuAllgemeines \
+**Alte Binaries:** https://gulrak.de/pbemtools/#downloads
 
 _Metabefehle inspiriert durch Georg Edelmayers PERL-Vorlagen-Generator._
 
