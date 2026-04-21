@@ -1693,8 +1693,14 @@ protected:
     Kampfzauber m_cpoKampfzauber;
 };
 
-extern CRegion* g_poCurrentRegion;
 extern std::string GetConfigFileName();
 extern void SetConfigFileName(const std::string& sFName);
 extern bool ExistUserFunction(const std::string& sName);
 extern bool DoUserFunction(const std::string& sName, ArgumentList& coArgs, Value* poVal);
+
+extern CKarte* g_poKarte;
+extern CReport* g_poCurrentReport;
+extern CRegion* g_poCurrentRegion;
+extern CEinheit* g_poCurrentUnit;
+extern CBauwerk* g_poCurrentBuilding;
+extern CSchiff* g_poCurrentShip;

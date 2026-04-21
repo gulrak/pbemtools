@@ -28,7 +28,7 @@ jobs:
           - name: macOS Universal
             os: macos-latest
             artifact_platform: macos-universal
-            cmake_args: "-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64"
+            cmake_args: -DCMAKE_OSX_ARCHITECTURES=arm64\;x86_64
             archive_ext: tar.gz
 
           - name: Linux x86_64

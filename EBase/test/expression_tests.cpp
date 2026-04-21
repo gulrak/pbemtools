@@ -77,7 +77,6 @@ bool DoUserFunction(const std::string&, ArgumentList&, Value*) { return false; }
 std::string GetConfigFileName() { return ""; }
 void SetConfigFileName(const std::string&) {}
 bool ExistUserFunction(const std::string&) { return false; }
-void* g_poCurrentRegion = nullptr;
 
 TEST_CASE("Expression basics", "[cexpression]") {
     Expression::Variables vars;

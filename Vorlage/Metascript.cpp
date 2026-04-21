@@ -116,13 +116,6 @@ Value _DoShip(CObjectPart* poPart, CRegion* pReg);
 Value _DoGrenze(CObjectPart* poPart, CRegion* pReg);
 Value _DoUnit(CObjectPart* poPart, CEinheit* poUnit, CEinheit* poUnitQ);
 
-CKarte* g_poKarte = nullptr;
-CReport* g_poCurrentReport = nullptr;
-CRegion* g_poCurrentRegion = nullptr;
-CEinheit* g_poCurrentUnit = nullptr;
-CBauwerk* g_poCurrentBuilding = nullptr;
-CSchiff* g_poCurrentShip = nullptr;
-
 static std::map<std::string, std::string> g_pseudoFiles;
 CScriptBase g_oScriptBase;
 

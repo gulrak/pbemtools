@@ -99,6 +99,14 @@ typedef std::map<std::string, int> TAGMAP;
 
 TAGMAP g_coTags;
 
+CKarte* g_poKarte = nullptr;
+CReport* g_poCurrentReport = nullptr;
+CRegion* g_poCurrentRegion = nullptr;
+CEinheit* g_poCurrentUnit = nullptr;
+CBauwerk* g_poCurrentBuilding = nullptr;
+CSchiff* g_poCurrentShip = nullptr;
+
+
 class AdditionalTag
 {
     typedef std::set<std::string> AdditionalTagSet;
