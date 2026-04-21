@@ -1,0 +1,152 @@
+name: Build and Test
+
+on:
+  push:
+    branches: ['**']
+    tags: ['v[0-9]*.[0-9]*.[0-9]*']
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Windows x86
+            os: windows-latest
+            artifact_platform: windows-x86
+            cmake_args: -A Win32
+            archive_ext: zip
+
+          - name: Windows x64
+            os: windows-latest
+            artifact_platform: windows-x64
+            cmake_args: -A x64
+            archive_ext: zip
+
+          - name: macOS Universal
+            os: macos-latest
+            artifact_platform: macos-universal
+            cmake_args: -DCMAKE_OSX_ARCHITECTURES=arm64\;x86_64
+            archive_ext: tar.gz
+
+          - name: Linux x86_64
+            os: ubuntu-latest
+            artifact_platform: linux-x86_64
+            cmake_args: ''
+            archive_ext: tar.gz
+
+          - name: Linux x86
+            os: ubuntu-latest
+            artifact_platform: linux-x86
+            cmake_args: >-
+              -DCMAKE_C_FLAGS=-m32
+              -DCMAKE_CXX_FLAGS=-m32
+              -DCMAKE_EXE_LINKER_FLAGS=-m32
+            extra_packages: gcc-multilib g++-multilib
+            archive_ext: tar.gz
+
+          - name: Linux arm64
+            os: ubuntu-22.04-arm
+            artifact_platform: linux-arm64
+            cmake_args: ''
+            archive_ext: tar.gz
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install extra packages
+        if: matrix.extra_packages != ''
+        run: sudo apt-get update && sudo apt-get install -y ${{ matrix.extra_packages }}
+
+      - name: Configure
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release ${{ matrix.cmake_args }}
+
+      - name: Build
+        run: cmake --build build --config Release
+
+      - name: Test
+        run: ctest --test-dir build -C Release --output-on-failure
+
+      # ── Determine archive name (nightly vs. tagged release) ──────────────
+      - name: Set archive name
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            echo "ARCHIVE_NAME=vorlage-${GITHUB_REF_NAME}-${{ matrix.artifact_platform }}.${{ matrix.archive_ext }}" >> "$GITHUB_ENV"
+          else
+            echo "ARCHIVE_NAME=vorlage-nightly-${{ matrix.artifact_platform }}.${{ matrix.archive_ext }}" >> "$GITHUB_ENV"
+          fi
+
+      # ── Package (Unix) ────────────────────────────────────────────────────
+      - name: Package (Unix)
+        if: (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) && runner.os != 'Windows'
+        shell: bash
+        run: |
+          STAGE=$(mktemp -d)
+          cp build/Vorlage/vorlage  "$STAGE/"
+          cp build/VPP/vpp          "$STAGE/"
+          cp README.md LICENSE       "$STAGE/"
+          tar czf "$ARCHIVE_NAME" -C "$STAGE" .
+
+      # ── Package (Windows) ─────────────────────────────────────────────────
+      - name: Package (Windows)
+        if: (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) && runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $stage = New-Item -ItemType Directory -Path "$env:RUNNER_TEMP\stage"
+          Copy-Item "build\Vorlage\Release\vorlage.exe" $stage
+          Copy-Item "build\VPP\Release\vpp.exe"         $stage
+          Copy-Item "README.md", "LICENSE"               $stage
+          Compress-Archive -Path "$stage\*" -DestinationPath "$env:ARCHIVE_NAME"
+
+      # ── Upload artifact ───────────────────────────────────────────────────
+      - name: Upload artifact
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_platform }}
+          path: ${{ env.ARCHIVE_NAME }}
+          retention-days: 14
+
+  # ── Create GitHub Release (tags only) ──────────────────────────────────────
+  release:
+    name: Create Release
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create source tarball
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          git archive \
+            --format=tar.bz2 \
+            --prefix="vorlage-${VERSION}/" \
+            HEAD \
+            > "vorlage-${VERSION}-source.tar.bz2"
+          echo "SOURCE_TARBALL=vorlage-${VERSION}-source.tar.bz2" >> "$GITHUB_ENV"
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            artifacts/**/*
+            ${{ env.SOURCE_TARBALL }}
