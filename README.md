@@ -13,6 +13,8 @@ Copyright (C) 1999-2026 by Steffen Schümann
 **Dokumentation:** https://github.com/gulrak/pbemtools/wiki/VorlageDokuAllgemeines \
 **Alte Binaries:** https://gulrak.de/pbemtools/#downloads
 
+**NEU: [Nightly Builds](https://github.com/gulrak/pbemtools/releases/tag/nightly) for die kommende v2.x verfügbar!**
+
 _Metabefehle inspiriert durch Georg Edelmayers PERL-Vorlagen-Generator._
 
 > ## Persönliche Anmerkung
