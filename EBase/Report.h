@@ -135,14 +135,9 @@ public:
     {
     }
 
-    CRegionKey(const CRegionKey& oRK)
-        : m_nX(oRK.m_nX)
-        , m_nY(oRK.m_nY)
-        , m_nZ(oRK.m_nZ)
-    {
-    }
-
-    ~CRegionKey() {}
+    CRegionKey(const CRegionKey&) = default;
+    CRegionKey& operator=(const CRegionKey&) = default;
+    ~CRegionKey() = default;
 
     bool operator==(const CRegionKey& oRK) const { return m_nX == oRK.m_nX && m_nY == oRK.m_nY && m_nZ == oRK.m_nZ; }
 
