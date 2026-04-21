@@ -757,9 +757,9 @@ int Expression::parseAssignment(Value* r)
         CReference oRef;
         Value oVal;
         sT = _token;
-        _assign = true;
+        _inAssign = true;
         parsePrimary(&oVal, &oRef);
-        _assign = false;
+        _inAssign = false;
         nextToken();
         if (_token.empty() && _type == TokenType::DELIMITER) {
             if (poContainer /*_objVal.getType()==VT_MAP || _objVal.getType()==VT_VECTOR*/) {
@@ -1143,7 +1143,7 @@ void Expression::parsePrimary(Value* r, CReference* pRef)
 
             if (!_object->index.empty() || _object->next) {
                 // Propagate assignment context to the object handler.
-                _object->assign = _assign;
+                //_object->assign = _assign;
 #ifdef USEOBJMAP
                 std::map<std::string, Expression::OBJECTS*>::const_iterator oi = g_cpoObjectMap.find(Flatten(_object->label));
                 if (oi != g_cpoObjectMap.end()) {
@@ -1290,9 +1290,9 @@ int Expression::evaluate(Variables& oContext, const char* e, Value* result, int*
         nextToken();
         if (_token.empty() && _type != TokenType::STRING)
             ERR(E_EMPTY);
-        _assign = false;
+        _inAssign = false;
         *a = parseAssignment(result);
-        _assign = false;
+        _inAssign = false;
         if (result->getType() == VT_ERROR) {
             result->error(result->asString().c_str());
             return E_VALUE;
@@ -1301,7 +1301,7 @@ int Expression::evaluate(Variables& oContext, const char* e, Value* result, int*
             ERR(E_SYNTAX);
     }
     catch (ExpressionException E) {
-        _assign = false;
+        _inAssign = false;
         if (result->getType() != VT_ERROR) {
             if (E.num < 0)
                 result->error(E.text.c_str());

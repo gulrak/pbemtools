@@ -142,6 +142,7 @@ public:
 
     static Precedence getPrecedence(const std::string& token);
     static Associativity getAssociativity(const std::string& token);
+    static bool inAssignment() { return _inAssign; }
 
 protected:
     char peekChar(bool bInString = false, int nOffset = 0);
@@ -174,7 +175,7 @@ protected:
     Value* _valueRef = nullptr;
     Variables* _context = nullptr;
 
-    bool _assign = false;  // true while evaluating the RHS of an assignment
+    static inline bool _inAssign = false;  // true while evaluating the RHS of an assignment
 
     static constexpr int MAX_RECURSION_DEPTH = 64;
     static Variables _vars;

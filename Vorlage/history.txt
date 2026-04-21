@@ -1,3 +1,15 @@
+---[Vorlage V2.0.0]---
+
+* Bugfix, Returncode manchmal 0 trotz Fehlern. (#30)
+* CValue-Klasse durch eine neue Value-Klasse mit std::variant ersetzt.
+* CExpression durch eine neue Expression-Klasse mit Shunting-Yard-Parser
+  ersetzt
+* C++ auc C++20 gehoben
+* Diverse abgekündigte C++-Features ersetzt
+* Vorlage ist nun OpenSource!!!!
+
+
+
 ---[Vorlage V1.7.6]---
 
 * Bugfix: Vorlage konnte bei neuen `[CRHierarchy]`-Sub-Blöcken crashen wenn

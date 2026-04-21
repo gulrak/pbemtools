@@ -269,7 +269,7 @@ public:
     CObjectPart()
         : next(nullptr)
         , bracket(0)
-        , assign(false)
+//        , assign(false)
     {
     }
 
@@ -279,5 +279,5 @@ public:
     IndexField index;
     CObjectPart* next;
     char bracket;
-    bool assign;  // true when this object is the LHS of an assignment
+//    bool assign;  // true when this object is the LHS of an assignment
 };

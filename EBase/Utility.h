@@ -70,6 +70,7 @@ inline bool IsUmlaut(char cc)
 
 #define ToLower(c) ((char)(g_toLowerMapping[(unsigned char)(c)]))
 
+#define INFOMSG(msg) InfoMessage(FormatMsg msg)
 #define ERRMSG(pobj, msg) ErrorMessage((void*)pobj, FormatMsg msg)
 // #define VERRMSG( msg ) VErrorMessage( FormatMsg msg )
 #define CONMSG(msg) ConsoleMessage(FormatMsg msg)
@@ -83,6 +84,7 @@ extern uint32_t g_nStepCount;
 extern uint32_t g_nLastErrorStep;
 extern int g_returnCode;
 char* FormatMsg(const char* msg, ...);
+void InfoMessage(const char* pszStr);
 void ErrorMessage(void* pDat, const char* pszStr);
 void ConsoleMessage(const char* pszStr);
 void TraceMessage(const char* pszStr);

@@ -1638,7 +1638,7 @@ Value _DoUnit(CObjectPart* poPart, CEinheit* poUnit, CEinheit* poUnitQ)
             oVal = Value((int32_t)poUnitQ->GetMetaOut().size());
         }
         else if (!pOP->next && IsEqual(pOP->label.c_str(), "OUTPUT") && pOP->index.size()) {
-            if (pOP->assign && pOP->index.size() == 1) {
+            if (Expression::inAssignment() && pOP->index.size() == 1) {
                 if (pOP->index[0].asLong() == (int32_t)poUnitQ->GetMetaOut().size()) {
                     poUnitQ->GetMetaOut().push_back(Value(""));
                     poUnitQ->GetMetaOut().changed(true);

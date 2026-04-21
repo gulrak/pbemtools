@@ -6,9 +6,12 @@ on:
     tags: ['v[0-9]*.[0-9]*.[0-9]*']
     paths-ignore:
       - '**.md'
+      - '**.txt'
       - 'LICENSE'
       - '.gitignore'
       - 'docs/**'
+      - 'config/**'
+      - 'scripts/**'
 
 jobs:
   build:

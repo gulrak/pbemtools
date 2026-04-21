@@ -76,7 +76,6 @@ extern std::string GetConfigFileName();
 
 using namespace std;
 
-// int32_t g_nFlags = 0;
 std::set<int> g_coFlags;
 std::string g_sSrcFile;
 int32_t g_nSrcLine = -1;
@@ -217,6 +216,18 @@ char* FormatMsg(const char* msg, ...)
     va_start(list, msg);
     vsnprintf(p, 4096, msg, list);
     return p;
+}
+
+void InfoMessage(const char* pszStr)
+{
+    static std::set<std::string> coErrMsgPool;
+    std::string sErr = std::string(pszStr) + "\n";
+    if (!IsFlag(VF_SUPPRESSMULTIERRORS) || coErrMsgPool.find(sErr) == coErrMsgPool.end()) {
+        g_pfErrorFunc(nullptr, sErr.c_str());
+        coErrMsgPool.insert(sErr);
+        COutput::Target("stderr")->Write(sErr);
+    }
+    delete[] (char*)pszStr;
 }
 
 void ErrorMessage(void* pDat, const char* pszStr)

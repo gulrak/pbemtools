@@ -2817,7 +2817,7 @@ int main(int argc, char* argv[])
     }
 
     if (bTime && bLocalHeader) {
-        CONMSG(("\n%s [Build %d],\n(C) Copyright 1999-2019 by S.Schuemann\n", VERSIONINFO, PBEMTOOLS_BUILD_NUMBER_EMU));
+        INFOMSG(("\n%s [Build %d],\n(C) Copyright 1999-2026 by S.Schuemann\n", VERSIONINFO, PBEMTOOLS_BUILD_NUMBER_EMU));
     }
 
     for (size_t aix = 0; aix < coArgs.size(); aix++) {
