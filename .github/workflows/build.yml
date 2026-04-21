@@ -72,7 +72,7 @@ jobs:
 
       # ── Determine archive name (nightly vs. tagged release) ──────────────
       - name: Set archive name
-        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+        if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
         shell: bash
         run: |
           if [[ "$GITHUB_REF" == refs/tags/* ]]; then
@@ -83,7 +83,7 @@ jobs:
 
       # ── Package (Unix) ────────────────────────────────────────────────────
       - name: Package (Unix)
-        if: (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) && runner.os != 'Windows'
+        if: (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')) && runner.os != 'Windows'
         shell: bash
         run: |
           STAGE=$(mktemp -d)
@@ -94,7 +94,7 @@ jobs:
 
       # ── Package (Windows) ─────────────────────────────────────────────────
       - name: Package (Windows)
-        if: (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) && runner.os == 'Windows'
+        if: (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')) && runner.os == 'Windows'
         shell: pwsh
         run: |
           $stage = New-Item -ItemType Directory -Path "$env:RUNNER_TEMP\stage"
@@ -105,7 +105,7 @@ jobs:
 
       # ── Upload artifact ───────────────────────────────────────────────────
       - name: Upload artifact
-        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+        if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_platform }}
