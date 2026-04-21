@@ -116,12 +116,12 @@ Value _DoShip(CObjectPart* poPart, CRegion* pReg);
 Value _DoGrenze(CObjectPart* poPart, CRegion* pReg);
 Value _DoUnit(CObjectPart* poPart, CEinheit* poUnit, CEinheit* poUnitQ);
 
-CKarte* g_poKarte;
-CReport* g_poCurrentReport = 0;
-CRegion* g_poCurrentRegion = 0;
-CEinheit* g_poCurrentUnit = 0;
-CBauwerk* g_poCurrentBuilding = 0;
-CSchiff* g_poCurrentShip = 0;
+CKarte* g_poKarte = nullptr;
+CReport* g_poCurrentReport = nullptr;
+CRegion* g_poCurrentRegion = nullptr;
+CEinheit* g_poCurrentUnit = nullptr;
+CBauwerk* g_poCurrentBuilding = nullptr;
+CSchiff* g_poCurrentShip = nullptr;
 
 static std::map<std::string, std::string> g_pseudoFiles;
 CScriptBase g_oScriptBase;
@@ -129,8 +129,8 @@ CScriptBase g_oScriptBase;
 int32_t CMetaCommand::g_nTrace = 0;
 int32_t CMetaCommand::g_nTraceSteps = -1;
 std::string CMetaCommand::g_sErrMsg;
-CMCI* g_poStepOver = 0;
-CMCI* g_poStepOut = 0;
+CMCI* g_poStepOver = nullptr;
+CMCI* g_poStepOut = nullptr;
 
 std::map<std::string, int> g_cnMetaTokens;
 #define GMT(x) {"#" #x, GMT_##x}
