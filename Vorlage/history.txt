@@ -1,0 +1,3183 @@
+---[Vorlage V1.7.6]---
+
+* Bugfix: Vorlage konnte bei neuen `[CRHierarchy]`-Sub-Blöcken crashen wenn
+  diese nicht zusätzlich definiert waren, selbst wenn es reguläre Blocke
+  sind. (#23)
+* Bugfix: `#tag EINHEIT[<expr>] ejcOrdersconfimed 1` funktionierte nicht
+  mit Variablen im Ausdruck `<expr>` (#22)
+* Feature: Wenn ausführliche Regions-Infos aktiv sind, werden nach dem
+  Materialpool nun auch die bewachenden Partieen aufgelistet. (#21)
+* Bugfix: Bei im Bau befindlichen Schiffen wurde für Flotten die Zielgröße
+  nur für ein Schiff angezeigt, ausserdem wird während des Baus nun die
+  Ladung angezeigt. (#20)
+* Bugfix: Message-Typ 1235024123 wurde bei Übergaben nicht berücksichtigt
+  und dadurch die Werte in der Handelsbilanz unterschlagen. (#19)
+* Bugfix: Die als eigene Partei getarnten Einheiten in einer Region wurden
+  der eigenen Partei hinzugezählt (war in v1.7.6rc1 defekt). (#18)
+
+---[Vorlage V1.7.5]---
+
+* Bugfix: Crash bei unvollständigen UTF-8-Codes behoben.
+* Feature: Bessere Fehlermeldungen bei Encoding-Fehlern.
+
+---[Vorlage V1.7.4]---
+
+* Bugfix: Die freie Kapazität bei Schiffen (sowie deren Ladung-Attibut)
+  konnten nicht immer korrekt berechnet werden und die Berechnung
+  enthielt zudem einen Fehler im Fall "schwerer" Einheiten. Der Fehler
+  wurde behoben und wenn verfügbar (Eressea) auf die CR-Attribute
+  cargo/capacity zurückgegriffen (#16)
+* Bugfix: Ein Pufferüberlauf in der Formatierung der Gegenstände einer
+  Einheit konnte Vorlage zum Abbruch bringen, alle Formatierungen
+  wurden auf eine sichere Formatierung unabhängig von der Ausgabelänge
+  umgestellt. (#15)
+* Feature: Bei Einheitennummern von Einheiten auf Schiffen oder in
+  Bauwerken wird der Marker vor der Einheitennummer ('s'/'S', bzw.
+  'b'/'B') der durch Großbuchstaben auch das Kommando markiert, durch
+  einen Doppelpunkt getrennt. Die Markierung stammte aus der Zeit vor
+  der Base36-Einführung und war damals noch besser lesbar. (#13)
+* Bugfix: Ein Fehler in der Formatierung führte zur Darstellung von
+  negativen Zahlen für freie Arbeitsplätze und bei Änderungen in
+  Einheiten als positives 2er-Komplement. (#10)
+* Bugfix: Die erste v1.7.4 hatte einen Fehler bei dem die schliessenden
+  Klammern bei Talent-Differenzen fehlen konnten.
+
+---[Vorlage V1.7.3]---
+
+* Beschleunigung des Scanners (b552)
+* Feature: Die Nachrichten zu Kämpfen in Regionen der Zugvorlage werden
+  nun ebenfalls bei Verwendung von `-n` bei den Nachrichten der Region
+  ausgegeben, wem das zu viel ist, der kann die Details des Kampfes
+  mit der neuen Option `--no-battle-messages` ausblenden (#10, b552)
+* Feature: Für Bauwerke kann nun in der Config festgelegt werden, oben 
+  ihre Kapazität sich auf Individuen oder Einheiten bezieht. In Eressea
+  ist davon der Leuchtturm betroffen, und durch as Config-Attribut
+  `"einheiten"` mit einem Wert von `1` wird die Auslastung in Einheiten
+  statt Individuen angezeigt.
+  Beispiel:
+  [Buildings]
+  "Leuchtturm",   3, "Talent", 4, "Kapazitaet", 1, "Einheiten", ...
+  (#9/b551)
+* Featur: Der Befehl '#var' erlaubt nun die Initialisierung der
+  deklarierten Variablen, also z.B.:
+  #var $i=0 $j=1
+  (b550)
+* Feature: Die Option `--output-encoding` unterstützt jetzt auch `utf8`
+  als Output-Encoding für die Zugvorlage (inkl. BOM) (#7/b548)
+* Vorlage benutzt nun intern für Kapazitätsberechnungen von Einheiten
+  double wie sonst überall auch, vorher war es float. (#6/b548) 
+* Feature: Option `-wc l` erlaubt es für Kommandozeilen eine andere
+  Zeilenlänge zu wählen als für die Kommentare, der Default ist der
+  der Kommentare (#1/b546)
+* Bugfix: Die erste 1.7.3 verhielt sich als ob `-fd` benutzt wurde.
+* Bugfix: Fehlerhafte Anzeige von Flotten als im Bau befindlich und mit
+  verwirrenden Grössen (#5/b548)
+
+---[Vorlage V1.7.2]---
+
+* Neuer Befehl `#assert <expr> [<message>]` erlaubt es Assertions zu
+  definieren, bei deren Fehlschlagen ein Fehler mit der optionalen
+  Message ausgegeben wird (b542)
+* Die Skript-Ausführung wurde beschleunigt indem erkannt wird in welchen
+  Elementen überhaupt Inplace-Auswertungen vorkommen, und nur in dem
+  Fall der teurere Auswertungsteil durchlaufen wird (#4/b542)
+* Bugfix: Keine warnungen mehr, beim Überschreiben von internen Funktionen
+  und Prozeduren (#3/b542)
+* Bugfix: Mixed up data types from config structures are now fixed.
+  (#2/b542)
+
+---[Vorlage V1.7.1]---
+
+* Eine Menge Cleanup, der Code musste großflächig entstaubt werden um
+  mit einem modernen Compiler mit kritischerem Warning-Level und
+  '-Werror' überhaupt compiliert zu werden.
+* Wechsel auf C++14, und Entfernung der Boost-Abhängigkeit.
+* Wechsel auf CMake als Build-Tool (b527)
+* Bugfix: Potentieller Crash wenn der 'OutputLineFilter' benutzt wird.
+  (b535)
+
+---[Vorlage V1.6.2-1]---
+
+* Der Befehl '#encoding' unterstützt nun auch UTF-8, so das man seine
+  Skript-Dateien nun auch in UTF-8 schreiben kann, wenn man an den
+  Anfang '#encoding utf-8' schreibt, oder die Datei mit BOM
+  markiert ist (was unter Linux oft nicht passiert). (b524)
+
+* Bugfix: Bei UTF-8-CR-Ausgabe wurden die COMMAND-Blöcke mit falschem
+  Encoding geschrieben (#99/b524)
+
+---[Vorlage V1.6.2]---
+
+* Vorlage unterstützt nun auch REPORT[dr].REGION[idx] bzw. dazu
+  REPORT[dr].REGION.SIZE (#93/b523)
+  
+* Vorlage unterstützt nun (zunächst nur rudimentär) UTF-8-CRs, wie sie
+  vom Eressea-Server ab dem 2.12.2007 gesendet werden. Die aktuelle
+  Implementation wandelt jedoch intern nur in ISO-8859-1 (das alte
+  Server-Encoding) um, erst V1.6.3 wird auch intern UTF-8 unterstützen.
+  (b521)
+
+* Mit der neuen Option '--restricted' kann Vorlage um einige Funktionen
+  reduziert werden, mit dem Ziel Vorlage als Dienst für Spieler auf
+  einem Server zu betreiben.
+  Nicht mehr benutzbare Funktionen:
+    open(), close(), readline(), writeline(), readvalue(), writevalue(),
+    status(), statustext()
+  Daneben gehen die Befehle #trace und #input nicht mehr und zudem
+  kann bei #config kein Pfad mehr angegeben werden, die Files
+  werden dann nur im aktuellen Verzeichnis gesucht. (#89/b518)
+
+* Die neue Option '--limit-runtime' ermöglicht es, die Ausführung der
+  Skripte auf eine gegebene Zeit in Sekunden zu begrenzen. Beim
+  Überschreiten der Zeit wird die Ausführung mit einer Fehlermeldung
+  abgebrochen. (#90/b518)
+
+* Mit dem neuen Befehl '#continue' kann man in #while direkt wieder an
+  den Anfang des #while springen. (#74/b517)
+  
+* Wenn Vorlage keine Befehle für die angegebene Partei findet (Option
+  -p) wird jetzt ein Fehler gemeldet. (#78/b517)
+
+* Bugfix: Doku und Code wiedersprachen sich hinsichtlich des
+  Wertebereiches von floats, es gilt für einen float $v der Bereich,
+  -10^50 < $v < -10^50 und es werden 10 Stellen Genauigkeit
+  zugesichert (#84/#85/b516)
+  
+* Bugfix: Das Arbeiten mit sehr grossen floats konnte zu Abstürzen bei
+  der Konvertierung in einen String führen (findet implizit z.B. im
+  Debugger statt) (#84/#85/b516)
+
+* Bugfix: Der Zugriff auf PARTEI-Objekte funktionierte nicht korrekt, da
+  je Partei nur eine Version, unabhängig der Report-Runde erreichbar ist
+  (im Konfliktfall der letzte geladene) (#88/b518)
+
+* Bugfix: OnUnit wurde für Verräter aufgerufen (#72/b518)
+
+* Bugfix: Die Option -fd hat nicht immer korrekte Meldungen ausgegeben
+  und die mitgelieferte standard.vms vertrug sich nicht mit der Option.
+  (#79/#80/b519)
+  
+* Bugfix: Der Zugriff auf Regionsbotschaften funktionierte nicht.
+  (#83/b519)
+
+* Bugfix: Bei der Verwendung von Strings als Index in Arrays wurde statt
+  einer Fehlermeldung der Index 0 verwendet. (#92/b520)
+  
+* Bugfix: Beim Zugriff auf Gebäude und Schiffe über Regionen (also z.B.
+  REGION[x,y].SHIP) konnte manchmal zwar via SIZE eine Anzahl gesehen
+  werden, der Zugriff auf die Elemente klappte jedoch nicht. (#82/b522)
+  
+---[Vorlage V1.6.1]---
+
+* Das Attribut wahrerTyp gibt nun bei Gebäuden keine Warnung mehr aus
+  (#69/b515)
+
+* Das Kapitel [Things] kann jetzt als vierten Wert die Plural-
+  Bezeichnung enthalten, die dann bei Bedarf verwendet wird,
+  entsprechend hat THINGS[<name>].PLURAL nun die Plural-Bezeichnung,
+  wenn definiert, sonst entspricht sie der Einzahl (b515)
+  
+* Bei Schiffen wird nun der Bau-Fortschritt angezeigt (#68/b514)
+
+* Die neuen Callbacks OnShip und OnBuilding werden nun zwischen
+  OnRegion und EndRegion für jedes Schiff/Bauwerk aufgerufen und
+  in ihnen sind SHIP bzw. BUILDING ohne Index gültig
+  (#67/b514)
+
+* Mit REPORT[-1].MESSAGE.SIZE bzw. REPORT[-1].MESSAGE[idx] kommt man
+  nun auch an die MESSAGE-Blöcke der Vorrunde (#64/b514)
+  
+* Helden sind nun entsprechend markiert und auch ihre Attribute werden
+  warnungsfrei erkannt (#60/b514)
+  
+* Bugfix: Einige Fehlermeldungen waren durch einen Index-Fehler
+  vertausch (#65/b514)
+  
+* Bugfix: Die Funktionen mit regulären Ausdrücken kamen nicht mit
+  Umlauten im Ausdruck zurecht.
+  (#70/b514)
+
+* Bugfix: Steuerzeichen konnten das CR-Einlesen blockieren.
+  (#62/b514)
+  
+* Bugfix: EMR_region war in standard.vms fehlerhaft benannt
+  (#59/b513)
+  
+---[Vorlage V1.6]---
+
+* Mit der neuen Option '--rseed' kann man ab jetzt den
+  Initialisierungwert des Zufallsgenerators setzen; Dies hilft vor
+  allem bei Debugging von Code der den Zufallsgenerator nutzt und nur
+  unter bestimmten Konstellationen Probleme erzeugt. (#57/b511)
+
+* Die neuen Konstanten TOOLVERSION und BUILDNUMBER ermöglichen es nun,
+  in Skripten auf Änderungen in Vorlage-Versionen zu reagieren; Dabei
+  enthält TOOLVERSION z.B. den String '1.6rc7' und BUILDNUMBER z.B.
+  den Integer 509, bei älteren Versionen hingegen stehen ergibt sich
+  jeweils der Name der Konstanten als String, also keine Fehlermeldung
+  (#55/b509)
+
+* Der #tag-Befehl kann nun auch SCHIFF- und BURG-Blöcken Attribute
+  für den CR-Export hinzufügen, wobei hier immer die Nummer angegeben
+  werden muß, also '#tag BURG[burgnummer] Attributname expr' oder
+  eben '#tag SCHIFF[schiffnummer] Attributname expr'
+  (#51/b509)
+
+* Vorlage unterstützt nun (ohne Warnung oder Config-Eintrag) das
+  Attribut 'UNIT.FOLGT'
+  (#50/b508)
+  
+* Mit der neuen Option '--strip-duplicate-descr' werden Einheiten-
+  beschreibungen abgekürzt, wenn sie sich in einer Region wiederholen,
+  d.h. es wird nur das erste Auftreten in voller Länge gezeigt
+  (#35/b499)
+
+* Erste Version eines Crash-Handlers unter Windows und Linux, um
+  möglichen Bugs leichter auf die Spur zu kommen.
+  (#32/#39/#48/b486)
+
+* Vorlage setzt nun bei erzeugten CRs das 'Konfiguration'-Attribut auf
+  "Vorlage" (#46/b486)
+
+* Mit den neuen Funktionen 'exp(v)', 'log(v)' und 'log10(v)' hat man
+  nun einige Erleichterung bei Berechnungen die darauf angewiesen sind.
+  Insbesondere für Heldenberechnungen könnte log10 nützlich sein.
+  (#38/b485)
+
+* Es gibt nun die neuen Funktionen 'and(v1,v2)', 'or(v1,v2)',
+  'xor(v1,v2)' sowie 'not(v)' um binäre Operationen auf Integern
+  durchführen zu können. (b480)
+
+* Statt der bisherigen Operatoren für logisches UND ('&') bzw. ODER
+  ('|'), kann nun die in den meisten Skriptsprachen übliche Version
+  '&&' bzw. '||' benutzt werden. Für eine zukünftige Version 2 wird
+  darauf komplett umgestiegen, also ist zu empfehlen, dies mit der
+  Zeit anzupassen. Die Option '--version2' wurde um eine Warnung
+  zu dieser Änderung erweitert. (b480)
+
+* Die Option '--kkall' bewirkt, wie die alte Option '-kk' eine grosse
+  Karte zu Beginn der Zugvorlage. Im Gegensatz zu dieser, die nur die
+  Dimensionen des Basis-Reports berücksichtigt, werden bei der neuen
+  Option alle Regionen berücksichtigt, die Karte kann also verdammt
+  groß werden, wenn man z.B. irgendwelche Welten-CRs an Vorlage mit
+  übergibt. (#19/b480)
+
+* Mittels der Option '--output-encoding <encoding>' kann man den für die
+  Ausgabe verwendeten Zeichensatz wählen. Unterstützt werden zur Zeit
+  iso-8859-1, macroman sowie cp437 und cp850, wobei iso-8859-1 der
+  Default ist (b479)
+
+* Der neue Befehl '#encoding <encoding>' ermoglicht es, in Skript-
+  Dateien das verwendete Encoding festzulegen. Erlaubt sind zur Zeit
+  iso-8859-1, macroman sowie cp437 und cp850, wobei iso-8859-1 der
+  Default ist. Damit das funktioniert, muß #encoding als allererstes
+  in der Ersten Zeile stehen. (b479)
+
+* Mit der neuen Option '--fullcom' kann man nun aktivieren, das Vorlage
+  vor der Ausführung jedwelcher Skripte schon alle persistenten
+  Kommentare in UNIT.OUTPUT übernimmt. Trotzdem wirken sich Änderungen
+  durch Referenz-Parameter auf die Zeilen aus, so das es bei
+  gleichzeitiger Veränderung des Arrays durch diese und durch direkte
+  Manipulation von UNIT.OUTPUT zu einer Warnung kommt, das Mischen ist
+  also zu vermeiden.
+
+  Zudem gibt es durch die Option eine neue Vorlage-Variable namens
+  $CURRENTMETA die den Index des aktuell ausgeführten Inline-Befehls
+  enthält, befindet man sich ausserhalb eines Inline-Befehls enthält
+  die Variable -1. Man kann also den aktuellen Befehl löschen, indem
+  man einfach folgendes Konstrukt benutzt:
+
+    #if $CURRENTMETA>=0
+    {
+	  UNIT.OUTPUT[$CURRENTMETA]=''
+    }
+    
+  (#17/b478)
+
+* Mit der Option '--cfgpath' kann man nun den Default-Path für Config-
+  Files überschreiben, welcher unter Windows der Pfad des EXE und unter
+  den anderen Systemen $HOME ist (b477)
+
+* Mit der neuen Option '--mapr' wird wie mit '-map' ein Karten-CR
+  ausgegeben, in diesem werden aber auch die Runden-Infos eingetragen
+  (#16/b474)
+
+* Neben den REPORT, REGION und UNIT verfügen nun auch SHIP und BUILDING
+  über ein Attribut Runde, welches aus Skripten heraus genutzt werden
+  kann (#15/b474)
+
+* Die Namen der Konfigurationsdateien haben sich geringfügig geändert:
+  Sie sind nun immer komplett aus Kleinbuchstaben zusammengesetzt und
+  alle Leerzeichen werden entfernt. Das hat im Moment nur Auswirkungen
+  für Vinyambar, da die Spielnamen Leerzeichen enthalten (was einige
+  Probleme bereitet hat) (b473)
+
+* Vorlage versucht nun Konfigurationsdaten zuerst aus einer User-Datei
+  (z.B. 'eressea-user.cfg' bzw. '.eressea-user-rc' zu laden, bevor die
+  normale, mitgelieferte verwendet wird. So kann man eigene
+  Einstellungen haben ohne das diese immer mit einem Update übertragen
+  werden müssen. Das ganze funktioniert nur für ganze Abschnitte, d.h.
+  man kann nicht einzelte Zeilen eines Abschnittes übersteuern (b473)
+
+* Bei Verwendung der Funktion 'match(<text>,<regexp>)' werden nun der
+  Treffer und optional enthaltene Unterausdrücke in speziellen lokalen
+  Variablen (ähnlich Perl und dem Ersetzungsmuster von 'change()')
+  abgelegt. Diese sind:
+
+    $&           der gesammte Treffer
+    $`           kompletter Text vor dem Treffer
+    $´           kompletter Text hinter dem Treffer (in Perl $')
+    $n           n-ter Unterausdruck (z.B. $1, $5, $13, ...)
+    $+           letzter Unterausdruck
+
+  Beispiel:
+
+    $text='Ein dicker runder Gnom'
+    #if match($text,'d(\\w+)r')
+    {
+        ; Hier sind jetzt folgende Werte gesetzt:
+        ; $&='dicker'
+        ; $1='icke'
+        ; $+='icke'
+        ; $`='Ein '
+        ; $´=' runder Gnom'
+    }
+
+  (b470)
+
+* Diverse kleinere Performance-Optimierungen in der Dateibehandlung
+  (b470)
+
+* Mit der neuen Funktion '$fh=system(<command>)' kann man nun externe
+  Programme aufrufen. Die Rückgabe ist dabei ein Datei-Handle über das
+  man auf die Ausgaben des Programmes so zugreifen kann, aler ob es
+  sich um eine geöffnete Datei handelt. Am Ende muß man so geöffnete
+  Handles ganz normal mit close(<handle>) schliessen. An den
+  Rückgabewert des Programmes kommt man nach dem schliessen über
+  'statustext(<handle>)' welches dann den Wert als String liefert
+  (b468)
+
+* Mit den neuen Funktionen '$val=read(<handle>)' bzw.
+  '$len=write(<handle>,<val>)' können Werte in offene Dateien
+  geschrieben und wieder gelesen werden. Dies funktioniert auch für
+  komplexe, evtl. geschachtelte Werte wie Dictionaries oder Arrays. Die
+  Daten werden dabei in einer vereinfachten XML-Schreibweise geschrieben
+  wobei beim Lesen keinerlei Verifikation erfolgt. Änderungen an so
+  geschriebenen Dateien sollten also sehr vorsichtig erfolgen (b463)
+
+* Das Kapitel '[Ships]' in der Konfigurationsdatei enhält nun auch die
+  anderen Werte (Reichweite und Talente, muß für einige Spiel-Dateien
+  evtl. noch nachgepflegt werden) (b463)
+
+* Mit '#tag EINHEIT[einheitennummer] <tagname> <expr>' kann man nun
+  auch aus anderen Kontexten heraus Tags in Einheiten-Blöcke einfügen,
+  mit '#tag REGION[<x>,<y>,<ebene>] <tagname> <expr>' geht das gleiche
+  auch für Region-Blöcke, in beiden Fällen gilt aber, dass es im CR
+  schon einen Block dafür geben muß, es werden also keine neuen Blöcke
+  im CR erzeugt (b463)
+
+* Mittels der Option '-gr <namensteil>' kann man erreichen, das nur für
+  Einheiten einer bestimmten Gruppe eine Zugvorlage erstellt wird.
+  Es werden die anderen Einheiten der Partei als verbündete Einheiten
+  angezeigt, falls man Fremde Einheiten anzeigen lässt. Allerdings
+  werden alle Berechnungen die die Region betreffen weiterhin auf Basis
+  der Partei ausgeführt, d.h. Einnahmen, Ausgaben, Personenzahlen oder
+  Materialpool sind weiter die der ganzen Partei. Dieses Feature
+  funktioniert nicht für die CR-Ausgabe. (b462)
+
+* Mittels Backslash ('\') können lange Zeilen, auch innerhalb von
+  Ausdrücken, umgebrochen werden, wobei in diesem Fall kein Leerzeichen
+  vor dem Backslash kommen darf, damit Vorlage weiß das der Ausdruck noch
+  nicht zuende ist. Alle Leerzeichen oder Tabs am Beginn der Folgezeile
+  werden ignoriert, die Fortsetzung darf also eingerückt werden (b462)
+
+* Mit der überscheibbaren Funktion CalcUnitCapacities kann man für eine
+  Einheit die Kapazitäten per Skript berechnen, falls der interne
+  Algorithmus nicht für ein bestimmtes Spiel funktioniert. Die Funktion
+  muß dann ein Array zurückliefern, das folgenden Aufbau hat:
+
+    [<fKapReiten>,<fFKapReiten>,<nRHO>,<fKapGehen>,<fFKapGehen>,<nGHO>]
+
+  Hier bedeuten:
+
+    <fKapReiten>    Ein float mit der Kapazität zum reiten
+    <fFKapReiten>   Ein float mit der freien Kapazität zum reiten
+    <nRHO>          Wieviele Pferde zum Reiten zuviel sind (>=0)
+    <fKapGehen>     Ein float mit der Kapazität zum gehen
+    <fFKapGehen>    Ein float mit der freien Kapazität zum gehen
+    <nGHO>          Wieviele Pferde zum Gehen zuviel sind (>=0)
+
+  Historisch gewachsen ist fKapReiten ohne die Fahrer, obwohl sie nötig
+  sind. Das ist wie bei Autos, wo man die max. Zuladung auch ohne das
+  Gewicht des Fahrers zu berücksichtigen angibt. Bei der freinen
+  Kapazität zum Reiten sind die Fahrer hingegen mit abgezogen.
+
+  Die Funktion hat also den Aufbau:
+
+    #func CalcUnitCapacities $ENr
+    {
+        ; passende Variable anlegen
+        #var $fKapReiten $fFKapReiten $nRHO $fKapGehen $fFKapGehen $nGHO
+
+        ; Hier wird nun alles mögliche berechnet
+        ; ...
+
+        ; Nun noch die Ergebnisse richtig verpackt zurückgeben
+        #return [$fKapReiten,$fFKapReiten,$nRHO,$fKapGehen,$fFKapGehen,$nGHO]
+    }
+
+  (b462)
+
+* Mit den neuen Befehlen #error und #warning kann man Fehlermeldungen
+  bzw. Warnungen aus Skripten heraus erzeugen. Diese landen im Fehler-
+  Kanal oder im Umlenkziel von '-e' (b461)
+
+* Zugriff auf beliebige Textdateien ist jetzt möglich. Dazu gibt es ein
+  paar neue Funktionen:
+
+  $handle=open(<filename>,<modus>)
+  
+    Die in <filename> angegebene Datei wird geöffnet. Ist <modus>
+    MODE_READ, so wird die Datei zum Lesen, bei MODE_WRITE zum
+    Schreiben, bei MODE_APPEND zum Anhängen geöffnet. MODE_READ,
+    MODE_WRITE und MODE_APPEND sind Konstanten die in 'standard.vms'
+    deklariert sind. Ob es geklappt hat erfragt man mit 'status(...)'
+    da die Funktion immer ein Handle liefert, das also auch im
+    Fehlerfall wieder mit 'close(...)'  geschlossen werden muß.
+
+  $line=readline(<handle>)
+
+    Es wird eine Zeile aus einer zum Lesen geöffneten Datei gelesen
+    und der Inhalt (ohne abschliessendes LineFeed o.ä.) als String
+    zurückgegeben.
+
+  $num=writeline(<handle>,<text>)
+
+    Es wird der Text in eine zum Schreiben geöffnete Datei geschrieben
+    und zudem ein abschliessendes Zeilenende (je nach OS) angefügt.
+    Die Zahl der geschriebenen Bytes wird zurückgegeben, oder 0, wenn
+	ein Fehler auftrat
+
+  $status=status(<handle>)
+
+    Es wird der Status des Handles abgefragt, gültige Ergebnisse sind
+    STAT_OK bei keinem Problem, STAT_EOF bei erreichen des Dateiendes,
+    STAT_ERROR wenn ein Fehlerzustand vorliegt. Die verschiedenen
+    Konstanten sind in 'standard.vms' zu finden.
+
+  $text=statustext(<handle>)
+
+    Wenn ein Fehlerzustand für dieses Handle vorliegt, so kann eine
+    dazugehörige Meldung mit dieser Funktion ermittelt werden um
+    eine brauchbare Fehlermeldung auszugeben.
+
+  $status=close(<handle>)
+
+    Eine offene Datei wird geschlossen. Es müssen alle Handles, auch
+    die bei denen das Öffnen nicht geklappt hat, geschlossen werden.
+    Es wird ein Status wie bei 'status(...)' zurückgegeben.
+
+  #table dump <handle>
+
+    Um eine formatierte Tabelle in eine Datei zu schreiben kann man
+	bei dem 'DUMP' einfach ein Dateihandle anhängen.
+
+  (b461)
+
+* Gibt man mehrere Basis-CRs der gleichen Runde aber verschiedener
+  Parteien an ohne mit -p eine auszuwählen, so wird für alle Parteien
+  eine Vorlage bzw. ein CR erzeugt, was nur zusammen mit '-ox ext'
+  Sinn macht damit nicht alles in einer Datei landet. Die in diesem
+  Fall noch fehlenden Passwörter kann man über die Config-Datei
+  angeben, wo jetzt im Kapitel '[Options]' neben der alten Syntax
+  'Passwort = "MeinGeheimesPasswort"' auch die neue Schreibweise
+  'Passwort<Parteinummer> = "DasPasswortDerPartei"' verwendet werden
+  kann. Also z.B.:
+
+    [Options]
+    Passwort1L3 = "DasPasswortDerPartei1L3"
+
+  Hierbei muß die Parteinummer in der Basis angegeben werden die auch
+  das Spiel verwendet, und (leider) bei Eressea exakt die Eressea-
+  Schreibweise der Base36-Zahlen verwendet werden, sprich mit großem
+  'L' und keinen anderen Buchstaben, da es sonst nicht gefunden wird.
+  ACHTUNG: Bei Spielen die die Zahlenbasis für Parteinummer aus der
+  Konfig-Datei bekommen, muß diese Option vor den Passwörtern kommen,
+  sonst weiß Vorlage beim Einlesen noch nicht welche Basis für die
+  Parteinummer Verwendung findet.
+  (b461)
+
+* Die Funktion xname erlaubt nun auch Hochkommas sowie die verschiedenen
+  Buchstaben aus iso-8859-1 mit Akzenten u.ä. in Namen (b460)
+
+* Die Maskierung von Silbermengen fremder Einheiten in Atlantis-Ablegern
+  ohne Silberkasetten etc. als Gegenstand kann nun über das Kapitel
+
+  [SilverMasks]
+  "Silberbeutel", <grenze>
+  "Silberkasette", <grenze>
+  ...
+
+  konfiguriert werden. Will man einfach die Silbermengen sehen so löscht
+  man die Einträge, ansonsten werden ab der Silbermenge <grenze> die
+  angegebenen Schlüsselwörter verwendet. Für Alt-Eressea also z.B.:
+
+  [SilverMasks]
+  "Silberbeutel", 500
+  "Silberkasette, 5000
+
+  Dadurch bekommt man ab 500 Silberstücken "Silberbeutel" angezeigt, ab
+  5000 Silberkasetten, will man hingegen einfach nur die Silbermünzen
+  sehen, kann man folgendes Verwenden:
+  
+  [SilverMasks]
+  "Silber", 1
+
+  (b460)
+
+* Wenn keine verwertbaren Nachrichten für die Einnahmen/Ausgaben einer
+  Region gefunden werden konnten wird die Ausgabe des Null-Wertes
+  unterdrückt, bzw. wenn verfügbar nur Nahrungskosten ausgegeben (b459)
+
+* Mit der neuen Option '--fullregs' werden OnRegion und EndRegion nicht
+  nur für Regionen des Basis-CRs mit eigenen Einheiten aufgerufen,
+  sondern für alle des Basis-CRs und alle zu denen man visibility-Tags
+  aus irgendwelchen CRs hat (b459)
+
+* Die zum Errechnen von Einnahmen/Ausgaben verwendeten Routinen können
+  auf Regionsebene überschrieben werden; Sobald Funktionen mit den Namen
+  'CalcRegionIncome' und 'CalcRegionExpenses' gefunden werden, verwendet
+  Vorlage diese (und errechnet dadurch auch die Summen über die
+  Regionen). (b459)
+
+* Mit dem neuen Config-Kapitel [Kampfstatus] kann man die in einigen
+  Spielen anders vergebenen Zuordnungen zwischen Kampfstati und CR-Wert
+  festlegen; Die Syntax lautet:
+
+  [Kampfstatus]
+  "<statusname>", <wert>
+
+  Für Eressea ist das zum Beispiel:
+
+  [Kampfstatus]
+  "aggressiv",    0
+  "vorne",        1
+  "hinten",       2
+  "defensiv",     3
+  "kämpft nicht", 4
+  "flieht",       5
+
+   Andere Spiele brauchen da eine Anpassung (b458)
+
+* Fehlermeldungen werden mit der neuen Option '-wfirst' nur einmal
+  ausgegeben, wenn sie exakt identisch sind, sprich auch der Ort
+  übereinstimmt, um in Schleifen oder bei '--version2' die Zahl der
+  Meldungen zu reduzieren (b458)
+
+* Mit der neuen Option '--version2' kann man Vorlage anweisen für
+  Konstrukte die sich zu Version 2 ändern werden Warnungen auszugeben;
+  Im Moment geschieht dies bei Verwendung von Inplace-Ausdrücken (b457)
+
+* Auf Resourcen kann nun auch mit 'REGION.RESOURCE['<typ>'].<attribut>'
+  zugegriffen werden; die Unterscheidung wird dabei über den Typ
+  getroffen, sprich bei Strings wird nach dem Namen, bei Integer nach
+  dem Index zugegriffen (b457)
+
+* Prozeduren können nun mit einem '#return' ohne Parameter aus jeder
+  Stelle heraus verlassen werden (b456)
+
+* Bei unbekannten Funktionen wird nun mit der Fehlermeldung noch der
+  Name der Funktion angegeben (b454)
+
+* Bugfix: random() lieferte in rc7 immer die gleiche Zufallskette
+  (#57/b511)
+
+* Bugfix: #tag konnte keine Attribute für Einheiten aus OnInit heraus
+  setzen (#56/b509)
+  
+* Bugfix: Uralter Bug im Case/Umlaut/Space-insensitiven Vergleich hat
+  in sehr seltenen Fällen (in der Regel bei UNIT.OUTPUT-Aktivitäten)
+  zum Absturz geführt (#49/b505)
+
+* Bugfix: Die Funktion 'change(txt,regex,pat)' hat nicht immer einen
+  Treffer gefunden wenn Subpatterns im Ersatzstring referenziert
+  wurden; So hat change('Foobar','.*(o+).*','The M$1n') die beiden
+  'o' nicht gefunden (#54/b504)
+
+* Bugfix: Durch ein Problem in der Pufferbehandlung des CR-Readers
+  wurde bei überlangen Zeilen der Puffer immer um 0 Bytes vergrössert,
+  was zu einer Endlosschleife führte (#53/b503)
+
+* Bugfix: Ein Subtiler Bug im Objekt-Handling hat unter Linux die
+  Erzeugung vollständiger Zugvorlagen verhindert (#45/b496)
+
+* Bugfix: Fehlerhafte Hierarchie-Behandlung verhinderte Kombination
+  von CRTags und CRHierarchy (#30/b492)
+
+* Bugfix: Rassenbezeichnungen konnten bei Einheiten bestehend aus
+  einer Person u.U. fehlerhaft abgeschnitten werden. (#26/b491)
+
+* Bugfix: Der Message-Renderer behandelte '$if()' ohne Else-Fall, die
+  Verknüpfung mittels '.'-Operator sowie ',' in Strings hinter einem
+  Funktionsaufruf nicht korrekt (#41/b490)
+
+* Bugfix: Ein in Anführungszeichen stehendes Password aus dem Config-
+  File wurde mit doppelten schliessenden Anführungszeichen in die
+  Zugvorlage übernommen (#44/b490)
+
+* Bugfix: Die Kapazitäts- und Gewichtsberechnung wird jetzt auf zwei
+  Nachkommastellen gerundet ausgegeben (#27/b490)
+
+* Bugfix: Fliesskomma-Literale mit einem Nachkommaanteil von 0 (z.B.
+  34.0) wurden fälschlicherweise in Integer konvertiert (#47/b488)
+  
+* Bugfix: sqrt() lieferte bei negativen Parametern eine unerwartete
+  Ausnahme (b485)
+
+* Bugfix: Bei regulären Ausdrücken mit Subpatterns die nicht zutrafen
+  konnte die Erzeugung der Match-Variablen einen Absturz verursachen
+  (Beispiel: '((a)|(z))(bc)' angewendet auf 'abc' -> $1/$2='a'
+  $3=<absturz statt ''> $4='bc') (b485)
+
+* Bugfix: Bei der Kapazitätsberechnung von wagenziehenden Trollen kam
+  es unter Umständen zu einer Division durch null, welche eine
+  'Unerwartete Ausnahme' zur Folge hatte. (b480)
+
+* Bugfix: Der Zugriff auf die REGION-Subobjekte REGIONSBOTSCHAFTEN,
+  UMGEBUNG, REGIONSKOMMENTAR und REGIONSEREIGNISSE funktionierte aus
+  Skripts heraus nicht (#01/b477)
+
+* Bugfix: Traf der Interpreter auf #proc, #func oder #include, so hat er
+  einen ungültigen Befehl gemeldet, statt auf fehlende Klammerung
+  hinzuweisen (b476)
+
+* Bugfix: Die Funktion 'xname()' reagierte nicht besonders gut auf
+  leere Regelstrings oder fehlerhafte Namensdefinitions-Dateien, sondern
+  warf i.d.R. unerwartete Ausnahmebehandlungen, statt Fehlermeldungen
+  (b475)
+
+* Bugfix: Die Funktion 'change()' funktionierte nicht korrekt, wenn eine
+  zu ersetzendes Untermuster zu Beginn des Erstzungsstrings verwendet
+  wurde (b474)
+
+* Bugfix: Magiegebiet-Angaben in mehreren Partei-Blöcken führte zu einer
+  Warnung (#24/b473)
+
+* Bugfix: Der Zugriff auf KAMPFZAUBER funktionierte nicht (#20/b473)
+
+* Bugfix: Die Verwendung undefinierter Variablen wurde trotz '-fd' nicht
+  immer in Funktionsaufrufen angemahnt (b472)
+
+* Bugfix: Die Behandlung von Behälterreferenzen konnte Zugriffsfehler
+  erzeugen die je nach Situation in "Unerwartete Ausnahmebehandlung"
+  oder einem Absturz endeten (b472)
+
+* Bugfix: Beim einlesen leerer XML-Dateien blieb Vorlage u.U. hängen
+  (b471)
+
+* Bugfix: Das Schreiben von Dictionaries in XML war fehlerhaft (b471)
+
+* Bugfix: Bei fehlendem schliessendem Hochkomma für String-Konstanten
+  konnte Vorlage nach der artigen Fehlermeldung volkommen abstürzen
+  (b471)
+
+* Bugfix: Die Option '-mr' hat wegen fehlerhaft ausgewerteter Parameter
+  nicht funktioniert (b469)
+
+* Bugfix: Alle Ausgaben auf die Konsole werden unter Windows nun
+  umgewandelt, um Umlaute und Sonderzeichen, soweit möglich, korrekt
+  auszugeben. Gleiches geschieht unter Windows mit den Eingaben von
+  der Konsole, bei denen auch nicht alle Zeichen korrekt behandelt
+  wurden (b469)
+
+* Bugfix: Fehlerhafte Behandlung von #config TABH und #config NESTED
+  (b467)
+
+* Bugfix: Ein weiterer Fehler in der neuen Behandlung der Konfig-
+  Dateien, der zu falschen Datentypen führen konnte, wurde behoben
+  (b466)
+
+* Bugfix: Abstürze beim Einlesen von CRs durch Optimierungsfehler des
+  Compilers durch Wechsel auf eine neue Version behoben und zudem die
+  Größe des Programmes ein gutes Stück reduziert. (b465)
+
+* Bugfix: Das Einlesen von Konfigurationsdateien hatte diverse Fehler
+  (b464)
+
+* Bugfix: Bei Fehlern in Konfigurationsdateien wurden keine Meldungen
+  ausgegeben (b464)
+
+* Bugfix: 'REGION.RESOURCE[<index>].<attribut>' funktionierte in 1.6rc1
+  nicht mehr korrekt (b464)
+
+* Bugfix: Vorlage hat bei Schiffen für die Kapazitätsberechnung nicht
+  auf die Daten in der Konfigurations-Datei geachtet (b462)
+
+* Bugfix: #tag funktionierte nicht korrekt für schon vorhandene Tags
+  (b462)
+
+* Bugfix: Bei Resourcen aus RESOURCE-Blöcken, die in der letzten Runde
+  noch vorhanden, diese Runde aber abgebaut sind (Bäume), wurde die
+  Änderung unterschlagen und die Resource komplett unterdrückt (b458)
+
+* Bugfix: In Config-Dateien dürfen Strings nun auch Kommas enthalten.
+  (b458)
+
+* Bugfix: Von Vorlage errechnete Gewichte werden nun intern von den
+  Rundungsstörungen bereinigt (b457)
+
+* Bugfix: 'UNIT.ANDEREPARTEI' lieferte eine Dezimalzahl, auch wenn
+  in dem Spiel Parteinummern in Base36 verwendet wurden (b457)
+
+* Bugfix: Im Debugger funktioniert nun auch e crop($b[$i],'(\\d+) ')
+  es wurden Debuggerausdrücke die Hochkommas enthalten, nicht korrekt
+  erkannt (b456)
+
+* Bugfix: Bei CRs von Spielen  ohne RESOURCE-Blöcke wurde die Differenz
+  für Steine nicht angezeigt (b456)
+
+* Bugfix: Die Funktion 'flatten()' lieferte nur max. 251 Zeichen zurück
+  (b454)
+
+* Bugfix: 'UNIT.TARNUNG' war immernoch falsch, da es nun das Talent
+  'UNIT.TARNUNG.STUFE' überdeckt hat (b454)
+
+
+---[Vorlage V1.5.04]---
+
+* Definiert man eine Funktion mit dem Namen 'OutputLineFilter', so wird
+  diese bei der Ausgabe der Zugvorlage für jede Ausgabezeile aufgerufen
+  und kann diese verändern und zurückgeben; Will man z.B. die Einrückung
+  auf Tabs umstellen, so könnte dies wie folgt geschehen:
+
+    #func OutputLineFilter $Line
+    {
+        $Line=change($Line,'^    ','\09\09');
+        $Line=change($Line,'^  ','\09');
+        $Line=change($Line,'^ ','');
+        #return $Line
+    }
+
+  Dadurch wird halt für Zeilen mit vier Leerzeichen am Zeilenanfang
+  (also die Einheiten-Befehle) eine Einrückung durch zwei Tabs, für die
+  Zeilen mit zwei Leerzeichen (Einheitenkommentare) durch ein Tab und
+  mit einem Leerzeichen (Regionsinfos, etc.) ohne Einrückung gewählt
+
+  HINWEIS: Es ist zu bemerken, das ein solcher Ausgabefilter die Ausgabe
+  der Zugvorlage je nach Rechner zumindest merkbar verzögert, also nicht
+  wundern, wenn er bei Verwendung eines Filters gegen Ende eine kurze
+  Denkpause einlegt ;-)
+  (b453)
+
+* Werden Funktionen oder Prozeduren gleichen Namens mehrfach definiert,
+  so führt dies nun zu einer Warnung (b453)
+
+* Mittels der neuen Option '--pedantic' werden Zugriffe auf Objekte oder
+  Attribute, die weder intern, noch im CFG-File (unter [CRTags] oder
+  [CRHierarchy]) codiert sind, mit einer Fehlermeldung quittiert um z.B.
+  Tippfehler leichter zu finden (b453)
+
+* Mit dem neuen Config-Datei-Kapitel [CRHierarchy] können Vorlage nun
+  auch neue Blöcke "schmackhaft" gemacht werden; Dazu ist folgendes
+  Format zu verwenden:
+
+  [CRHierarchy]
+  "BLOCKNAME", <unique>, 0, 0, <nkey>, ["KEY1", ...,] ["SUBBLK1", ...]
+
+  Dabei bedeuten:
+  BLOCKNAME     Name des Blocks, dies können zur Zeit nicht alle Blöcke
+                (aber die meisten) sein
+  <unique>   0: Block hat keine IDs oder diese sind nicht global
+                eindeutig
+             1: Block hat IDs und ist global eindeutig
+  0, 0          Für Erweiterungen vorgesehen
+  <nkey>   0-n: Block hat (max.) 0 bis n IDs
+  "KEYn"        Namen unter der die IDs ansprechbar sein sollen
+  "SUBBLKn"     Namen der in diesem Block erlaubten Subblöcke
+
+  ACHTUNG: Das ist ein experimentelles Feature, das nicht durchgängig
+  von Vorlage benutzt wird; das bedeutet, man kann zwar neue Blöcke
+  damit in Vorlage einbinden, aber bestehende dürfen damit nicht
+  umdefiniert werden, da dies nicht mit der alten pre-2.0-Datenhaltung
+  harmoniert, ebenso hat das Flag <unique> noch keinerlei Auswirkungen
+
+  HINWEIS: Bei Verwendung von Keys kann nur über diese auf das Subobjekt
+  zugegriffen werden; Ein Zugriff über Index ist zur Zeit weder für die
+  Attribute, noch die Objekte möglich
+  (b452)
+  
+* Bugfix: Ausdrücke wie 'huhu'bu ergaben keine Syntax-Fehlermeldung
+  (b452)
+
+* Bugfix: '#ifregion' außerhalb eines gültigen Regionskontextes (z.B.
+  OnInit) führte zu einer unerwartetes Ausnahmebehandlung (b452)
+
+* Bugfix: 'PARTEI[<pnr>].STATUS' lieferte beim Vorhandensein von
+  Gruppen den Allianz-Status der Partei <pnr> zur letzten Gruppe
+  hinter der Partei im CR, nicht zu der Partei selbst (b452)
+
+* Bugfix: 'UNIT.TARNUNG' hat nicht den aktuellen Tarnungsstatus der
+  Einheit geliefert (b452)
+
+* Bugfix: '#table debug' gab vor den Zeilen noch zwei Leerzeichen zur
+  Einrückung aus (b452)
+
+* Bugfix: Die Berücksichtigung von noskillpoints funktionierte nicht
+  korrekt, was z.B. unter Vinyambar bewirkte, Talenttage zu schlucken
+  (b452)
+
+
+---[Vorlage V1.5.03]---
+
+* Als Vorbereitung auf die 2.0 kann man schon jetzt statt 'unit',
+  'building' und 'ship' auch mit 'einheit', 'burg' und 'schiff'
+  arbeiten (b451)
+  
+* Die Objektnamen alleine, ohne alles, lieferten eine 1, wenn man in
+  einem gültigen Kontext für das Objekt war (z.B. 'unit' in OnUnit);
+  das ist jetzt nicht mehr möglich, 'unit' liefert jetzt immer 'unit'
+  als Text; Für Zugriffe mit Index oder Subblöcken, funktioniert der
+  Test auf existierende Instanzen natürlich weiterhin (b451)
+
+* Für Eressea wird nun ERESSEA anstelle von PARTEI als Startbefehl in
+  Zugvorlage geschrieben (b450)
+
+* Mit 'BUILDINGS[<typ>].KAPAZITAET' kann man feststellen ob ein
+  Bauwerkstyp eine Kapazitätsbegrenzung hat (z.B. Leuchtturm) oder diese
+  von der Größe abhängt (dann ist BUILDINGS[<typ>].KAPAZITAET gleich 0)
+  (b450)
+
+* Die neue Callback-Prozedur CreateUnitHeader kann verwendet werden um
+  selber das Aussehen der eigenen Einheiten-Blöcke in der Zugvorlage zu
+  bestimmen (b450)
+
+* Durch 'REGION.MESSAGE.SIZE', 'REGION.MESSAGE[<index>].<attribut>'
+  kann man über die Nachrichten in einer Region iterieren (b450)
+
+* Mittels 'REGION.POOL.SIZE', 'REGION.POOL[<index>].NAME' sowie
+  'REGION.POOL[<index>].ANZAHL' kann man über den Materialpool einer
+  Region iterieren (b450)
+
+* Die neue Option '-nv' unterdrückt die Ausgabe einer Zugvorlage für
+  den Fall das man nur an den Debugausgaben seines Skriptes interessiert
+  ist (b450)
+
+* Mittels 'REPORT.PARTEI.SIZE' bzw. 'REPORT.PARTEI[<index>]' sowie
+  'REPORT.GRUPPE.SIZE' bzw. 'REPORT.GRUPPE[<index>]' kann man an
+  über die Parteien und Gruppen des Reports iterieren (b449)
+
+* Das neue Attribut 'PARTEI.ALLIANZ[<pnr>]' bzw. 'GRUPPE.ALLIANZ[<pnr>]'
+  ermöglicht die Abfrage des Status einer Partei zu der Partei oder
+  Gruppe (nur bei eigener Partei oder eigenen Gruppen) (b449)
+
+* Der Zugriff auf Regionen über 'REPORT.REGION[<index>]' wurde
+  beschleunigt (b449)
+
+* Mit 'REPORT.OPTIONEN.SIZE' sowie 'REPORT.OPTIONEN[<index>].NAME' und
+  'REPORT.OPTIONEN[<index>].AKTIV' kann man auf die Optionen zugreifen
+  (b449)
+
+* Der Befehl #debug rückt jetzt nichtmehr selbsständig ein, damit man
+  damit universeller Text-Dateien durch umleiten der Ausgaben erzeugen
+  kann (b449)
+
+* Mit dem neuen Objekt 'DB' bekommt man Zugriff auf zwei interne
+  Strukturen von Vorlage, in denen die Regionen und Einheiten aller
+  CRs qualitätssortiert abgelegt sind; Man kann aber jeweils nur auf
+  die nach Vorlage-Meinung besten Versionen zugreifen und diese werden
+  dann über 'DB.REGION.SIZE' bzw. 'DB.REGION[<index>]' sowie über
+  'DB.UNIT.SIZE' bzw. 'DB.UNIT[<index>]' angesprochen (b449)
+
+* Mit den Attributen 'REGION.RUNDE' und 'UNIT.RUNDE' kann man
+  feststellen, aus welcher Runde die Informationen über eine Region
+  bzw. Einheit stammen, die in derinternen Datenbank verwendung finden
+  (b449)
+
+* Es gibt jetzt mit 'UNIT.TALENTE.<talent>[<index>]' eine generische
+  Möglichkeit auf die Felder des Talent-Blockes zuzugreifen; So gibt
+  z.B. 'UNIT.TALENTE.HIEBWAFFEN[1]' zur Zeit die Talentstufe des
+  Hiebwaffentalentes zurück, sofern es existiert, anderenfalls 0
+  (b449)
+
+* Warnungen wegen unbekannten Feldkennungen (CR-Tags) können nun auch
+  gezielt unterdrückt werden, indem man in das Config-File unter dem
+  Kapitel [CRTags] passende Einträge erzeugt (Anführungszeichen sind
+  hierbei zwingend):
+
+    [CRTags]
+    "BLOCKNAME", "Tagname1", "Tagname2" ... (usw.)
+
+  Das bewirkt, das die CR-Tags für den angegebenen Block gültig sind.
+  Man braucht also für jeden Block in dem man Tags erlauben will eine
+  eigene Zeile in dem Kapitel. (Neue Blöcke kann man Vorlage damit aber
+  nicht "unterjubeln".)
+  (b449)
+
+* Anpassungen an CR-Format V64 (b449)
+
+* Bei Eressea CR V64 Dateien mit gesetztem noskillpoints-Tag schaltet
+  Vorlage die Anzeige von Lerntagen ab und bei Verwendung von -td
+  wird nun statt dessen eine Stufenänderung angezeigt (b449)
+
+* Um alte Skripte zu unterstützen gibt es solange Bedarf besteht noch
+  'UNIT.<talent>.TAGE' wobei der Wert dem Entspricht der gerade die
+  angegebene Stufe ergibt (b449)
+
+* Vorlage unterdrückt nun die Warnung bei Magellan-CRs mit dem Tag
+  'ejcOrdersConfirmed' im CR und stellt das Flag als das Attribut
+  'UNIT.EJCORDERSCONFIRMED' zur Verfügung (b449)
+
+* Anpassungen an CR-Format V63 (b448)
+
+* Es gibt mit den CR V63 Reports das neue Attribut 'REGION.VISIBILITY'
+  (b448)
+
+* Bugfix: Im Fall das der Speicher ausging, gab es i.d.R. nur eine
+  "Unerwartete Ausnahmebehandlung", jetzt wird der Speichermangel
+  gemeldet (b451)
+
+* Bugfix: Wenn man in Stringliteralen Hochkommas benutzt hat ohne sie
+  mit dem Backslash zu escapen (also z.B. #ifregion 'Tak'Kal' statt
+  richtig #ifregion 'Tak\'Kal'), so geriet Vorlage in einen instabielen
+  Zustand oder blieb hängen (b451)
+
+* Bugfix: Für SCHEMEN wurde irrtümlich eine Meldung bezüglich eines
+  unbekannten Regionstyps "Unbekannt" erzeugt (b451)
+
+* Bugfix: Beim Weglassen von Referenz-Parametern konnte es zu internen
+  Fehlern kommen (b451)
+
+* Bugfix: In Mallorn-Regionen tauchten in der Zugvorlage sowohl
+  Schößlinge als auch Mallornschößlinge auf (b451)
+
+* Bugfix: 'UNIT.HP' wurde nicht unterstützt (b449)
+
+* Bugfix: 'REGION.BESCHR' wurde immer als 0 zurückgegeben (b449)
+
+* Bugfix: Das Message-Rendering hat nicht mehr funktioniert (b449)
+
+
+---[Vorlage V1.5.02]---
+
+* Anpassungen an CR-Format V62
+
+* In 'REGION.DURCHSCHIFFUNG.SIZE' und 'REGION.DURCHSCHIFFUNG[<idx>]'
+  kann man nun auf die, in Eressea ab CRV62 von den Durchreisen
+  getrennten, Schiffsbewegungen zugreifen (b447)
+
+* Der Einheitenstatus 'bekommt in Kämpfen keine Hilfe' ist nun über
+  'UNIT.UNAIDED' erreichbar, wobei ungleich 0 für eine Aktivierung des
+  Status steht (b446)
+
+* Alle Warnungen können nun mit der Option '-wall' unterdrückt werden
+  (b446)
+
+* Bugfix: Das expandieren von leeren Stringvariablen als Befehl führte
+  zu einem Fehler (b447)
+
+* Bugfix: Variablennamen konnten keine Umlaute enthalten (b446)
+
+* Bugfix: Konfigurationsfile enthielt noch die falschen Burgengrößen
+  (b446)
+
+* Bugfix: Regionsnachrichten konnten u.U. doppelt in der Zugvorlage
+  erscheinen (b446)
+
+* Bugfix: Vorlage nimmt nun konsequent für unbekannte Rassen ein Gewicht
+  von 10GE pro Person an (b446)
+
+* Bugfix: im Gegensatz zu den Regionsausgaben wurden die Gesamtausgaben
+  fehlerhaft berechnet, d.h. es wurde nicht die richtige Anzahl zu
+  versorgender Personen verwendet (b446)
+
+* Bugfix: Man konnte nicht mit '#if report[<dr>] {...}' abfragen ob es
+  überhaupt einen Report der betroffenen Runde gibt (b446)
+
+
+---[Vorlage V1.5.01]---
+
+* Ein Konfigurationsfile für Sitanleta ist nun Teil der Distribution,
+  der, bei Bedarf oder Problemen durch Änderungen in Aktueller Version
+  unter http://www.sitanleta.de/downloads/index.html heruntergeladen
+  werden kann (b445)
+
+* Der neue CR-Block BATTLESPEC wird zur Zeit ignoriert, aber immerhin
+  keine Fehlermeldung/Warnung ausgegeben (b445)
+
+* Bugfix: Bei der Untersuchung potentiell unsichtbarer Fremdeinheiten
+  konnte es zu einem Absturz kommen (b445)
+
+
+---[Vorlage V1.5 final]---
+
+* Für die Erzeugung einer Zugvorlage, die sich möglichst nah an der dem
+  NR beigelegten orientiert gibt es die neue Option '-nrzv' (b444)
+
+* Von Spielern geführte Fremdrassen die keine regulären Spielerrasse
+  angehören, können nun einfach als Rassen in der Konfiguration
+  eingetragen werden und werden dann, bezüglich Unterhalt, Kapazität
+  und Gewicht auch so behandelt (b444)
+
+* Vorlage ist bei Multi-Integer-CR-Feldern nun dagegen resistent, das
+  diese manchmal fäschlicherweise durch Kommas statt Leerzeichen
+  getrennt sind (b444)
+
+* Das Ausgabehandling von Vorlage wurde nochmals geringfügig geändert;
+  Ausgabeströme werden jetzt nach folgenden Regeln behandelt:
+
+   int. log. Strom    default   Umlenkbar mit     Bei '>'    Bei '2>'
+  ------------------+--------+-----------------+-----------+-----------
+  Zug (auch CR)       stdout      -o/-ox         Umlenkung      -
+  Fehlermeldungen     stderr        -e              -        Umlenkung
+  (#debug/#t. debug)  stderr*       -do             -*       Umlenkung*
+  Trace (Timing)      stderr*       -to             -*       Umlenkung*
+  console (Debugger)  stdout   nicht umlenkbar      -**         -**
+
+  *) Diese Ströme werden nach stdout geleitet, wenn Zugvorlage/CR mit
+     -o/-ox umgelenkt werden, in diesem Fall erfolgt eine Umlenkung
+     mit '>'
+
+  **)Dieser Strom ist nicht umlenkbar. Werden sowohl sowohl stdout als
+     auch stderr umgelenkt und somit eine Ausgabe unmöglich, wird der
+     Debugger, ebenso wie der #input-Befehl inaktiv
+  (b443)
+
+* Es gibt jetzt die neuen Attribute 'UNIT.OUTPUT[<idx>]' sowie
+  'UNIT.OUTPUT.SIZE' mit dem man die bereits durch Metabefehle erzeugten
+  Zeilen einer Einheit abrufen kann; Deses Feld wirkt wie ein echtes
+  #array, so das im Gegensatz zu allen anderen Attributen hier auch eine
+  Zuweisung funktioniert und so die Befehle einer Einheit auch aus den
+  globaleren Kontexten (OnInit, OnExit, ...) manipuliert werden können
+  (b443)
+
+* Mit der Syntax '[val,...]' können nun auch direkt Array-Literale
+  erzeugt werden, ein paar Beispiele:
+
+    $t=[]  ; $t wird ein leeres #array zugewiesen
+    $u=[1,'foo','bar',3.14] ; $u ist nun ein #array aus vier Elementen
+    $u[0]=['geht','auch',['geschachtelt']]
+    ; jetzt wurde dem 0ten Element von $u ein verschachteltes #array
+    ; zugewiesen
+
+  (b443)
+
+* Die Zahl der Arbeitsplätze wird nun in der Regionsinfotabelle
+  angezeigt (b443)
+
+* Im neuen Konfigurations-Kapitel '[Resources]' wird eine Liste der
+  Resourcen einer Region und Ihr Platzbedarf (in Arbeitsplätzen pro
+  Stück) angegeben mit der die interne Arbeitsweise (Baeume=8,
+  Schoesslinge=4) bei Änderungen oder für andere Spiele überschrieben
+  werden kann (b443)
+
+* Bei Option '-td' werden jetzt auch für Aura die Änderungen angezeigt
+  (b443)
+
+* Im Skriptdebugger wird nur für die Ergebnisse des Befehls 'e' auch
+  der Typ mit angegeben (b443)
+
+* Mit dem neuen Skript-Debugger-Kommando 'w' kann man den Call-Stack
+  anzeigen lassen; Es wird dabei jede gerade ablaufende Prozedur oder
+  Funktion mit den Aufrufparametern angezeigt, wobei die oberste die
+  ist in der Vorlage gerade arbeitet, die darunter die jeweiligen
+  Aufrufer der darüberstehenden; (b443)
+
+* Mit dem neuen Skript-Debugger-Kommando 'b [<exp>]' kann man bedingte
+  Traces anlegen; Jedes mal wenn ein Ausdruck angegeben wird, wird er
+  zur Liste der Trace-Bedingungen hinzugefügt, wird kein Parameter
+  übergeben, zeigt der Debugger eine Liste der gesetzten Bedingungen
+  an; Mit 'bd <n>' kann der n-te Eintrag der Liste gelöscht werden;
+  Die bedingten Traces bewirken, das vor jedem Befehl den Vorlage
+  ausführt geprüft wird, ob eine der Bedingungen erfüllt ist und falls
+  ja in den Debugger gesprungen wird; Die Bedingung die dazu führte
+  wird angezeigt; ACHTUNG: Viele oder komplexe Bedingungen verlangsamen
+  die Ausführungsgeschwindigkeit zum Teil erheblich! (b443)
+
+* Es gibt nun das neue Attribut 'REGION.ARBEITSPLAETZE' welches die Zahl
+  der Arbeitsplätze der Region insgesammt angibt, d.h. ohne eine
+  Berücksichtigung der Bauern; freie Arbeitsplätze sind dann also durch
+  'REGION.ARBEITSPLAETZE-REGION.BAUERN' gegeben (b442)
+
+* Mit der optionalen neuen Callback-Prozedur 'CreateRegionHeader' kann
+  man nun selber das Aussehen des Regionskopfes bestimmen; Es können
+  so alle Infos oder Erscheinungformen von Regionsköpfen erstellt
+  werden, wobei für Eressea zu beachten ist, das min. die REGION-Zeile
+  erzeugt wird; Eine minimalistische Eressea-Version wäre also:
+
+    #proc CreateRegionHeader
+    {
+        ; REGION-Zeile aufbauen
+        #var $Line
+        $Line='REGION '+region.x+','+region.y
+        #if region.z { $Line=$Line+','+region.z }
+        $Line=$Line+' \59 '+region.name+' ('+region.terrain+', '
+        $Line=$Line+region.personen+', '+region.pool.silber+'$ Silber)'
+
+        ; REGION-Zeile ausgeben
+        $Line
+
+        ; ECheck-Kommentar
+        #message 'ECheck Lohn '+region.lohn
+    }
+
+  (b442)
+
+* Die Report-Änderungen von CR-Version 59 werden nun erkannt (b442)
+
+* Auch die Mengen von in RESOURCE-Blöcken abgelegten Rohstoffen kann
+  man nun, wie sonst auch, mittels 'REGION.<resourcetype>' abfragen
+  (b442)
+
+* Mittels 'REGION.RESOURCE.SIZE' und 'REGION.RESOURCE[<idx>].<attrib>'
+  kann man auf alle Attribute der neuen RESOURCE-Blöcke zugreifen (b442)
+
+* Die neuen Zugriffe 'REPORT[<dr>].REGION' bzw. 'REPORT[<dr>].UNIT'
+  ermöglichen den Zugriff auf Regionen und Einheiten älterer Runden,
+  sofern CRs aus der Runde (AktuelleRunde+<dr>) übergeben wurden, <dr>
+  sollte also immer negativ sein (b442)
+
+* Der Wert von 'REGION.MALLORN' entspricht nun der Anzahl der Mallorn-
+  Bäume in der Region und ist nicht mehr nur ein Flag, es wird aber
+  in 'REGION.BAEUME' weiterhin die Zahl der Mallornbäume zurückgegeben
+  so das alte Skripts die nicht auf 'REGION.MALLORN==1' sondern auf
+  'REGION.MALLORN' oder 'REGION.MALLORN>0' o.ä. abfragen weiterhin
+  funktionieren sollten (b442)
+
+* Mit der neuen Option '-to <file>' kann man die Ausgaben der Ablauf-
+  Verfolgung sowie der Zeitmessungen in eine Datei umleiten; Gibt man
+  hier z.B. die gleiche Datei an wie unter '-e <file>' oder '-do <file>'
+  dann werden die Ausgaben auch in dieser Datei gemischt (b441)
+
+* Es gibt nun mit 'UNIT.GRUPPE' die Möglichkeit zu erfahren ob eine
+  Einheit in einer Gruppe ist und mit 'UNIT.GRUPPE.<attribut>' kann auf
+  die Attribute der Gruppe der Einheit zugegriffen werden (b441)
+
+* Vorlage unterstützt nun die Typprefixe und zeigt diese bei fremden
+  Einheiten an, sie sind auch über 'UNIT.GRUPPE.TYPPREFIX' bei Gruppen
+  sowie für Parteien über 'PARTEI[pnr].TYPPREFIX' erreichbar (b441)
+
+* Weitere, z.T. passendere Fehlermeldungen werden in div. Situationen
+  ausgegeben (b441)
+
+* Beim Antreffen von unbekannten Regionstypen erzeugt Vorlage nun
+  virtuelle Config-Einträge und Map-Zeichen um sie in der Karte anzeigen
+  zu können (b441)
+
+* Mit der neuen Option '-do <file>' kann man die Ausgaben der Befehle
+  '#debug' und '#table debug' in eine Datei umleiten; Gibt man hier z.B.
+  die gleiche Datei an wie unter '-e <file>' dann werden die Ausgaben
+  auch in dieser Datei gemischt (b441)
+
+* Es gibt jetzt das neue Attribut 'BUILDING.BONUS' mit dem man zu einem
+  Bauwerk den bauernbonus bekommt; Es ist dabei nicht gesagt, das der
+  Bonus in der Region zum Tragen kommt, weil es ja durchaus eine größere
+  Burg geben kann (b440)
+
+* Die neue Funktion 'sqrt(<expr>)' erlaubt jetzt die Berechnung der
+  Quadratwurzel eines Ausdrucks (b440)
+
+* Messages die im CR-Block REGION eingebettet waren, bekommen das
+  synthetische Attribut 'region[<idx>]' mit dem man an die Koordinaten
+  kommt (b440)
+
+* Vorlage hatte intern aus Performance-Gründen noch einige Schranken
+  (Literallänge<=512 Zeichen, max. Länge von Bezeichnern 80 Zeichen);
+  Diese Grenzen wurden nun aufgehoben; Einzig eine maximale Tiefe für
+  Rekursionen von 64 wurde aufrechterhalten, die nicht technisch
+  begründet ist, sondern Endlosrekursionen auffangen soll (b440)
+
+* Das neue Attribut 'REPORT.SPIEL' gibt an, für welches Spiel der
+  Durchlauf erfolgt (also z.B. 'Eressea') (b440)
+
+* Vorlage warnt nun, wenn die geladenen CRs wiedersprüchliche Spiel-
+  Informationen enthalten (b440)
+
+* Die neue Option '-more' bewirkt, das Vorlage die Ausgaben nach jedem
+  vollen Bildschirm anhält und erst durch Druck auf die Eingabetaste
+  fortfährt (b440)
+
+* Vorlage gibt nun am Ende eine Zusammenfassung über die Zahl der
+  aufgetretenen Fehler bzw. Warnungen aus (b439)
+
+* Ein paar Performancesteigernde Maßnahmen ergaben in Tests unter Win32
+  eine Verringerung der Laufzeit um etwa 20% (b438)
+
+* Mif dem neuen Debugger-Kommando 'l' kan man die Ausführung bis zum
+  Verlassen der aktuellen Funktion/Prozedur ohne Trace erzwingen (b438)
+
+* Mit dem neuen Debugger-Kommando 'n <n>' ist es analog zu 's <n>' jetzt
+  möglich, eine gewünschte Anzahl von Schritten auszuführen ohne aufrufe
+  von Funktionen oder Prozeduren zu verfolgen (b438)
+
+* Bei REGION, UNIT, BUILDING, SHIP und GRENZE gibt es jetzt die neuen
+  Attribute EFFECTS.SIZE und EFFECTS[<idx>] (b438)
+
+* Obwohl es ihn schon lange gibt, ist der Befehl '#include <dateiname>'
+  bisher nicht in der History oder Doku aufgetaucht; Er ermöglicht es,
+  eine Skriptdatei aus einer anderen zu importieren, so das man nicht
+  immer alle in der Aufrufzeile angeben muß (b<ganzfrüh>)
+
+* Die EMR-Funktionen aus 'standard.vms' sind nun in Vorlage eingebaut,
+  können aber überschrieben werden indem man selber eine erzeugt; in
+  'standard.vms' sind sie immernoch, und können als Basis und Beispiel
+  dienen (b437)
+
+* Verorkte Regionen werden jetzt als solche angezeigt und das neue
+  Attribut 'REGION.VERORKT' ermöglicht die Abfrage aus Skripten
+  heraus (b436)
+
+* Die neue Option '-sk' bewirkt bei Einheitensortierung das Einheiten
+  die das Kommando haben immer nach oben kommen, um sie in den
+  Gebäuden leichter zu finden (empfehlenswert zusammen mit '-sb')
+  (b435)
+
+* Man kann jetzt auch über die positionellen Argumente, also über
+  'ARG[<idx>]' Parameter verändern, wenn sie auch im Kopf der Prozedur
+  mittels '&' vor dem Parameternamen als veränderlich (also als
+  Referenzübergabe) gekenzeichnet wurden (b435)
+
+* Mittels '&...' kann man bei einer Prozedur nun festlegen, das man
+  alle noch folgenden Parameter auch verändern können will, diese
+  also ebenfalls per Referenz übergeben werden (b435)
+
+* Mit dem Debugger-Kommando 'v' kann man das nochmalige Ausgeben des
+  lokalen Kontextes veranlassen (b435)
+
+* Genau wie '#var' funktionieren nun auch '#array' und '#dict' sowohl
+  im globalen, als auch im lokalen Kontext (b435)
+
+* Der '#sort'-Befehl kann nun auch eingebettete Arrays sortieren (b434)
+
+* Der die neue Syntax des Sortierbefehls für #array-Behälter lautet nun
+  '#sort <array> [<lessfunc> [<arg1> [...]]]' so das man ihm nun noch
+  weitere Parameter mitgeben kann, die dann an die Vergleichsfunktion
+  durchgereicht werden; Es ist zwingend notwendig, das die von der
+  Vergleichsfunktion erwartete Zahl von zusätzlichen Parametern auch bei
+  #sort angegeben wird, weil Funktionen keine variable Argumentzahl
+  erlauben (b434)
+
+* Im Kopf der Zugvorlage wird nun auch die Liste der Aufrufparameter
+  ausgegeben um nachträglich leichter Probleme analysieren zu können
+  (b434)
+
+* Die neue Funktion 'typeof(<exp>)' ergibt den Typ des Ausdruckes; Der
+  zurückgegebene Wert ist ein Integer und hat folgende Werte mit ihrer
+  Bedeutung:
+    0 - TYPE_NULL   - auf diesen Typ liefert isnothing() einen Wert
+                      ungleich null, dies ist also ein "Nichts"
+    1 - TYPE_ERROR  - dies ist das Ergebnis eines Fehlerhaften
+                      Ausdruckes
+    2 - TYPE_INT    - eine Ganzzahl, d.h. ohne Nachkommastellen
+    3 - TYPE_FLOAT  - eine Fließkommazahl
+    4 - TYPE_STRING - ein String bzw. Textausdruck
+    6 - TYPE_ARRAY  - ein Feld, also #array
+    7 - TYPE_DICT   - ein Assoziativer Behälter #dict
+  Es ist _dringend_ empfohlen, _nicht_ die Zahlen zu verwenden, da
+  sie sich in zukünftigen Versionen ändern können; Im der neuen
+  'standard.vms' sind daher mittels des '#const'-Befehls die oben
+  angegebenen Konstanten definiert die man am besten einbindet und
+  die angepasst werden, wenn sich die Werte ändern (b433)
+
+* Der neue Befehl '#const <name> <value>' ermöglicht es jetzt globale
+  Konstanten zu definieren; Für den Namen gelten die bisherigen
+  Regeln für Bezeichner, aber es darf kein '$' zu Beginn stehen (b433)
+
+* Der Zugriff auf ein Array mittels '$arrayname(<idx>)' ergibt jetzt
+  analog zu Dictionaries den Index und nicht den Inhalt (b433)
+
+* Die für das Rendern der von Vorlage erzeugten Pseudo-Nachrichten aus
+  BATTLE-Blöcken benötigte Funktion 'EMR_region' ist nun in Vorlage
+  eingebaut, kann aber jederzeit durch ein Skript überschrieben werden
+  (b432)
+
+* Mit der neuen Funktion 'substr(<val>,<pos>,<len>)' kann man nun Teile
+  eines Textausdruckes nach Position und Länge extrahieren; Wird die
+  Position <po> negativ angegeben, so wird vom Ende gezählt, wird die
+  Länge <len> negativ angegeben, so wird die um Betrag verminderte Länge
+  des Textes verwendet, liegen die Werte außerhalb gültiger Bereiche so
+  werden sie angepasst und notfalls ein Leerstring zurückgegeben (b432)
+
+* Auf mit #config erstellten Objekten funktioniert jetzt auch der
+  Ausdruck '<object>.size', ein Zugriff über eine Position, wie bei
+  Dicts, funktioniert aber nicht und wird auch in 1.5 nicht mehr kommen,
+  das Feature macht also im Moment nur für #config-Objekte Sinn die als
+  primären Schlüssel eine fortlaufende Nummer haben (b432)
+
+* Mit der Option '-cl <elements>' kann man erreichen, das Vorlage eine
+  Warnung ausgibt, wenn ein Behälter (also #dict oder #array) mehr als
+  <elements> Einträge enthält (b431)
+
+* Unter Windows kann mit CTRL+BREAK in den Debugger gesprungen werden
+  (b430)
+
+* Die neuen Funktion 'float(<val>)' und 'int(<val>)' ermöglichen eine
+  Wandlung in Fließkomma bzw. Integer (im Geensatz zu floor/ceil ohne
+  Rundung) (b430)
+
+* Die neue Funktion 'time()' erlaubt den Zugriff auf die Zeitmessung,
+  so das man selber für Teilbereiche die Zeit messen kann; Die Funktion
+  gibt das Ergebnis in Millisekunden zurück (b430)
+
+* Das Objekt 'SHIP' hat nun die beiden Attribute 'SHIP.INSASSEN' und
+  'SHIP.BESCHR' wie die Gebäude ja schon seit langem (b429)
+
+* Vorlage zieht nun von der verbrauchten Zeit in der Anzeige die Zeit
+  die auf Eingaben gewartet wurde ab und gibt Nettozeiten an; Es wird
+  aber die Gesammtwartezeit am Ende bei der Gesammtzeit ausgegeben
+  (b428)
+
+* Der Befehl '#message' kann nun auch ohne Argument verwendet werden um
+  eine Leerzeile ohne Semikolon zu erzeugen (b428)
+
+* Vorlage erzeugt für jeden BATTLE-Block im Report eine zusätzliche
+  Pseudo-MESSAGE mit dem Typ -1 und in 'rendered' den künstlichen Text
+  "In <regionsbezeichnung> fand ein Kampf statt." sowie einem 'region'
+  Eintrag mit den Koordinaten der Region um die Ausgabe der Kämpfe mit
+  Skriptbefehlen in OnInit zu vereinfachen; Die Ausgabe könnte in OnInit
+  mit folgendem Code erfolgen:
+
+    $i=0 : $battle=0
+    #message
+    #while $i<report.message.size
+    {
+        #if report.message[$i].type==-1 { $battle=1 }
+        #if report.message[$i].type==-2 { $battle=2 }
+        #if $battle==1
+        {
+            #message report.message[$i].rendered
+        }
+        $i=$i+1
+    }
+
+   (b428)
+
+* Vorlage erzeugt am Ende der Globalen CR-MESSAGE-Blöcke die zusätzliche
+  Pseudo-MESSAGE mit dem Typ -2 und dem Text "Ende der globalen
+  Nachrichten" um das Parsen der Messages in REPORT.MESSAGE ein wenig zu
+  vereinfachen (b428)
+
+* Es gibt nun die beiden Funktionen 'toupper(<txt>)' u. 'tolower(<txt>)'
+  mit denen Texte in klein bzw. in Großbuchstaben umgewandelt werden
+  können (b428)
+
+* Es ist jetzt auch '#proc <prozedurname> ...' erlaubt, also eine #proc
+  ohne einen einzigen benannten Parameter (b427)
+
+* Anpassungen an CRV58 und damit die neuen Attribute 'UNIT.VERRAETER'
+  sowie 'UNIT.VERKLEIDUNG' (b427)
+
+* Die geänderten Kampfstati der Einheiten in Eressea CRV57 werden nun
+  berücksichtigt (b425)
+
+* Mit dem optionalen Parameter 'progress' kann '#debug' nun auch für
+  die Option '-pi' Ausgaben erzeugen; Ist die Option inaktiv werden die
+  Ausgaben unterdrückt; Die neue Syntax ist also
+
+    #debug [progress] <text>
+
+  (b425)
+
+* Mit der neuen Option '-et' wird erreicht, das Vorlage bei einem Error
+  in den Debugger springt (b425)
+
+* Mit der neuen Option '-pw' kann man Vorlage ein Passwort für die
+  Zugvorlage übergeben, welches, sofern keines im CR vorhanden ist,
+  verwendet; Diese Option hat Vorrang vor dem Passwort im Config-File
+  (b425)
+
+* Wird im Config-File unter dem Kapitel '[Options]' ein Eintrag der Art
+
+    Passwort = "<Passwort>"
+
+  erzeugt, so wird dieses zur Zugvorlagenerstellung verwendet (b425)
+
+* Die neue interne Variable $EXECINLINE bestimmt, ob in einem Durchgang
+  die in Einheiten eingebetteten Befehle ausgeführt werden oder nicht;
+  Sie wird zu Beginn mit 1 initialisiert und nach einem Durchlauf auf
+  0 gesetzt, so daß weitere Durchläufe dann ohne die Auswertung der
+  Befehle im Report stattfindet; Durch Setzten oder Löschen der Variable
+  in OnInit kann bei Multi-Pass-Läufen bestimmt werden ob und wann die
+  Auswertung erfolgen soll (b424)
+
+* Der neue Befehl '#sort <array> [<lessfunc>]' ermöglicht es Arrays zu
+  sortieren; Wird der Name einer Vergleichtsfunktion <lessfunc>
+  angegeben, so wird diese verwendet, andernfalls der Kleiner-Operator;
+  Die Aufgerufene Funktion, falls angegeben, sollte die Signatur wie
+  z.B.
+
+    #func LessThan $arrayname $i1 $i2
+
+  haben und bekommt in $arrayname den Namen des Arrays (für Inplace-
+  Zugriff) und in $i1 und $i2 jeweils die Indizes der beiden Einträge;
+  Die Funktion solle einen Wert ungleich 0 liefern, falls für die beiden
+  Indizes $($arrayname)[$i1]<$($arrayname)[$i2] gilt, sonst 0
+  (b422)
+
+* Es ist nun möglich Behälter in Behälter zu legen, genau genommen kann
+  man jeder Variable auch einen Behälter zuweisen; Dabei ist zu beachten
+  das dies immer Kopieren des Behälters zur Folge hat, also nur mit
+  Vorsicht (Performace) benutzt werden sollte; Dies ermöglicht z.B. zu
+  seinen Einheiten temporäre Arbeitswerte abzulegen wie in diesem
+  Beispiel:
+
+    ; Ein Dict für die Infos und eines als Kopiervorlage erzeugen
+    #dict $unit $dummy
+
+    #proc OnInit
+    {
+        ; Regionsindex
+        $ri=0
+
+        ; Solange noch Regionen existieren
+        #while $ri<report.region.size
+        {
+            ; Einheitenindex
+            $ei=0
+            ; Solange Einheiten in der Region sind
+            #while $ei<report.region[$ri].einheiten
+            {
+                ; Ist es eine eigene Einheit?
+                #if report.region[$ri].unit[$ei].partei==report.partei
+                {
+                    ; Für jede Einheit ein Dictionary eintragen
+                    $unit[report.region[$ri].unit[$ei].nummer]=$dummy
+                }
+                ; nächste Einheit
+                $ei=$ei+1
+            }
+            ; nächste Region
+            $ri=$ri+1
+        }
+    }
+
+    ; später kann dann einfach z.B. mit
+    $unit[12b4]['Holzbedarf']=100
+    #debug 'Holzbedarf der Einheit auf '+$unit[12b4]['Holzbedarf']+' gesetzt.'
+
+  Solche geschachtelten Groß-Behälter sollen nie als Parameter an
+  Prozeduren/Funktionen übergeben werden, weil dies ein aufwändiges
+  Deepcopy erfordert; Notfalls lieber mittels Inplace-Auswertung darauf
+  zugreifen (b422)
+
+* Mittels '#array $ArrayName1 $ArrayName2 ...' kann man nun Arrays
+  erzeugen; Dies funktioniert zur Zeit _nur_ global; Auf den
+  Behälter kann mittels '$ArrayName[<index>]' zugegriffen werden; Neue
+  Elemente hängt man an ein Array an, indem man sie $a[$a.size] zuweist;
+  Löscht man, analog zu Dictionaries ein Element mittels $a[<index>]=
+  so werden alle nachfolgenden Elemente nach unten verschoben; Das
+  automatische Einfügen an beliebiger Stelle (mit Verschieben der
+  Elemente nach hinten) ist (noch) nicht vorgesehen; Man kann zudem
+  Größe (Anzahl der Elemente) durch '$ArrayName.SIZE' ermitteln (b422)
+
+* Mit den neuen Attributen 'REGION.DURCHREISE.SIZE' und
+  'REGION.DURCHREISE[<index>]' kann man auf die Durchreise-Infos einer
+  Region zugreifen (b421)
+
+* Die neue Option '-rc' verhindert, das durch die Auswertung von
+  Metabefehlen die bereits im CR vorhandenen Befehle gelöscht werden;
+  Hierdurch können natürlich u.U. mehrfache lange Befehle auftreten
+  (b421)
+
+* Die neue Option '-mi [<num>]' sorgt daführ, das die Auswertung der
+  Metabefehle in mehreren (min. <num>) Durchgängen (Passes) erfolgt;
+  Alle weiteren Durchgänge wirken additiv, d.h. die bisher erzeugten
+  Befehle (aber schon wie gewohnt die aus dem CR) werden nicht
+  überschrieben; Die Nummer des aktuellen Durchlaufs wird beginnend mit
+  1(!) in der globalen Variable $PASSNUM abgelegt; Erhöht man diese in
+  OnExit von Hand um 1, so wird ein weiterer Auswertungslauf erzwungen
+  auch wenn die in <num> angegebene Anzahl schon erreicht oder
+  überschritten ist (falls die Routinen gemerkt haben das weitere Läufe
+  nötig sind); $MINPASSES enthält den mit '-mi' übergebenen Wert zur
+  Info der Skripte (b421)
+
+* Das Attribut UNIT.POSITION liefert nun auch für auf Schiffen
+  befindliche Einheiten die Position (beginnend mit 1) innerhalb des
+  Reports; ACHTUNG: es kann also nicht mit #if unit.position gefragt
+  werden, ob eine Einheit in einem Bauwerk ist, sondern hierfür ist
+  #if unit.bauwerk zu verwenden (b420)
+
+* Der neue Befehl '#input [<aufforderung> [<variable>]]' ermöglicht es
+  nun auch während der Abarbeitung Eingaben zu erfragen; Wird die
+  Variable weggelassen, so wird das Ergebnis der Eingabe verworfen,
+  fehlt auch die Aufforderung, so wird "[Weiter mit der Eingabetaste]"
+  ausgegeben und darauf gewartet; Dies funktioniert natürlich nur in
+  Umgebungen die Interaktivität zulassen, also i.d.R. nicht aus GUI-
+  Clients heraus (b420)
+
+* Inplace-Auswertung von Variablen in Objektzugriffen, mittels $()
+  ermöglichen z.B. Referenzen auf Objekte:
+    $RegRef='REGION[1,-2]'
+    #message 'Hier leben '+$($RegRef).Bauern+' Bauern'
+  (b420)
+
+* Vorlage unterstützt nun auch im CR Escaped Characters, d.h. z.B.
+  die mit \ "entschärften" Anführungszeichen in den neuen Regeln für
+  das Rendern der Nachrichten (b419)
+
+* Mit den neuen Attributen UNIT.EINHEITSBOTSCHAFTEN.SIZE und
+  UNIT.EINHEITSBOTSCHAFTEN[<index>] kann man nun auf die Botschaften
+  an eine Einheit zugreifen (b419)
+
+* Mit UNIT.COMMANDS.SIZE und UNIT.COMMANDS[<index>] kann man nun auf
+  die Original-Befehle aus dem CR zugreifen; Das Ergebnis bereits
+  ausgeführter Metabefehle ist davon unbetroffen und der Zugriff
+  erfolgt nur lesend (b419)
+
+* Vorlage kommt nun auch mit CR V57 MESSAGE-Blöcken klar, in denen die
+  Regions-Koordinaten in einem Drei-Integer-Feld angegeben sind;
+  (b419)
+
+* Erkennung der neuen Blöcke MESSAGETYPE und TRANSLATION und unterstützt
+  auch mit der bisherigen Option '-fr' das Rendern der neuen Messages,
+  wobei es aber, aufgrund von möglichen Änderungen oder Erweiterungen
+  im CR nicht zwangsläufig die Entgültige Version darstellt; Die Daten
+  des Translation-Blockes werden aber noch nicht verwendet; eine echte
+  Internationalisierung von Vorlage scheint im Moment unwahrscheinlich
+  (b419)
+
+* Mit der neuen Option '-pi' kann man die Abarbeitung der Skripte etwas
+  detailierter verfolgen um festzustellen in welchem Teil z.B. eine
+  Endlosschleife auftritt (b418)
+
+* Bugfix: Einige Nachrichten wurden fälschlicherweise der Region 0,0
+  zugeordnet (b444)
+
+* Bugfix: Bei der Ausgabenberechnung über den gesamten Report wurde
+  immer mit 10 Silber pro Person gerechnet, ungeachtet des Eintrages im
+  Konfigurationsfile (b444)
+
+* Bugfix: Im Rassenhandling wurde nicht immer auf die Daten aus dem
+  Konfigurationsfile zugegriffen (b444)
+
+* Bugfix: Aufgrund vom ISO-C++-Standard abweichendem Verhalten der STL
+  des verwendeten G++-Compilers stürzte Build 443 unter Linux ab (b444)
+
+* Bugfix: Das Tag 'typprefix' in EINHEIT-Blöcken wurde nicht erkannt
+  (b444)
+
+* Bugfix: Wenn es kein '[Resources]'-Kapitel in der Konfiguration gab,
+  stürzte Vorlage ab (b444)
+
+* Bugfix: In der, mit '-us' einsortierten Anzeige, fremder Einheiten
+  wurden evtl. welche die man selber nicht, ein anderer, dessen Report
+  man aber mit angegeben hat, aber schon sieht, nicht angezeigt (b443)
+
+* Bugfix: In der Anzeige fremder Einheiten ohne Einsortierung, also '-u'
+  oder '-uv', aber nicht '-us', konnten auch welche aus anderen Runden
+  auftauchen die in der aktuellen Runde garnicht vorhanden sind (b443)
+
+* Bugfix: Bei verquirrlten CRs aus anderen Clients konnte z.B. die
+  Meldung nach unbekannten GRENZE-Blöcken auftreten (b433)
+
+* Bugfix: Im Skript-Debugger wurden Ausdrücke mit Hochkommas meistens
+  nicht korrekt behandelt und gaben dann auch nicht das Verhalten des
+  Interpreters wieder (b443)
+
+* Bugfix: Eine Zuweisung an eine Behälter-Position mit ='' bewirkte eine
+  Löschung des Elementes, statt eine Leerstring-Zuweisung (b443)
+
+* Bugfix: Bei Überarbeitung des Speicherhandlings wurde ein Memoryleak
+  gefixed (b443) 
+
+* Bugfix: Unter bestimmten Konstellationen im CR konnte Vorlage sich
+  interne Strukturen zerschießen, was zu unvorhergesehenen Ausnahme-
+  behandlungen führt (b443)
+
+* Bugfix: Für manche Fehler wurde zusätzlich noch ein ": als Befehls..."
+  gemeldet (b442)
+
+* Bugfix: Bei einem Zugrif auf REGION.PREISE[0] bei Regionen ohne den
+  PREISE-Block kam es zu einer unerwarteten Ausnahme (b442)
+  
+* Bugfix: Nach einer '\ddd'-Sequenz in Strings wurde ein Zeichen
+  verschluckt (b442)
+
+* Bugfix: Fehlermeldungen und Warnings die beim Reportlesen auftraten
+  wurden nicht auf der Fehlerumleitung ausgegeben (b441)
+
+* Bugfix: Ein Fehler in der CR-Leseroutine konnte dazu führen, das
+  MESSAGETYPE und TRANSLATION nicht erkannt wurden (b441)
+
+* Bugfix: Die Anzeige der Punktedurchschnitsänderung war undefiniert,
+  wenn in der Vorrunde noch keine Punkte im Report waren (b440)
+
+* Bugfix: Wenn #config kein passendes Kapitel fand, gab es keine Info
+  bezüglich der Stelle im Skript an der das passierte (b440)
+
+* Bugfix: Bei einigen Zugriffen auf Subobjekte wurde irrtümlich von
+  einem Zugriff auf ein nichtexistierendes Objekt ausgegangen (b440)
+
+* Bugfix: Fehler in Teilausdrücken konnten u.U. verloren gehen (b440)
+
+* Bugfix: Der Debugger-Befehl 'n' hatte einen Fehler der ihm quasi die
+  's'-Semantik gab (b440)
+
+* Bugfix: Die lokale Anwendung von '#var', '#array' und '#dict' hatte
+  für den Fall das mehr als ein Bezeichner gegeben war noch immer einen
+  Bug, der zu einer Fehlermeldung führte (b440)
+
+* Bugfix: Die lokale Anwendung von '#var', '#array' und '#dict' bewirkte
+  ein paar Fehlermeldungen auch wenn die entsprechenden Variablen und
+  Behälter erzeugt wurden (b439)
+
+* Bugfix: Beim Zugriff auf komplett nicht existierende Objekte, z.B.
+  'grunzwanzling['blup'].anzahl' gab es i.d.R. keinen Fehler, sondern
+  eine null; Dies ist nun nur noch so, wenn es zwar 'grunzwanzling'
+  gibt, aber keinen Eintrag unter dem Schlüssel 'blup' existiert, gibt
+  es hingegen 'grunzwanzling' nicht, kommt nun eine Fehlermeldung
+  (b439)
+
+* Bugfix: ARG[] war in Bezug auf Groß-/Kleinschreibung nicht durchgängig
+  konsistent behandelt worden, es muß immer groß geschrieben werden, es
+  gibt nun aber eine Fehlermeldung, wenn man dies vergisst
+  (b439)
+
+* Bugfix: Bei einigen Attributbehältern konnte 'size' mit einem Attribut
+  in Konflikt geraten, weil manchmal nicht gefrüft wurde, ob kein Index
+  angebenen ist (b439)
+
+* Bugfix: Das löschen von Array-Elementen mittels '$Array[index]=' und
+  einem ungültigen Index führte zu einer unerwarteten Ausnahmebehandlung
+  (b438)
+
+* Bugfix: '&...' bewirkte keine Veränderungsmöglichkeit (b438)
+
+* Bugfix: In 'standard.vms' war ein Fehler im Namen von 'EMR_region'
+  (b437)
+
+* Bugfix: Inplace-Replacement wirkte auch in Strings (b437)
+
+* Bugfix: Zugriffe der Art 'object[<idx>].$var' oder 'object.$var' sind
+  i.d.R: mit einem Fehler belegt worden (b437)
+
+* Bugfix: Bei Auswertung von Ausdrücken im Debugger mittels 'e' wurde
+  das Tracing nicht deaktiviert, so das man sofort in verwendeten
+  Funktionen wieder im Debugger landete (b436)
+
+* Bugfix: Der Parser hat durch eine "Optimierung" Variable zweimal
+  aufgelöst, was in manchen Inplace-Fällen zu Problemen führen konnte
+  (b436)
+
+* Bugfix: Die Funktion 'random()' hatte besonders zu Beginn kein gutes
+  Enthropieverhalten, Vorlage verwendet nun einen eigenen Generator
+  der statt des vorher verwendeten libc-rand() bei gutem Zeitverhalten
+  eine sehr viel längere Periode (Faktor >10^3k) und bessere Streuung
+  hat; die Seed-Wahl wurde ebenfalls _deutlich_ verbessert (b435)
+
+* Bugfix: Einige Memory-Leaks gefixed (b435)
+
+* Bugfix: Der Variable als Behälter oder Objekte anzusprechen hat keinen
+  Fehler zur Folge gehabt (b435)
+
+* Bugfix: Beim Anlegen von Variablen oder Behältern mit ungültigem Namen
+  wurde kein Fehler gemeldet (b435)
+
+* Bugfix: Beim mehrfachen Anlegen von Variablen oder Behältern im
+  gleichen Kontext (i.d.R. Global), gab es keine Fehlermeldung (b435)
+
+* Bugfix: Bei Zuweisungen an Ziele denen man nichts zuweisen kann, wie
+  z.B. Funktionsaufrufen, hat Vorlage manchmal keinen Fehler gemeldet
+  (b433)
+
+* Bugfix: Die Inplaceauswertung hatte diverse Situationen in denen sie
+  zu Fehlermeldungen führte, speziell im Zusammenhang mit geschachtelten
+  Behältern; Durch eine Anpassung des Parsers kann sie nun außer in
+  Hochkommas und über Ausdruckgrenzen hinweg überall eingesetzt werden;
+  Letzteres bedeutet, das man nicht durch Inplace aus einem Parameter
+  optional zwei machen kann; Daraus resultierte leider eine spührbare
+  Performanceeinbuße des Metalanguage-Interpreters die wohl erst in
+  nach der 1.5-Phase vermieden werden kann (b432)
+
+* Bugfix: Die Zuweisung eines Behälters an einen Behälter klappte nicht
+  (b432)
+
+* Bugfix: Zugriff auf Array-Positionen jenseits der Größe ergaben eine
+  unerwartete Ausnahmebehandlung (b432)
+
+* Bugfix: match(), before(), after(), crop() und change erzeugten bei
+  einem leeren regulären Ausdruck eine Ausnahmebedingung (b431)
+
+* Bugfix: #sort funktioniert nur mit direkten #array-Variablen, nicht
+  aber eingebetten, hat dies aber nicht gemeldet sondern nichts gemacht;
+  Die Funktionalität ist leider nicht in 1.5 erweiterbar (b431)
+
+* Bugfix: Verräter die sich als eigene Einheiten ausgeben wurden in
+  einem EINHEIT-Block in der Zugvorlage gepackt, als ob man ihnen
+  Befehle geben könne (b431)
+
+* Bugfix: Die Option '-rc' war implementiert aber nicht aktivierbar
+  (b431)
+
+* Bugfix: Ausnahmebedingungen konnten zu unbemerkten Abbrüchen von
+  Funktionen und Prozeduren führen; Es werden nun Fehlermeldungen
+  für diese Fälle generiert um sie finden und eleminieren zu helfen
+  (b431)
+
+* Bugfix: Die Semantik der Operatoren '&&', '||'und '!', sowie des '#if'
+  war in Bezug auf Strings vorsichtig formuliert unschön: Die Operatoren
+  taten überhaupt nichts sinnvolles und das '#if' hat versucht Strings
+  als Zahl zu interpretieren; Dies verhalten wurde dahingehend geändert,
+  das String mit Inhalt, also nicht Länge Null, als logisch Wahr
+  angesehen werden, Leerstrings als logisch Falsch; Um einfach auf die
+  Anwesenheit einer Einheit auf einem Schiff oder in einem Gebäude
+  prüfen zu können geben 'UNIT.BAUWERK' und 'UNIT.SCHIFF' nun im
+  Null-Fall eine Integer-Null zurück und nicht wie vorher einen String
+  '0'; analoges gilt für 'UNIT.TEMP' und 'UNIT.ALIAS' (b430)
+
+* Bugfix: Bei Befehlen die durch Skripte erzeugt wurden durch Umbrüche
+  die Folgezeilen fehlerhafterweise mit Semikolon eingeleitet.
+
+* Bugfix: Ein Seiteneffekt im Behälterhandling führt u.U. zu falschen
+  Sortierergebnissen bei #sort (b429)
+
+* Bugfix: "Einheit A (foo) lehrt Einheit B (bar)"-Messages wurden von
+  Vorlage nicht in die Zugvorlage übernommen (b428)
+
+* Bugfix: In Objekten die mit #config erzeugt wurden konnte man nicht
+  wie bei eingebauten Objekten mit einem Zugriff über den Key
+  feststellen ob es den Eintrag gibt (b428)
+
+* Bugfix: Weitere Fixes an #sort für den Fall das mit einer geskripteten
+  Vergleichsfunktion gearbeitet wird (b428)
+
+* Bugfix: Verbessertes Fehlerhandling statt der früher immer paarweise
+  auftretenden "':' als Befehlstrenner erwartet!" und "'}' am Ende eines
+  Komandoblocks erwartet!" (b427)
+
+* Bugfix: Einige Fehlermeldungen hatten keine File/Zeilen-Angaben (b427)
+
+* Bugfix: 'SHIP[<schiffsnummer>]' und 'BUILDING[<bauwerksnummer>]' haben
+  ausserhalb der Region nicht korrekt funktioniert (b427)
+
+* Bugfix: Leerzeichen hinter einem '...'-Parameter in einer #proc haben
+  verhindert, das die Funktion als eine mit variabler Argumentzahl
+  erkannt wurde (b427)
+
+* Bugfix: Inplace-Zugriff funktionierte bei Behältern nicht (b427)
+
+* Bugfix: #sort rief die Compare-Funktion mit illegalen Positionen auf
+  (b427)
+
+* Bugfix: Behälter konnten als Schlüssel für Dicts genutzt werden (b427)
+
+* Bugfix: Passwörter aus der Config-Datei wurden abgeschnitten (b427)
+
+* Bugfix: Beim Kampfzauber wird nun der korrekte Level angezeigt (b427)
+
+* Bugfix: Index-Zugriff auf die Werte von Multi-Integer-Attributen hat
+  nicht funktioniert (b427)
+
+* Bugfix: '#input [<aufforderung> [<variable>]]' meldete einen Fehler
+  wenn es die Variable nicht gab, unabhängig von der Benutzung von -fd
+  (b427)
+
+* Bugfix: Die Verwendung von Behälterzugriffen als Index, also z.B.
+  $array1[$array2[3]], klappte nicht korrekt, die Verwendung von
+  (<index>) bei geschachtelten Behältern dadurch auch nicht (b427)
+
+* Bugfix: Verbessertes Fehlerhandling bei Zuweisungen (b426)
+
+* Bugfix: Bei geschachtelten Behältern erfolgte bei falscher Indizierung
+  eine falsche Fehlermeldung (b425)
+
+* Bugfix: Bei geschachtelten Behältern funktionierte das SIZE-Attribut
+  nicht (b425)
+
+* Bugfix: Beim Zugriff auf Behälter konnte unter bestimmten Umständen
+  ein Abflug erfolgen (b425)
+
+* Bugfix: Pfadbehandlung für Konfigurationsdateien war Fehlerhaft (b424)
+
+* Bugfix: 'SHIP[<id>].<attribute>' funktionierte nicht ohne einen
+  Regionskontext (b423) 
+
+* Bugfix: Wenn in einem Funktionsaufruf ein Parameter mit einem
+  Delimiter begann, so führte dies zu einem Fehler (b423)
+
+* Bugfix: Ein Fehler im Parser verhinderte das man ',' oder ')' als
+  Parameter für Funktionen verwenden konnte (b422)
+
+* Bugfix: Die Behandlung von Astralregionen war fehlerhaft und sie
+  tauchten i.d.R. nicht in der Zugvorlage auf (b421)
+
+* Bugfix: Div. Fehlersituationen wurden mit korrekteren Fehlermeldungen
+  versehen (und viele müssten noch :-/) (b421)
+
+* Bugfix: Vorlage ist nun resistent gegen die Verwendung von @ (b418)
+
+* Bugfix: Beim erreichen der 100er-Grenze in einer Region kam Vorlage
+  mit Option '-kl' zum Abflug/Halt, weil im Referenzreport keine Infos
+  über Luxusgüter sind (b418)
+
+
+---[Vorlage V1.5 beta 5]---
+
+* Mit 'vorlage -e <dateiname>' kann man die eingebaute Optionserklärung
+  von Vorlage auch in eine Datei ausgeben lassen (b417)
+
+* Anpassungen der Messageauswertung an die neuen Message-IDs ab
+  Eressea-Runde 227 (b416)
+
+* Die neue Option '-mr <xo> <yo>' Sorgt dafür das in allen folgenden
+  Regionen <xo> und <yo> zu den Koordinaten addiert wird; Dies ist
+  die einzige Option die auch zwischen den CRs übergeben werden darf
+  (b416)
+
+* Die Kampfzauber werden ab CR V53 nun bei den Magiern angezeigt (b416)
+
+* Das Objekt BUILDING hat nun das fehlende Attribut 'BESCHR' für den
+  Zugriff auf die Beschreibungen von Gebäuden (b416)
+
+* Anpassung an den CR V54 ohne Passwort (b415)
+
+* Bugfix: Der Zugriff auf eigene CR-Erweiterungen in REGION-Blöcken
+  funktionierte nicht (dieses Bugfix hat die Sortierreienfolge der
+  Regionen geändert) (b416)
+
+* Bugfix: Wenn Vorlage mit einem Parteilosen Report mit größerer
+  Rundennummer und einem älteren Parteibehafteten aufgerufen wird,
+  so stürzte es ab (b416)
+
+* Bugfix: Im rausgeschriebenen Karten-CR bei Option '-map' wurde
+  'Insel' fälschlicherweise zu 'Island' (b415)
+
+
+---[Vorlage V1.5 beta 4]---
+
+* Anpassung an CR V53, der Block 'KAMPFZAUBER' wird eingelesen und
+  unter 'UNIT.KAMPFZAUBER.SIZE' die Anzahl der Kampfzauber-Blocke
+  bzw. unter 'UNIT.KAMPFZAUBER[<idx>].<attribut>' die Atribute zur
+  Verfügung gestellt; Der Block-Key steht dabei in dem Attribut
+  'UNIT.KAMPFZAUBER[<idx>].KEY' zur Verfügung (b414)
+
+* In der Warentauschliste (nur Option '-hb') stehen nun vor den
+  Parteinummern auch die Parteinamen (b414)
+
+* Bugfix: Die Pseudo-Tags 'herb' und 'Insel' fanden aus Info-CRs (z.B.
+  Karten) nicht immer den Weg in das REGION-Objekt (b414)
+
+* Bugfix: 'REGION[...].GRENZE', 'REGION[...].BUILDING' sowie
+  'REGION[...].SHIP' funktionierten in der Regel nur mit der aktuellen 
+  Region (b413)
+
+* Bugfix: 'change(txt,regx,rep)' hat nicht, wie angekündigt, alle sondern
+  nur das erste Auftreten des Patterns ersetzt (b413)
+
+* Bugfix: '#config ... FILE' hat die Pfadangaben ignoriert (b413)
+
+* Bugfix: Prozeduren konnten als Funktionen aufgerufen werden und
+  umgekehrt (b412)
+
+* Bugfix: '#config TABH' unterstützte keine String-Attribute (NESTED
+  kann keine unterstützen, das ist Syntaxbedingt) (b412)
+
+* Bugfix: Ohne die Option '-d' führten #debug-Ausgaben zu Fehlern
+  (b412)
+
+
+---[Vorlage V1.5 beta 3]---
+
+* Mittels 'PARTEI[<parteinummer>].<attrib>' kann man nun auf die
+  Attribute einer Partei zugreifen; Atribute sind in diesem Fall alle
+  Tags die in den CR-Blöcken PARTEI oder ALLIANZ (bzw. ALLIANZEN oder
+  ADRESSEN in Empiria) vorkommen (b411)
+  
+
+* Mit dem neuen Befehl '#debug <expr>' kann man analog zu #message eine
+  Ausgabe auf dem Error-Kanal ausgeben (b410)
+
+* Mit der neuen #table-Option 'DEBUG' (statt 'DUMP') kann man eine
+  Tabelle auf dem Error-Kanal ausgeben (b410)
+
+* Die neue Option '-d' schaltet die obengenannten Ausgaben ein, sonst
+  werden sie unterdrückt (b410)
+
+* Bugfix: '#config buildings NESTED' funktionierte nicht korrekt, es
+  wurden die Subobjekte 'baukosten' und 'unterhalt' nicht angelegt
+  (b411)
+
+* Bugfix: Im Handling von 'REGION[].GRENZE[].<attr>' trat eine Exception
+  auf, die dazu führte, das kein Wert erzeugt wurde (b411)
+
+* Bugfix: Im Parser traten Memoryleaks auf, die zum Teil zu erheblichem
+  Speicheranstieg führen konnten (b410)
+
+
+---[Vorlage V1.5 beta 2]---
+
+* Der #config-Befehl hat nun eine erweiterte Syntax die es erlaubt
+  eine abweichende Datei als Quelle anzugeben; Die neue Syntax lautet:
+  '#config <Kapitel> [FILE <Datei>] <Mode> [<Names>]' (b409)
+
+* Bei aktiver Differenzanzeige '-td' und aktiver Parteiübersicht '-up'
+  werden nun für die Personenzahl und den MAterialpool der Parteien
+  auch Änderungen angezeigt (b409)
+
+* Unter Windows akzeptiert Vorlage auch Umlaute in DOS-Schreibweise,
+  was vor allem im Debugger auf der Konsole hilfreich ist (b408)
+
+* Die neue Methode 'flatten(<val>)' gibt die Stringrepresentation des
+  Wertes ohne Leerzeichen, Umlaute und Großbuchstaben zurück, d.h.
+  Leerzeichen werden entfernt, Umlaute und Großbuchstaben konvertiert
+  (b408)
+
+* Werden in REGION-Blöcken des CRs ';herb'-Tags gefunden, so werden
+  diese als bei eingeschalteten Regionsinfos als Kraut angezeigt;
+  Dies ist, ähnlich wie das ';Insel'-Tag kein Standard-Tag, sondern
+  eine Erweiterung die auch von einigen Clients unterstützt wird; Es
+  bietet sich an einen extra Karten-CR zu pflegen, in dem Insel- und
+  herb-Tag enthalten sind und diesen Vorlage mit zu übergeben
+  (b407)
+
+* Die Syntax von NESTED-Config-Objekten wurde erweitert, um auch
+  Attribute im Hauptobjekt haben zu können; diese werden vor dem
+  ersten Unterobjekt, also nach dem Key, dem ersten Wert jeder
+  Zeile, in der gleichen Weise wie die Attribute der Subobjekte
+  aufgeführt; Es ergibt sich folgende Syntax:
+  Schlüssel|  numer. Attribute  | 1. Subobjekt mit Attributen    | etc.
+  ---------+--------------------+--------------------------------+-----
+  "<Key>",  [<num>, "Name", ...] ["SubObj", <num>, "Name", [...]] [...]
+  (b406)
+
+* Aus der Änderung der NESTED-Objekte ergeben sich neue Attribute
+  für BUILDINGS gibt; 'BUILDINGS.TALENT' gibt das nötige Bautalent an,
+  'BUILDINGS.BONUS' den Bauernbonus; dies bis jetzt nur für Eressea,
+  weil mir die Informationen fehlen (b406)
+
+* Der Eintrag in eressea.cfg BUILDINGS['Universität'] lautet nun
+  BUILDINGS['Akademie'] (b406)
+
+* Warnungen über unbekannte Feldkennungen im CR können mit der neuen
+  Optioen '-ws' unterdrückt werden, sie können für die meisten Blöcke
+  auch wenn Vorlage sie nicht kennt über die Attribute abgefragt
+  werden (b405)
+
+* Es gibt nun endlich Zugriff auf die Luxusgüter mittels den neuen
+  Attributen 'REGION.PREISE.<luxusgut>' bzw. 'REGION.PREISE.SIZE',
+  'REGION.PREISE[<idx>].SILBER' und 'REGION.PREISE[<idx>].NAME'
+  (b405)
+
+* Bugfix: Bei der Verwendung von 'REGION[x,y]' bzw. 'REGION[x,y,z]'
+  konnte nicht auf Regionen die nicht im Basis-CR existierten
+  zugegriffen werden (b409)
+
+* Bugfix: Die Patternregeln für Option '-o' kollidierten mit der
+  Möglichkeit Optionsfiles mittels '@filename' anzugeben (b409)
+
+* Bugfix: Verdanon-Reports konnten nicht mehr ohne Änderungen gelesen
+  werden (b408)
+
+* Bugfix: Die Handelsbilanzen unter Verdanon (Option '-hb') hatten
+  keine Funktion (b408)
+
+* Bugfix: Die Frei-Kapazitätsberechnung unter Verdanon haben die
+  Personengewichte nicht berücksichtigt, weil der Typ im CR 'Personen'
+  heist, im CFG-File aber 'Menschen' stand; das CFG wurde angepasst
+  (b408)
+
+* Bugfix: Die Anzeige von Warentausch (ebenfalls Option '-hb')
+  funktionierte schon sein der Eressea-Einführung der neuen MESSAGE-
+  Blöcke nicht mehr, und wurden unter Verdanon und Eressea reaktiviert
+  (b408)
+
+* Bugfix: Bei Referenzparametern mit Strings wurden die Strings ohne
+  Hochkommas zurückgegeben und konnten so evtl. beim nächsten Aufruf
+  zu Problemen führen (b408)
+
+* Bugfix: Bei den Statusmeldungen zum Reportlesen wurden die
+  Parteinummern immer dezimal ausgegeben (b407)
+
+* Bugfix: Die erste Trace-Ausgabe-Zeile klebte noch an der vorherigen
+  Statusmeldung (b407)
+
+* Bugfix: Im Handling von Variablen Parametern führte ein Fehler
+  zur Löschung des vorletzten Parameters und zum Nichtanlegen des
+  letzten Parameters (b407)
+
+* Bugfix: Manchmal wurden Fehlermeldungen am Errorhandling vorbei ohne
+  Angabe des Ortes ausgegeben (z.B. "Operation mit typlosen Operanden")
+  (b406)
+
+* Bugfix: Das Löschen von Elementen in einem #dict führte zu einem
+  Abbruch der Prozedur/Funktion ohne Löschung (b405)
+
+* Bugfix: Bei variabler Parameterzahl stürzte Vorlage ab, wenn ein
+  weggelassener Parameter ein Referenzparameter ('&') war (b405)
+
+* Bugfix: Beim Zugrif auf das n-te Element eines #dict mittels runder
+  Klammern wurde die Auswertung des Restausdruckes abgebrochen (b405)
+
+
+---[Vorlage V1.5 beta 1]---
+
+* Es gibt ab jetzt wieder eine Linux-Version (b404)
+
+* Mit der neuen Funktion 'length()' kann man die Länge der Zeichen-
+  Representation eines Wertes ermitteln (b404)
+
+* Im Dateinamen Für die Option '-o' können nun generisch Daten des
+  Reports eingefügt werden, indem man @p für die dezimale Parteinummer,
+  @P für die Parteinummer im derzeit gültigen Format, @r für die Runde,
+  @j für das Jahr, @m für den Monat (dezimal) und @w für die Woche
+  einfügt; so ergibt z.B. '-o @p2@j@m@w.er' einen Namen wie ich ihn
+  benutze (4920221.er für Partei 49 (1d), zweites Zeitalter, zweites
+  Jahr, zweiter Monat und erste Woche); Bei alter Zeitrechnung ist der
+  Monat, wie das Jahr auch, mit evtl. führender Null zweistellig (b404)
+
+* Das Objekt UNIT hat die "neuen" Attribute 'UNIT.TEMP' und
+  'UNIT.ALIAS' für die Temp-Nummer der letzten Runde, bzw. der Nummer
+  vor NUMMER EINHEIT (b404)
+
+* Burg als Objekt in den [Buildings]-Block in Config-File eingetragen
+  (b402)
+
+* Mittels 'REPORT.MESSAGE.SIZE' und 'REPORT.MESSAGE[<idx>].<attrib>'
+  kann jetzt auf die Nachrichten des Bezugsreports zugegriffen werden;
+  Bei CR-Versionen die keine MESSAGE-Blöcke enthalten, ist das einzige
+  Attribut 'REPORT.MESSAGE[<idx>].RENDERED' mit dem auf die alten
+  Text-only-Nachrichten zugegriffen werden kann (b401)
+
+* Der Konformität wegen gibt es nun die Attribute 'REGION.GRENZE.SIZE',
+  'REGION.UNIT.SIZE', 'REGION.BUILDING.SIZE' und 'REGION.SHIP.SIZE'
+  (b401)
+
+* ACHTUNG: Der Zugriff auf ein #dict mittels '$DictName(<idx>)' ergab
+  den Wert an der Position <idx> (beginnend mit 0); Dieses Verhalten
+  wurde _geändert_! Es wird nun der Key des Wertes an dieser Position
+  zurückgegeben, den Wert selber kann man dann über diesen Key bekommen
+  (b400)
+
+* Die neue Option '-map <file>' erzeugt eine Karte mit dem gesammelten
+  geographischen Wissen der CRs die angegeben wurden; Es werden von den
+  Regionen nur Terrain, Name sowie evtl. Insel ausgegeben (b400)
+
+* Mit dem Befehl '#config <Kapitel> <Mode> [<Names>]' kann man jetzt
+  Tabellen aus dem Config-File in globale Objekte laden; Dabei gibt
+  es drei Modes die Tabellenformaten im Config-File entsprechen:
+  TABH: Horizontale Objekt-Anordnung, d.h. alle Attribute in einer
+        Zeile (z.B. 'Castles' oder 'Things' im Config-File)
+        Hier müssen die Attributnamen, ohne die erste Spalte, angegeben
+        werden, die erste Spalte ist Index und kann auch als Attribut
+        NAME erfragt werden; Beispiel:
+          #config Castles tabh groesse bonus
+        erzeugt mit eressea.cfg ein Object bei dem der Aufruf
+          CASTLES['Festung'].GROESSE
+        250 ergibt
+  TABV: Vertikale Objekt-Anordnung, d.h. alle Attribute in einer Spalte
+        (z.B. 'Races' im Config-File)
+        Hier sind die Attributnamen in der ersten Spalte, die erste
+        Zeile ist Index und kann als Attribut NAME erfragt werden;
+        Beispiel:
+          #config Races tabv
+        erzeugt ein Object RACES, welches sich genau so verhält wie
+        das eingebaute, welches mittelfristig entfernt wird
+  NESTED: Verschachteltes Object, mit einer Ebene Unterobjekten, d.h.
+        das Objekt ist Komplett in einer Zeile angegeben, aber mit
+        einem speziellen Aufbau: Erster Eintrag ist der Index, der auch
+        unter NAME erreichbar ist, dann folgt eine Kette von Subobjekten
+        die immer durch den Subobjekt-Namen gefolgt von den Attributen
+        als Zahl/Namens-Paare aufgelistet werden; Dieser Aufbau
+        impliziert, das nur numerische Attribute möglich sind; Beispiel:
+          #config Buildings nested
+        erzeugt ein Object BUILDINGS bei welchem der Aufruf
+          BUILDINGS['Saegewerk'].BAUKOSTEN.STEIN
+        den Wert 5 ergibt
+  (b400)
+
+* Mittles einem letzten Parameter '...' kann man für eine Prozedur
+  die Warnungen bezüglich abweichender Parameterzahl unterdrücken, also
+  z.B. '#proc MachWas $arg1 $arg2 ...' (b400)
+
+* Es gibt jetzt das neue Attribut 'UNIT.PARTEINAME' um an den Namen
+  einer Partei zu kommen (b399)
+
+* Für die meisten Objekte kann man jetzt ohne Attribut erfragen ob es
+  die Instanz gibt, z.B. ist 'UNIT[<idx>]' bei nicht vorhanden sein 0,
+  analoges gilt für REGION, GRENZE, SHIP, BUILDING (b399)
+
+* Der neue Befehl '#tag <BlockName> <TagName> <Expr>' erlaubt es bei
+  Option '-cr', in den erzeugten Report zusätzliche Tags einzufügen;
+  so könnte z.B. mit '#tag EINHEIT bestaetigt 1' ein CR-Eintrag
+  '1;bestaetigt' für die aktuelle Einheit erzeugt werden (Das Feature
+  klappt nur für REGION- und EINHEIT-Blöcke) (b397)
+
+* Anpassung an die neue Silber-Darstellung als Gegenstand ab dem
+  CR51 (b396)
+
+* Mittels '#dict $DictName1 $DictName2 ...' kann man nun einen
+  assoziativen Behälter erzeugen; Dies funktioniert zur Zeit _nur_
+  global; Auf den Behälter kann mittels '$DictName[<key>]' zugegriffen
+  werden; Key darf dabei einen beliebigen Typ haben, auch wenn von
+  Fließkommazahlen eher abzuraten ist; Man kann zudem auf das n-te
+  Element in dem Behälter mit '$DictName(<idx>)' zugreifen und die
+  Größe (Anzahl der Elemente) durch '$DictName.SIZE' ermitteln
+  *ACHTUNG: EXPERIMENTELLE PHASE, ERFAHRUNGSBERICHTE ERWÜNSCHT* (b395)
+
+* Um für den potentiell kommenden Zeitpunkt gewappnet zu sein, an
+  dem die MESSAGE-Blöcke keine gerenderten Texte mehr enthalten ist
+  Vorlage jetzt in der Lage anhand der Regeln in MESSAGETYPES die
+  Nachrichten auch selber aufzubauen, sofern dies erforderlich ist
+  (b395)
+
+* Mit der neuen Funktion 'xname(<rne>,<maxrep>)' wird ein Name mittels
+  xNamer-Mechanismen erzeugt, wobei bei Kollisionen max. <maxrep>
+  erneute Versuche unternommen werden (b394)
+
+* Mittels der neuen Option '-xn <file>' können xNamer-Regel-Dateien
+  importiert werden (b394)
+
+* Config-File-Handling verbessert und so Skriptbearbeitung etwas
+  beschleunigt (b392)
+
+* Das in den neuen CRs nicht mehr vorhandene Unterhalt-Tag bei
+  Bauwerken wird nun durch das Config-File erstezt (wenn keines
+  im CR ist) (b391)
+
+* Im Config-File für Eressea steht nun auch die Taverne (b391)
+
+* Bugfix: Es gab mit 'UNIT.ÖL' ein Problem, weil die länderspezifische
+  Einstellung in Vorlage falsch war (b404)
+
+* Bugfix: Silber wurde bei der Gewichtsberechnung doppelt gewertet
+  (b403)
+
+* Bugfix: REGION.GRENZE.SIZE funktionierte leider nicht, es gab eine
+  Fehlermeldung (b403)
+
+* Bugfix: Bei Einheiten die nur Silber hatten wurde seit der Silber-
+  umstellung in Eressea ein Leerkommentar ausgegeben (b403)
+
+* Bugfix: Durch einen Fehler konnten globale Variable nicht freistehend
+  verwendet werden, da 'Unbekannte Variable' gemeldet wurde (b402)
+
+* Bugfix: Die Copyright-Zeile in der Zugvorlage war zu lang (b402)
+
+* Bugfix: Durch einen Fehler bei der Verwendung von Referenz-Parametern
+  in der 1.5 konnte es vorkommen, das eine Exception ausgelöst wurde
+  und so bei Rückkehr von einem #call auch die darüber liegende Prozedur
+  verlassen wurde (b401)
+
+* Bugfix: Im Handling zur Existenzabfrage von Objekten hatte sich
+  bei REGION ein Fehler eingeschlichen, der dazu führte das es
+  scheinbar jede Region gibt (b400)
+
+* Bugfix: Für Küstenregionen funktionierte die Inselsortierung leider
+  immernoch nicht richtig, sollte aber jetzt endlich tun (b400)
+
+* Bugfix: Der Skriptdebugger kam mit Leerzeichen in Strings beim
+  parsen der Eingabezeile nicht zurecht (b400)
+
+* Bugfix: Vorlage reagiert nun tolleranter gegenüber PARTEI-Block-
+  Umgruppierungen wie sie der JClient vornimmt (b399)
+
+* Bugfix: Die Option '-p <pnr>' erwartete immer Dezimalzahlen, egal
+  wie die Regelung im Spiel war (b399)
+
+* Bugfix: Die Funktion 'crop(<str>,<re>)' hatte genau die inverse Logik
+  und gab leider alles ohne den passenden Ausdruck zurück (b399)
+
+* Bugfix: Die Inselsortierung mit '-si' funktionierte nicht richtig
+  und hat auch einen zusätzlich angegebenen Karten-CR bei der
+  Gruppierung nicht verwendet (b398)
+
+* Bugfix: Das Config-File für Eressea enthielt falsche (alte) Hitpoints
+  für einige Rassen (b397)
+
+* Bugfix: Nachrichten konnten durch das geänderte Message-Handling
+  als Kopien in Region 0,0 auftauchen (b397)
+
+* Bugfix: Im Zusammenhang mit Prozeduren mit variabler Anzahl von
+  Parametern beim Aufruf konnte es zu Verklemmungen kommen die zu einem
+  Hängen von Vorlage führen konnten (b397)
+
+* Bugfix: Der Tokenizer für Skript-Dateien reagierte auf Semikolon-
+  Angaben in Strings mit Fehlverhalten (auch jetzt sind jedoch
+  Semikolons in Strings besser zu vermeiden, da das CR-Format das
+  eigentlich eher nicht erlaubt) (b394)
+
+* Bugfix: Es konnte durch Leerzuweisungen u.U. die Zielvariable
+  vernichtet werden, so das sie danach als undefiniert gilt (b394)
+
+* Bugfix: 'UNIT.FREI.<reiseart>' und 'UNIT.KAP.<reiseart>' lieferten
+  seit Config-File-Umstellung in 1.5 alpha 2 falsche Werte (b393)
+
+* Bugfix: 'REGION.EINHEITEN' lieferte, wenn man in der Region keine
+  Einheiten mehr hatte, die Runde zuvor aber schon, den Wert der
+  vorherigen Runde (b392)
+
+* Bugfix: 'REPORT.PARTEI' lieferte noch eine Base10-Angabe, unabhängig
+  von den Modi des Spiels oder Optionen im Config-File (b391)
+
+* Bugfix: Die Anpassung an die CR-Änderung Burgtypen direkt anzugeben
+  hatte einen Fehler der die Erkennung der Typen verhinderte, so das
+  Vorlage die Gewinne falsch berechnet (b391)
+
+* Bugfix: Der Zugriff auf 'REPORT.REGION[<idx>]' klappte nicht korrekt
+  (b391)
+
+* Bugfix: Bei einer Übersichtskarte mit großen Koordinatenintervallen
+  stimmte die Einrückung nicht (b391)
+
+
+---[Vorlage V1.5 alpha 4]---
+
+* Der neue Befehl '#break' erlaubt es, Schleifen an beliebiger Stelle
+  abzubrechen und die Schleifenbedingungen so einfacher zu gestalten
+
+* Für Funktionen gibt es jetzt neben der Zuweisung an $RETURN auch
+  den Befehl '#return <expr>' mit dem man analog zu C/C++ eine Funktion
+  an beliebiger Stelle beenden und einen Wert zurückgeben kann
+
+* Vorlage gibt nun mit '-v' eine Versionsinfo aus und beendet sich
+
+* Der neue Befehl '#table' erlaubt es formatierte Tabellen ähnlich den
+  Regionsinfos zu erzeugen; '#table clear' löscht die laufende Tabelle,
+  '#table <expr>' fügt die Textrepresentation von '<expr>' als Feld in
+  die Tabelle ein, '#table next' beginnt eine neue Zeile und mit
+  '#table dump' wird die Tabelle in die Zugvorlage übertragen
+
+* Es gibt die neuen Attribute 'REGION.X', 'REGION.Y', 'REGION.Z' sowie
+  'REGION.CHAR' um die Koordinaten bzw. das Kartenzeichen einer Region
+  zu bekommen
+
+* Man kann jetzt mit 'REPORT.REGION[<idx>]' auf Regionen per Reihenfolge
+  zugreifen, die Anzahl der Regionen ist in REPORT.REGION.SIZE zu finden
+
+* Die neue Funktion 'itoan(<val>,<basis>)' erlaubt es Zahlen in
+  Strings mit wählbarer Basis zu konvertieren
+
+* Die neue Funktion 'antoi(<str>,<basis>)' erlaubt es Strings mit
+  wählbarer Basis in Zahlen zu konvertieren
+
+* Bugfix: #message-Ausgaben in den Einheitenblöcken wurden nicht
+  umgebrochen
+
+* Bugfix: 'UNIT.NUMMER' hat ungeachtet der Options u.U. Base36-Nummern
+  zurückgegeben
+
+* Bugfix: Mit fehlerhaften (z.B. alten) Config-Files konnte Vorlage
+  mit einem Divisions-Error abfliegen
+
+* Bugfix: Es wird sichergestellt, das Fehlermeldungen nun immer
+  auf einer neuen Zeile anfangen (nicht die erste in den Meldungen
+  zum lesen irgendwelcher Dateien eingeklebt wird)
+
+* Bugfix: Vom Objekt UNIT konnte man nicht an die Attribute 'PRIVAT',
+  'PARTEITARNUNG' und 'BESCHR' kommen
+
+* Bugfix: Die Objektzugriffe auf 'REGION.SHIP[<idx>].<attr>' und
+  'REGION.BUILDING[<idx>].<attr>' funktionierten seit Umstellung
+  auf Volle Base36-Unterstützung nicht mehr
+
+* Bugfix: Weggelassene Referenzparameter führten zu Mutationen in
+  Skriptparametern
+
+
+---[Vorlage V1.5 alpha 3]---
+
+* Es gibt nun die neuen Funktionen 'floor(<expr>)' und 'ceil(<expr>)'
+  mit denen Fließkommawerte zur nächstkleineren bzw. nächstgrößeren
+  Ganzzahl gewandelt werden können
+
+* Die neue Funktion 'isnothing(<expr>)' ergibt für leere Variable
+  (typlose Werte) einen Wert ungleich 0
+
+* Mit der neuen Funktion 'abs(<expr>)' bekommt man den Absolutwert
+  oder auch Betrag eines Ausdrucks (also ohne Vorzeichen)
+
+* Durch die Funktion 'sign(<expr>)' kann man das Vorzeichen eines
+  Ausdrucks ermitteln; Es wird für negative Zahlen -1, für positive
+  Zahlen 1 und für die 0 eine 0 zurückgegeben
+
+* Bugfix: Im Expressionparser hatte sich leider ein neuer Bug im
+  Zusammenhang mit Funktionen eingeschlichen.
+
+
+---[Vorlage V1.5 alpha 2]---
+
+* Statt der Zusammenschreibung von Mehrwort-Attributen (Kräuternamen)
+  kann man nun auch '~' statt des Leerzeichens verwenden um darauf
+  zuzugreifen also z.B. 'UNIT.BLAUER~BAUMRINGEL'
+
+* Das Tag 'hunger' wird nun unterstützt, ausgegeben und steht auch
+  als Attribut von UNIT zur Verfügung
+
+* Das Tag 'alias' wird nun unterstützt
+
+* Das neue Attribut 'UNIT.POSITION' gibt die Position einer Einheit
+  in einem Gebäude an (oder 0, wenn die Einheit nicht in einem Gebäude
+  steht)
+
+* Option '-kk' Erzeugt eine Karte zu Beginn der Vorlage
+
+* Auf die Parameter einer Prozedur kann auch mittels 'ARG[<index>]'
+  (<index> beginnend mit 0) zugegriffen, die Anzahl der Parameter
+  bekommt man über 'ARG.SIZE' heraus
+
+* Auf alle einfachen Attribute eines CR-Objektes kann nun mit dem
+  CR-Namen als Attribut-Namen zugegriffen werden
+
+* Es gibt nun die neuen Callbacks 'OnUnit', 'EndUnit' und 'EndRegion'
+
+* In allen Callbacks kann man nun #message verwenden um an der
+  entsprechenden Stelle Kommentare in die Zugvorlage einzubauen
+
+* Die Rassen ([Races]) haben den neuen Config-Eintrag Unterhalt
+  bekommen, welcher die Unkosten pro Runde für eine Person angibt
+
+* Die Gegenstände ([Things]) haben den neuen optionalen Config-Eintrag
+  KAP bekommen, der das Fassungsvermögen angibt (nur für Pferd/Wagen)
+
+* Die Kapazitätsangaben aus dem Config-File werden nun endlich
+  verwendet, genauso wie Gewichte der Rassen, Unterhalt der Rassen und
+  andere Rassenwerte, sofern von Vorlage intern verwendet
+
+* Das neue Subobjekt 'TALENTE' von 'UNIT' ermöglicht den Zugriff auf
+  die Talente ohne Kenntnis ihres Namens; 'UNIT.TALENTE.SIZE' gibt
+  dabei die Anzahl der erlernten Talente zurück,
+  'UNIT.TALENTE[<idx>].<attribut>' mit 0<=idx<UNIT.TALENTE.SIZE
+  ermöglicht den Zugriff auf die Attribute 'NAME', 'TAGE' und 'STUFE'
+
+* Das neue Subobjekt 'GEGENSTAENDE' von 'UNIT' ermöglicht den Zugriff
+  auf die Ausrüstung ohne Kenntnis des Namens; 'UNIT.GEGENSTAENDE.SIZE'
+  gibt dabei die Anzahl der Ausrüstungsarten zurück,
+  'UNIT.GEGENSTAENDE[<idx>].<attribut>' mit
+  0<=idx<UNIT.GEGENSTAENDE.SIZE ermöglicht den Zugriff auf die
+  Attribute 'NAME' und 'ANZAHL'
+
+* Das neue Objekt 'RACES' ermöglicht den Zugriff auf die Attribute in 
+  der Config-Datei; so kann man mit RACES['Zwerge'].REKRUTIERUNGSKOSTEN
+  den entsprechenden Wert bekommen
+
+* Das neue Objekt 'THINGS' ermöglicht den Zugriff auf 'GEWICHT' und
+  evtl. 'KAPAZITAET' der Gegenstände in der Config-Datei; so kann man
+  mit THINGS['Pferd'].GEWICHT bzw. THINGS['Pferd'].KAPAZITAET
+  entsprechende Werte bekommen
+
+* Vorlage unterstützt jetzt die Base36-Schiffs/Bauwerke/Partei-IDs ab
+  Eressea-Runde 208
+
+* Erster, rudimentärer Support für die CR-Blöcke SCHEMEN und
+  SPEZIALREGION, Probleme bitte melden
+
+* Die Zahlenbasis für die Einheitennummern, Bauwerkenummern (incl.
+  Schiffe) und Parteinummern kann in der Configdatei unter '[Options]'
+  mit 'EBase = <basis>', 'BBase = <basis>' bzw. 'PBase = <basis>' im
+  übersteuert werden
+
+* Bugfix: Der Zugriff auf REGION.LAEN klappte nicht
+
+* Bugfix: unter bestimmten Bedingungen wurde für ein Bauwerk die falsche
+  Einheit als Besitzer gekennzeichnet
+
+* Bugfix: Beim Objekt 'BUILDING' fehlte das Attribut 'BELAGERER'
+
+* Bugfix: In der Vorlage wurden unter bestimmten Bedingungen keine 
+  Regionsänderungen angezeigt, obwohl eigene Einheiten in beiden CRs 
+  anwesend waren
+
+* Bugfix: Untote werden nicht mehr als "Mitesser" gerechnet
+
+* Bugfix: Beim Zugriff 'REGION.UNIT[<index>].<attribut>' kam es unter 
+  Verdanon u.ä. zu Fehlermeldungen, weil irrtümlich intern mit Base36
+  gearbeitet wurde
+
+* Bugfix: Ein Fehler in der internen Arithmetrik führte zum Verlust der
+  Nachkommastellen
+
+* Bugfix: Es konnte zu Inkonsistenzen zwischen den in der Vorlage
+  angezeigten Kapazitäten und den über Metabefehle zur Verfügung
+  gestellten kommen
+
+* Bugfix: ECheck-Zeilen werden nur noch bei Eressea/Empiria erzeugt
+
+* Bugfix: Die Tarnrasse wird bei Dämonen nun in der Zugvorlage von
+  nachfolgenden Angaben mit Komma abgetrennt
+
+* Bugfix: Der Zugriff auf den Pool funktionierte bei Attributen mit
+  mehreren (zusammengeschriebenen) Worten (z.B. Kräutern) nicht
+
+* Bugfix: Der Expression-Parser hat die Auswertung nach einem
+  Funktionsaufruf irrtümlich abgebrochen
+
+* Bugfix: In der Funktion 'change(val1,rexp,val2)' trat ein interner
+  Fehler in einem regulären Ausdruck auf
+
+* Bugfix: Leere Gebäude/Schiffe tauchten (bei '-sb') nicht in der
+  Vorlage auf
+
+* Bugfix: Die Zeilennummern bei Fehlermeldungen und im Skriptdebugger
+  konnten unter bestimmten Umständen falsch sein
+
+
+---[Vorlage V1.5 alpha 1]---
+
+* Die neue Funktion 'random()' erzeugt einen Zufallswert von 0 bis
+  (2^31-1)
+
+* Die neue Funktion 'equals(val1,val2)' gibt einen Wert ungleich 0
+  wenn die beiden Values sich entsprechen (Case-/Umlaut-Ignorierend)
+
+* Die neue Option '-b' gibt alle Beschreibungen (Einheit/Region/
+  Gebäude/Schiff) aus
+
+* beim Umbruch wird nun versucht Anzahlen nicht von Gegenständen zu
+  trennen (z.B. beim Materialpool)
+
+* Mit #var $VarName1 $VarName2,...  können nun Variablen deklariert
+  werden, geschieht dies außerhalb von #proc oder #func wird eine
+  globale Variable erzeugt
+
+* Die neue Option '-fd' fordert das Deklarieren von Variablen vor
+  erstem Gebrauch, sonst Fehlermeldung
+
+* Die neue Option '-e <file>' lenkt die Fehlermeldungen in eine Datei
+  um
+
+* Neben 'OnInit' vor und 'OnExit' nach der Vorlageerzeugung wird nun
+  auch 'OnRegion' zu Beginn jeder Region aufgerufen
+
+* #message funktioniert auch in OnRegion und ermöglicht es, weitere
+  Informationen im Regions-Header anzugeben
+
+* Die neue Funktion 'match(val,rexp)' wendet auf die
+  Stringrepresentation von <val> die den regulären Ausdruck <rexp> an
+  und gibt einen Wert ungleich 0 zurück, wenn der Ausdruck passt
+
+* Die neue Funktion 'before(val,rexp)' gibt alles von <val> bis zum
+  ersten Treffer von <rexp> zurück
+
+* Die neue Funktion 'after(val,rexp)' gibt alles von <val> nach dem
+  ersten Treffer von <rexp> zurück
+
+* Die neue Funktion 'crop(val,rexp)' gibt den auf <rexp> passenden Teil
+  der Stringrepresentation von <val> zurück
+
+* Die neue Funktion 'change(val1,rexp,val2) gibt eine Kopie von <val1>
+  zurück, in der alle Vorkommen von <rexp> durch <val2> ersetzt wurden
+
+* Die EFFECTS-Einträge aus dem CR V47 werden in die Vorlage übernommen
+
+* Innerhalb von Strings können Sonderzeichen (auch Semikolon) durch die
+  Schreibweise '\ddd' erzeugt werden, so ergibt '\033' ein '!'
+
+* Bugfix: Zugriff auf Dinge mit mehrwörterigen Namen (Grüner Spinnerich)
+  klappte nicht richtig
+
+* Bugfix: '!=' und '!' Operatoren funktionieren endlich
+
+* Bugfix: Der Zugriff auf UNIT.HOLZFAELLEN schlug fehl,
+  UNIT.HOLZFAeLLEN oder UNIT.HOLZFÄLLEN hingegen funktionierte
+
+* Bugfix: externe Skripte reagierten manchmal sehr unvorhersehbar bei
+  Verwendung von Kommentaren
+
+* Bugfix: Fehlerhafte Optionsauflistung in Vorlage (Aufruf ohne
+  Parameter) behoben
+
+
+---[Version V1.4 beta 13]---
+
+* Die neuen Verdanon-Tags bei Einheiten (Ladung und Kapazitaet) erden
+  nun erkannt
+
+* Das neue Eressea-CR-V44-Tag 'temp' wird erkannt
+
+* Wenn die Ausgabe mit '-o' oder '-ox' in eine Datei erfolgt werden
+  Fehlermeldungen auf stdout ausgegeben, um so einen Pager benutzen oder
+  sie in eine Datei umleiten zu können
+
+* Wenn die Option '-sb' aktiv ist werden nun auch Burgen und Schiffe
+  angezeigt in denen man keine Einheiten hat
+
+* Die neue Option '-us' ermöglicht es, das die fremden Einheiten die mit
+  '-u' oder '-uv' angezeigt werden zwischen die eigenen mit einsortiert
+  werden
+
+* Talentänderungen die keine sind (+0) werden nun nicht mehr ausgegeben.
+
+* Es werden nun beim Aufruf Steuerdateien unterstützt, die mit
+  vorangestelltem '@' übergeben werden; Darin können sich dann weitere
+  Kommandozeilenparameter befinden
+
+* Bugfix: CR-Zeilen die mit einem Umlaut endeten konnten diesen beim
+  einlesen verlieren
+
+* Bugfix: Bei Option '-cr' ging in leeren COMMANDS-Blöcken das leere
+  Kommando verloren
+
+* Bugfix: Die Pfadangaben für den Import von Skript-Dateien wurde
+  unabhängig vom aktiven -cfg aus vorlage.cfg gelesen
+
+* Bugfix: Bei Verdanon und Empiria wurden oftmals irrtümlich bei den
+  Magiern auch (unsinnige) Aura-Werte angezeigt
+
+* Bugfix: Die Benutzung von Skriptdateien über Pfadangaben in der
+  Konfig-Datei konnte zum Absturz führen
+
+
+---[Version V1.4 beta 12]---
+
+* Die Konfiguration für Vorlage ist nun nicht mehr in der Datei
+  'vorlage.cfg' (Win) oder '.vorlagerc' (Linux) sondern in einer Datei
+  die vom Spiel abhängt. Für Eressea sind dies 'eressea.cfg' oder
+  '.eressearc', für Verdanon 'verdanon.cfg' oder '.verdanonrc' (Die alte
+  Datei wird aber zum gegenwärtigen Zeitpunkt noch benötigt); Die Datei
+  für Verdanon wurde von Andreas Beer freundlicher weise zur Verfügung
+  gestellt, Danke dafür!
+
+* Die Wahl der richtigen Konfigurationsdatei lässt sich mit der neuen
+  Option '-cfg spiel' setzen, geschieht dies nicht, so sucht Vorlage in
+  dem ersten CR nach einer gültigen Spiel-Kennung wird keine gefunden,
+  wird wie bisher 'vorlage.cfg' oder '.vorlagerc' verwendet
+
+* Das neue CR-Format Version 42 wird nun unterstützt, und damit auch die
+  geänderten Messages
+
+* Die neue Option '-wait' lässt Vorlage am Ende der Ausführung auf einen
+  Tastendruck warten
+
+* Die neue Option '-td' bewirkt, wenn durch Vor-CR möglich, das bei den
+  Einheiten die Talentveränderungen angezeigt werden
+
+* Die neue Option '-up' zeigt in jeder Region am Ende eine
+  Zusammenfassung der fremden Parteien in der Region an; ist die
+  Materialpool-Anzeige aktiv, so wird zudem auch noch der jeweilige
+  Materialpool der Parteien ausgegeben
+
+* Das Objekt BUILDING wurde aus REGION ausgelagert und ist nun
+  eigenständig als BUILDING[id].attribut anzusprechen.
+
+* Der Ausdruck REGION.BUILDING[n].attribut existiert noch, arbeitet nun
+  aber über einen Index von 0 bis REGION.Bauwerke-1
+
+* Das Objekt BUILDING[id] hat nun die Attribute Nummer, Typ, Name,
+  Besitzer, Groesse, Unterhalt sowie Insassen
+
+* Es gibt ein neues Objekt SHIP[id] mit den Attributen Nummer, Typ,
+  Name, Kapitaen, Kueste, Schaden, Prozent, Ladung, MaxLadung sowie
+  Kapazitaet
+
+* Mit dem Ausdruck REGION.SHIP[n].Attribut kann man über einen Index von
+  0 bis REGION.Schiffe-1 auf die Schiffe in einer Region zugreifen
+
+* Das Objekt UNIT hat die neuen Attribute Typ, WahrerTyp und Name
+
+* Die Kapazitätsberechnungen für Verdanon sollten nun (nach dem neuen
+  Verdanon-System) funktionieren (Fehler bitte melden, spiele selber
+  nicht Verdanon!)
+
+* Bugfix: Der Modulo-Operator (%) funktionierte nicht.
+
+
+---[Version V1.4 beta 11]---
+
+* Das neue CR-Format Version 41 wird nun unterstützt, und damit auch die
+  neuen Messages
+
+* Als Konsequenz daraus berücksichtigt Vorlage nun bei CRs ab Version 41
+  auch kostenpflichtige Talente in den Ausgabe-Berechnungen
+
+* Die Anzeige des Datums für CRs ab dem zweiten Zeitalter Eresseas ist
+  auf den neuen Kalender angepasst
+
+* Zauberer haben nun auch eine Auflistung der Sprüche, wenn die Anzeige
+  der Talente aktiv ist
+
+* Die neuen Attribute Aura und Auramax werden hinter dem Magietalent in
+  der Talentliste ausgegeben und auch als neue Attribute des Objektes
+  UNIT unterstützt
+
+* Bugfix: Durch einen Seiteneffekt wurde in Version 41 CRs ein falscher
+  Punktestand angezeigt
+
+* Bugfix: Fremde Einheiten von Arenaregionen und normalen Regionen
+  wurden gemischt wenn die Regionen (bis auf die Ebene) die selben
+  Koordinaten hatten
+
+
+---[Version V1.4 beta 10b/c]---
+
+* Bugfix: Fälschlicherweise wurden als Kapazitäten unter Empiria 
+  5.4/10.4 verwendet, unter Eressea hingegen 5.0/10.0, das ist jetzt
+  behoben (und aus 10.4 wurden korrekterweise 10.8)
+
+* Bugfix: Der Befehl #default hatte einen Bug, der dazu führte, das
+  Befehle wie ARBEITE nicht in die Vorlage übernimmen wurden
+
+* Bugfix: Die Zeile Personen/Einheiten/Punkte/Durchschnitt wurde
+  gesplittet
+
+* Bugfix: Der Insel-Sorter greift leider noch immer nicht auf alle
+  Regionsinfos zurück, aber sollte nun, wenn Island-Tags Verwendung
+  finden zumindest richtig sortieren
+
+* Bugfix: Die dynamisch erzeugten Regionsinfo-Tabellen wurden mit
+  reichlich Leerzeichen am rechten Rand "dekoriert"
+
+* Bugfix: Auch bei Verdanon-Vorlagen wurden ECheck-Infos und der
+  REGION-Befehl generiert
+
+* Bugfix: Das Unterhalts-Flag im Einheitenkommentar wurde auch erzeugt,
+  wenn gar kein Unterhalt für das Gebäude gezahlt werden muß
+
+* Bugfix: Bei einzelnen Katzen wurde "1 Katz" angezeigt
+
+
+---[Version V1.4 beta 10]---
+
+* CRs mit mehreren Ebenen werden nun unterstützt
+
+* In den EINHEIT-ECheck-Infos wird nun bei der Kommandoeinheit eines
+  Gebäudes der Unterhalt angezeigt
+
+* Bei eigenen parteigetarnten Einheiten wird dies nun angezeigt
+
+* Bei Eisen und Laen wird nun angezeigt, ob nichts nie vorhanden ist
+  ('-') oder das Vorkommen unbekannt ist ('?')
+
+* Im Vorlagekopf werden nun auch Personenzahl, Einheitenzahl,
+  Punktezahl und Prozentualer Stand zum Schnitt angegeben
+
+* Bei Option '-hb' wird nun das Gesammteinkommen (Eintreiben/
+  Unterhalten/Arbeiten/Luxusgutverkauf), sowie die Gesammtausgaben
+  (Verpflegung, Luxusguteinkauf, Gebäudeunterhalt) im Vorlagekopf
+  ausgegeben, sowie in jeder Region diese Werte für die Region; Die
+  Ausgaben berücksichtigen aber leider noch nicht ausgaben für
+  kostenpflichtige Talente (gibt leider scheinbar keine Nachricht
+  darüber)
+
+* Bugfix: Wenn ein Bergbauer eine Region verlässt und die Eisen/Laen-
+  Info dadurch wegf/auml;llt wird keine Änderung angezeigt
+
+* Bugfix: In Empiria wird nun ohne Silbergewicht und mit 5/10GE
+  Kapazität gearbeitet
+
+
+---[Version 1.4 beta 9e]---
+
+* Bei Einheiten wird in der Vorlage nun in dem Einheitenkommentar das
+  Gebäude und die Position darin angegeben, um so zu erkennen, ob ein
+  Schutz/Vorteil für die Einheit vorliegt oder nicht; Die Angabe erfolge
+  analog zu der von ECheck benutzen Syntax für Schiffsbesatzungen,
+  zuzüglich der Angabe (n/m) wobei n die Position im Gebäude und m die
+  Kapazität angibt
+
+* Der neue experimentelle Befehl #default fügt in die Einheitenbefehle
+  die langen Befehle aus dem CR ein, um z.B. ROUTE in Verbindung mit
+  Metabefehlen in einer Einheit benutzen zu können
+
+* Bugfix: Die Änderungen in 1.4 beta 9c betreffs der neuen CR-Struktur
+  führten zu einem Problem mit Insel-CRs
+
+* Bugfix: In Empiria wurde für Silber ein Gewicht angenommen (die
+  Rassenkapazitäten sind aber noch immer nicht korrekt, sorry)
+
+
+---[Version V1.4 beta 9d]---
+
+* Die neue Option -klp kann anstelle von -k oder -kl verwendet werden,
+  und es wird nur das Produzierte Luxusgut aufgeführt
+
+* Bei Option -pm wird nun der erzeugte BESCHREIBE PRIVAT auch
+  entsprechend der Zeilenlänge, die mit -w eingestellt wurde,
+  umgebrochen; Hierbei wird für aktuelle Eressea-Reports die neue
+  Umbruchsmethode verwendet
+
+* Bugfix: Unter Empiria wurden keine Befehle für die Zugvorlage erzeugt,
+  weil die Default-Tags nicht herangezogen wurden
+
+
+---[Version V1.4 beta 9c]---
+
+* Die neuen CR-Blöcke ALLIANZ und PARTEI (die Folge-Parteiblöcke) werden
+  nun unterstützt
+
+* Es gibt nun einen Skriptdebugger mit dem man Fehler in Skripten
+  schneller finden können sollte (Mit ? bekommt man eine Hilfe)
+
+* Mit dem neuen Befehl #trace <n> kann man Ablaufinformationen
+  aktivieren. #trace 1 schaltet die Ausgabe ein, #trace 2 springt in
+  den Metaskript-Debugger
+
+* Der neue Befehl #notrace deaktiviert die Ausgabe der
+  Ablaufinformationen
+
+* Das Objekt UNIT hat die neuen Attribute Land, Kampfstatus und die
+  Kapazitätsangaben frei.reiten, frei.gehen, kap.reiten sowie kap.gehen
+
+* Das Objekt REGION hat die neuen Attribute Name, Terrain sowie
+  'Building[nr].Typ' und 'Building[nr].Groesse'
+
+* Es wird nun ein vorhandenes Basis-Tag sowie das Koordinaten-Tag
+
+* Es wird nun zu den Luxusgütern auch die maximale Anzahl handelbarer
+  Güter angezeigt
+
+* Das Errorhandling wurde überarbeitet und teilweise Verbessert
+
+* Bugfix: Nachrichten die zweimal dieselbe Einheitennummer enthielten,
+  wurden auch der Einheit doppelt zugeordnet (Verteilung des "Auges des
+  Drachen")
+
+* Bugfix: Der Zugriff auf Einheiten mit falscher Einheitennummer führte
+  zu einem Absturz
+
+* Bugfix: Anzeige von fremden Talenten wenn CR vorhanden klappte nicht
+
+* Bugfix: Fehler in Gewinnberechnung und vorlage.cfg behoben
+
+* Bugfix: Fehler in LerneMache-Skript behoben
+
+* Bugfix: Bei der Behandlung von fehlerhaften Ausdrücken kam es zu
+  Folgefehlern
+
+* Bugfix: Der Aufruf unbekannter Funktionen führte zu einem Absturz
+
+* Bugfix: Der Vergleichsoperator '==' wurde falsch ausgewertet
+
+* Bugfix: Es wurde im für den Monat Dezember das falsche Jahr im Report
+  angezeigt
+ 
+
+---[Vorlage V1.4 beta 9a]---
+
+* Das Objekt UNIT hat die neuen Attribute X und Y, um die Position der
+  Einheit zu erfragen
+
+* Bugfix: Die Auswertung des Parameters '-p' war fehlerhaft und die
+  Option hatte keine Wirkung
+
+* Bugfix: In #if / #ifregion / #ifunit wurden Zuweisungen (und nur die)
+  auch ausgeführt, wenn die Bedingung nicht erfüllt war
+
+
+---[Vorlage V1.4 beta 9]---
+
+* In CRs existierende Insel-Tags werden nun von Vorlage ausgewertet und
+  die Inselnamen für die Regionen, wenn möglich, ermittelt; diese Namen
+  werden dann in der REGION-Zeile mit ausgegeben
+
+* Die neue Option '-un' wirkt bei aktivem '-u' oder '-uv' und sorgt
+  dafür, das nur noch fremde Einheiten auszugeben, die neu in der Region
+  sind, oder in Regionen in denen man im Vergleichsmonat nicht war
+
+* Wenn die Information aus dem Vergleichsreport (i.d.R. dem Vormonat)
+  das ermöglichen, wird bei fremden Einheiten (wenn diese angezeigt
+  werden) nun auch noch die Region aus der sie kommen ausgegeben
+
+* Die Talente von Einheiten sind nun nach Stufen sortiert, das
+  verbessert den Wert der Einheitensortierung nach Talenten
+
+* Der neue Befehl #message <text> ermöglicht es normale Kommentare aus
+  Metabefehlen heraus zu erzeugen; Der Text muß eine durch Hochkommas
+  eingeschlossene Zeichenkette sein, wenn er Leer- oder Sonderzeichen
+  enthalten soll
+
+* Die neue Option '-m' erzeugt in den Regionsinfos die Auflistung des
+  Materialpools (Auch wenn dieser nicht aktiviert ist); Es ist zu
+  beachten, das Vorlage, da es die nächsten Befehle ja nicht vorhersehen
+  kann, keine Reservierungen berücksichtigt
+
+* Es wird jetzt beim Tarne-Talent, falls eine Abweichung vom Basiswert
+  vorliegt, der aktive Tarne-Status angezeigt
+
+* Bugfix: Gelegentliche Abstürze in der Release-Version
+
+* Bugfix: Die Gewinnberechnung hatte manchmal zu völlig falschen
+  (negativen) Ergebnissen geführt
+
+* Bugfix: Bei der Auswertung von Ozeanregionen konnte Vorlage mit
+  Zugriff auf falschen Speicher abfliegen
+
+* Bugfix: Bei der Auswertung von Regionen die vorher nur Nachbarregioen
+  oder Durchreiseregionen waren konnte Vorlage mit Zugriff auf falschen
+  Speicher abfliegen
+
+* Bugfix: Es wurde in 1.4 b 8 berall Mallorn statt Bäumen gemeldet
+
+* Bugfix: Wenn man mit Differenzen der Regionsinfos arbeitet (also den
+  letzten CR mitgegeben hat) wurden manchmal Änderungen angezeigt, die
+  nicht stimmten, wenn aus dem alten CR keine Daten dafür vorlagen,
+  jetzt unterdrückt Vorlage in so einem Fall die Angabe
+
+
+---[Vorlage V1.4 beta 8]---
+
+* Unter Linux heißt 'vorlage.cfg' jetzt etwas konformer '.vorlagerc' und
+  wird im $HOME-Verzeichnis gesucht
+
+* Es können jetzt mehrere (bel. viele, wenn Speicher und Konsole
+  mitmachen) CRs angegeben werden, und zwar auf von verschiedenen
+  Spielern; Bei Verwendung der Option '-ox' werden für alle Parteien der
+  aktuellen (der neusten) Runde Vorlagen erzeugt, die die Namen und den
+  Pfad der jeweiligen Bezugs-CRs plus Endung tragen
+
+* Wenn Option '-ox' verwendet wird, ud die resultierenden Dateien schon
+  existieren, werden sie nicht überschrieben, sondern ein Fehler
+  gemeldet; Mit der neuen Option '-f' kann man das verhalten abschalten
+  und das Überschreiben forcieren
+
+* Wenn es die Environment-Variable 'VORLAGEOPTIONS' gibt werden die
+  Daten darin vor den Komandozeilen-Parametern ausgewertet
+
+* Beim Zugriff auf Regionsdaten oder Einheitendaten werden, beim
+  Vorhandensein mehrerer Informationen aus verschiedenen aktuellen CRs,
+  die jeweils "besten" Daten verwendet, d.h. Wenn man selber z.B. eine
+  Region nur als Durchreiseregion gesehen hat, aber eine Einheit einer
+  Partei deren CR man Vorlage mitgegeben hat (Verbündeter) dort steht,
+  kann man dennoch in Metabefehlen auf alle Daten der Region zugreifen,
+  als ob man dort eine Einheit hätte. (Wenn in einem CR ein T7-Zwerg
+  steht, kann man also auch mit 'region.laen' sehen ob da Laen ist,
+  selbst wenn man die Info im eigenen CR nicht hatte)
+
+* Neue Attribute im Objekt REGION: Gewinn enthält den Gewinn-Wert aus
+  den Regionsinfos und das Attribut Pool ermöglicht den Zugriff auf
+  den Material-Pool; So ergibt z.B. 'region.pool.eisen' die Eisenmenge
+  der eigenen Partei in der Region
+
+* Die neuen Optionen '-u' und '-uv' erlauben es, alle fremden Einheiten
+  in den Regionen hinter den eigenen als NR-ähnlichen Kommentar einfügen
+  zu lassen (Auch hier gilt: Die besten vorhandenen Infos werden
+  benutzt); Die zweite Option ist dabei Verbose, also mit allen Daten
+  (Talente/Beschreibungen) sofern vorhanden; Einheiten die im eigenen
+  Report nicht vorhanden sind, aber in einem anderen schon, werden mit
+  einem 'T' markiert, parteigetarnte mit einem '!';
+
+* Mit 'region[x,y]' kann man auch auf Daten von anderen Regionen
+  zugreifen, wobei die Koordinaten x und y denen im Report entsprechen
+  müssen
+
+* Mit 'unit.region[dx,dy]' kann man auf Regionen relativ zur Position
+  einer Einheit zugreifen, wobei dx und dy die Deltawerte der Position
+  sind (z.B. ist 'unit.region[0,1]' die Region im Nordosten);
+
+* Die Metasprache unter stützt nun auch Funktionen mittels des #func-
+  Befehls; Dabei können aber zur Zeit noch keine Referenzen verwendet
+  werden; Des weiteren können Funktionen keine Eressea-Befehle erzeugen;
+  Die Werterückgabe erfolgt durch Zuweisung an $RETURN
+
+* Das Objekt UNIT unterstützt nun die Attribute: Bewache mit dem man den
+  Bewache-Status erhält (ein Wert ungleich Null bedeutet, die Einheit
+  bewacht die Region), frei.gehen, frei.reiten mit denen man die freie
+  Kapazität in GE erhält, die eine Einheit für die jeweilige
+  Fortbewegung hat, kap.gehen, kap.reiten die Kapazität der Einheit,
+  wenn sie alles abgelegt hätte (also leer)
+
+* In Strings kann nun mittels des '\'-Zeichens ein Hochkomma "escaped"
+  werden, so das es nicht als Stringende gilt; So kann man nun z.B. Mit
+  "#ifregion 'Shak\'Tar' {...}" auch auf Regionen Abfragen, die ein
+  Hochkomma im Namen haben
+
+* Da das '\'-Zeichen eine neue Bedeutung hat, ist nun das '|'-Zeichen
+  für die erzeugung von Anführungszeichen in Metabefehls-Strings
+  zuständig
+
+* Die neue Option '-sp' sortiert die Einheiten nach den
+  BESCHREIBE-PRIVAT-Texten, um so eine eigene Sortierung zu erzeugen
+
+* Bugfix: Kommentare die keine Metabefehle enthalten wurden nicht in die
+  Vorlage übernommen und gingen verloren
+
+* Bugfix: Die Leerzeile nach Kapitänsinfos wurde entfernt
+
+
+---[Vorlage V1.4 beta 7]---
+
+* Die neue Option '-cr' erlaubt es, anstelle einer Zugvorlage einen
+  neuen CR mit dem Ergebnis der Metabefehlsauswertung zu erzeugen um
+  Anwender von anderen Tools (z.B. EHMV) in den Genuß der Metasprache
+  kommen zu lassen; Es gelten die selben Optionen zur Beeinflussung des
+  Ausgabeziels wie bei einer Zugvorlage (also o file, -ox ext oder
+  eben stdout)
+
+* Verwendete Spieldaten sind nun größtenteils in der Datei 'vorlage.cfg'
+  Aufgeführt und können so geändert werden; dazu gehören u.a. die
+  Gewichte von Gegenständen, Schiffskapazitäten, Terraintypen (incl. der
+  in der Minimap zu verwendenden Zeichen); Die Datei wird im selben
+  Verzeichnis gesucht, in dem Vorlage liegt
+
+* In der Minimap werden jetzt unterschiedliche Zeichen angezeigt, je
+  nachdem ob in der Region eigene Einheiten sind, oder nicht (default
+  groß=eigene Einheiten, klein=keine eigenen Einheiten)
+
+* Bei Unterprogrammen muß jetzt in der #proc-Zeile vor den Referenz-
+  Parametern, also Parametern, die das Unterprogramm nach außen
+  verändern kann, ein '&'-Zeichen vorangestellt werden, um beide
+  Übergabearten zu ermöglichen (Achtung: #next u.ä. erwarten in
+  Unterprogrammen Referenz-Parameter!)
+
+* Es gibt nun im Objekt REGION die neuen Attribute Silberpool und
+  Personen
+
+* Strings in Metabefehlen können jetzt mit Hochkommas umschlossen
+  werden, um Leerzeichen und Sonderzeichen darin zu ermöglichen;
+
+* Das '\'-Zeichen wird innerhalb von Strings bei Übertragung in Eressea-
+  Befehls-Zeilen in Anführungszeichen umgewandelt, um das Manko zu
+  beheben, das in persistenten Kommentaren keine Anführungszeichen
+  erlaubt sind
+
+* Bugfix: Der Zugriff auf andere Einheiten mit
+  UNIT[Einheitennummer].Attribut hatte einen Bug, der zur Meldung
+  'Fehlerhafte Klammerung' führte
+
+
+---[Vorlage V1.4 beta 6]---
+
+* Erste Version die es auch für x86-Linux gibt (experimentell)
+
+* Mittels des '~'-Zeichens können nun auch die Befehle wie BENENNE und
+  BESCHREIBE in Metabefehlen verwendet werden
+
+
+---[Vorlage V1.4 beta 5]---
+
+* In Unterprogrammen kann man nun eigene Variable benutzen (z.B.
+  '$MyVar=1234')
+
+* Der neue Metabefehl '#while' ermöglicht in Unterprogrammen Schleifen
+  zu verwenden, um z.B. über die Einheiten einer Region zu iterieren
+
+* Das Objekt REGION hat die neuen Attribute Einheiten, Gewinn und Unit[]
+  bekommen, wobei man mit 'region.unit[0].Attribut' die oberste Einheit
+  des CR/NR in der Region erreicht und diesen Ausdruck wie ein UNIT-
+  Objekt verwenden kann
+
+* Das Objekt UNIT hat die neuen Attribute Partei, Bauwerk, Schiff und
+  Nummer
+
+* Die Kapitänsinfo wird nun ebenfalls bei Bedarf umgebrochen
+
+* Bugfix: Attribute (Gegenstände) die Leerzeichen im Namen hatten
+  konnten prinzipbedingt nicht angesprochen werden. Dies kann nun
+  erfolgen, indem man die Leerzeichen einfach wegläßt
+
+* Bugfix: Die Gewinn-Berechnung in den Regionsinfos hat Jobverluste,
+  z.B. durch Bäume nicht berücksichtigt
+
+* Bugfix: Beim '#every'-Befehl wurde die Phase (2. Parameter) nach dem
+  Durchlauf auf einen falschen Wert gesetzt
+
+* Bugfix: Die Kapazität von Einheiten mit Trollen die Wagen zogen hatte
+  immer noch einen Fehler
+
+
+---[Vorlage V1.4 beta 4]---
+
+* Unterprogramme werden jetzt mit den neuen Befehlen '#call' und '#proc'
+  und der Option '-i filename' unterstützt (näheres in der Doku)
+
+* Die Regionsinfo-Tabelle wurde etwas schmaler gestaltet
+
+* Bugfix: Die Kapazitätsberechnung für Trolleinheiten hatte noch Bugs
+
+
+---[Vorlage V1.4 beta 3]---
+
+* Die neue Option '-hb' erlaubt es, zu Beginn der Zugvorlage eine
+  Handelsübersicht, nach Parteien und Produkten einzufügen, um den
+  Überblick zu behalten
+
+* Die neue Option '-si' erlaubt es, die Regionen nach Inselzugehörigkeit
+  zu sortieren, statt nach Report-Reihenfolge, dabei liegen alle
+  Regionen beisammen, die miteinander Verbunden sind
+
+* Die neue Option '-ox ext' leitet die Zugvorlage, wie die Option 
+  '-o filename' in eine Datei um, die aber den selben Basisnamen wie der
+  Bezugsreport hat, aber die Dateierweiterung ext bekommt; Der Report
+  muß die Endung '.cr' haben (wie ja üblich)
+
+* Die neue Option '-pb' zeigt BESCHREIBE-PRIVAT-Inhalte in der Vorlage
+  an
+
+* Bei Schiffen steht nun auch die freie und die theoretische Kapazität
+
+* In den Regionsinfos steht nun der von den Bauern erwirtschaftete
+  Gewinn, also die Menge, die man maximal Abschöpfen kann, ohne die
+  Regionsreserven zu gefährden
+
+* In der REGION-Zeile steht nun auch noch der Geländetyp
+
+
+---[Vorlage V1.4 beta 2]---
+
+* Bugfix: Es wurden bei Angabe von zwei Reports die Nachrichten von
+  beiden bei der Region angezeigt und bei unit[xyz] konnte unter
+  Umständen auf die alten Daten der Einheit zugegriffen werden
+
+* Bugfix: In der Doku wurde überall als Trennzeichen zwischen Befehlen
+  ein Semikolon genannt, es ist aber der Doppelpunkt
+
+
+---[Vorlage V1.4 beta 1]---
+
+* Es können zwei Reports angegeben werden, wobei der ältere genutzt
+  wird, um die Änderungen der Regionsdaten anzuzeigen, falls die
+  jeweilige Region in beiden Reports vorkommt (Reihenfolge egal)
+
+* Mit der neuen Option '-l' kann man eine Gewichtsübersicht zu Einheiten
+  aktivieren; Dies ergibt bei jeder Einheit eine Zeile in der das
+  Gesamtgewicht, sowie die freie/theoretische Kapazität beim Reiten
+  (wenn möglich) und beim Gehen angegeben werden; Sind zu viele Pferde
+  vorhanden wird dies gemeldet
+
+* Statt die Standardausgabe für die Zugvorlage zu benutzen kann man nun
+  mit der Option '-o filename' die Ausgabe in eine Datei umlenken; Dies
+  geht zwar normalerweise mit '> datei' auch, aber unter Windows klappt
+  diese Umlenkung nicht aus "START/Ausführen..." und auch nicht bei
+  Verknüpfungen
+
+* Die Zeilenlänge ab der Nachrichten und Gegenstandslisten oder
+  Talentlisten umgebrochen werden kann mit der Option '-w len' auf len
+  Zeichen eingestellt werden
+
+* Die neue Option '-q' unterdrückt die Ablaufmeldungen auf der Konsole,
+  zu denen nun auch eine Zeitmessung gehört
+
+* Die Reihenfolge der Regionen in der Vorlage entspricht nun der im
+  Report, um das durcharbeiten ohne viel Blättern zu erreichen
+
+* Bugfix: Bei Einheiten auf Schiffen wurden alle zu ECheck-Kapitänen
+  (alle bekamen das große 'S');
+
+* Bugfix: Bei Schiffsneubauten oder Hafenschiffen wurde als
+  Auslaufrichtung irrtümlich Nordwesten angezeigt, statt
+  "Auslaufrichtung beliebig";
+
+
+---[Vorlage V1.3.3]---
+
+* Neben der Tragekapazität (welche leider noch nicht immer stimmt),
+  wird nun das Gesamtgewicht der Einheit angegeben
+ 
+* Bugfix: Fehler beim Zugriff auf andere Einheiten über den Index
+  behoben
+
+* Bugfix: Das Verhalten von '#after' wich von der Doku ab, d.h.
+  '#after 1' bedeutet nun nächste Vorlage, nicht '#after 0' wie
+  fälschlicherweisein den alten Versionen; Es ist also jetzt eine Runde
+  später;
+
+
+---[Vorlage V1.3.2]---
+
+* Lange Nachrichten und Talent-/Gegenstandslisten werden nun umgebrochen
+
+* Bei Einheiten auf Schiffen wird nun wie in der Standardvorlage die
+  Schiffsnummer in den eckigen Klammern angegeben
+
+* Bugfix: Der Bug in der 'else'-Behandlung wurde behoben
+
+
+---[Vorlage V1.3.1]---
+
+* Unterstüzung für EINHEITSBOTSCHAFTEN implementiert
+
+* Bugfix: Ein Bug in der Kapitänsbehandlung machte dieses Release
+  erforderlich
+  
+
+---[Vorlage V1.3]---
+
+* Das neue Objekt REPORT ermöglicht Zugriff auf "Rekrutierungskosten",
+  "Runde", "Partei" und "Personen"
+
+* Zu jeder Einheit wird nun der Bewache/Kampfstatus eingefügt
+
+* Bei Kapitänen wird nun das Schiff und die Ablegeküste eingefügt
+
+
+---[Vorlage V1.3 beta 6]---
+
+* Die Befehle #if, #ifregion und #ifunit unterstützen jetzt einen
+  else-Zweig
+
+* In Empiria-CRs werden lange Nachrichten umgebrochen, die jetzt von
+  Vorlage wieder zusammengefügt werden
+
+* Bugfix: Bugs in der Nachrichtenauswertung konnten zum Programmabbruch
+  führen und nicht alle Nachrichten wurden bei ihren Einheiten,
+  einsortiert (betrifft Handelsnachrichten, die ja zu zwei Einheiten
+  gehören)
+
+
+---[Vorlage V1.3 beta 5]---
+
+* Experimenteller EMPIRIA-Support wurde implementiert
+
+* Neue Option -pm ermöglicht es die Befehle der Einheiten mit 
+  BESCHREIBE PRIVAT " befehl : befehl : ..." zu übergeben
+  
+* Die Felder "belagert", "Belagerer", "Default", "privat", "wahrerTyp"
+  wurden implementiert
+
+* Bugfix: Ein Fehler in der Auswertung des UNIT-Objektes hat zu falschen
+  Ausdrücken geführt
+
+
+---[Vorlage V1.3 beta 4]---
+
+* Neue Option -n um die Nachrichten in die Vorlage einzufügen
+
+* Neues Attribut 'Strasse' vom REGION eingefügt
+
+* Das angewarnte CR-Kapitel "REGIONSBOTSCHAFEN" und die Tags "Strasse",
+  "Unterhalt" und "hp" implementiert
+  
+* Bugfix: Bug im Gebäudeteil des Parsers gefixt
+
+
+---[Vorlage V1.3 beta 3]---
+
+* Untote werden für ECheck mit ",I" markiert
+
+* Die Transportkapazität wurde aus den eckigen Klammern ausgelagert
+
+* Bugfix: Leere COMMAND-Einträge im CR führten zum Absturz
+
+
+---[Vorlage V1.3 beta 2]---
+
+* Bugfix: Ein Fehler bei der Umlaut-Anpassung ergab, daß Wüsten in den
+  Minikarten als Wald angezeigt wurden
+
+* Es wurde das CR-Kapitel "SPRÜCHE" und die Tags "Prozent" und "Tarnung"
+  implementiert
+
+
+---[Vorlage V1.3 beta]---
+
+* Anpassung auf die Base36-Einheitennummern
+
+* Schachtelung der Metabefehle ist nun möglich
+
+* UNIT- und REGION-Objekt zum Zugriff auf Einheiten und Regionsdaten
+
+* Die Doku wurde auf HTML umgestellt
+
+
+---[Vorlage V1.2]---
+
+* Die verschiedenen Informationen in der Zugvorlage lassen sich nun
+  getrennt schalten
+  
+* Es wurden Metabefehle eingeführt, mit denen sich Vorgänge
+  automatisieren lassen. Eine beigefügte Textdatei versucht die
+  Funktionalitäten zu erläutern. ;-)
+
+
+---[Vorlage V1.1]---
+
+* In den Regionskommentaren wird nun auch zusammenfassend die Zahl der
+  Personen und die Silbersumme angezeigt, um die Finanzen leichter
+  planen zu können
+
+
+---[Vorlage V1.0]---
+
+* In den Regionskommentaren wird nach der ECHECK-Zeile eine Minikarte
+  mit den Nachbarregionen eingefügt
+  
+* Bei den Einheiten steht in je einer Kommentarzeile, welche Talente sie
+  haben und welche Objekte sie bei sich führen
