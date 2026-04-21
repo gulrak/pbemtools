@@ -112,6 +112,39 @@ jobs:
           path: ${{ env.ARCHIVE_NAME }}
           retention-days: 14
 
+  # ── Update rolling nightly release (master only) ─────────────────────────
+  nightly:
+    name: Update Nightly Release
+    needs: build
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Delete existing nightly release and tag
+        run: gh release delete nightly --yes --cleanup-tag || true
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Publish nightly release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: nightly
+          name: Nightly Build
+          prerelease: true
+          make_latest: false
+          body: "Latest build from the master branch. Updated automatically on every push."
+          files: artifacts/**/*
+
   # ── Create GitHub Release (tags only) ──────────────────────────────────────
   release:
     name: Create Release
