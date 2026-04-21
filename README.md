@@ -2,6 +2,7 @@
 
 [![Build Status](https://github.com/gulrak/pbemtools/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/gulrak/pbemtools/actions/workflows/build.yml)
 [![GitHub release](https://img.shields.io/github/v/release/gulrak/pbemtools)](https://github.com/gulrak/pbemtools/releases/latest)
+[![GitHub nightly status](https://img.shields.io/github/checks-status/gulrak/pbemtools/nightly?label=nightly)](https://github.com/gulrak/pbemtools/releases/tag/nightly)
 [![Platforms](https://img.shields.io/badge/platforms-Windows%20%7C%20macOS%20%7C%20Linux-blue)](#)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
