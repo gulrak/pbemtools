@@ -20,3 +20,10 @@ if(CMAKE_CXX_COMPILER_ID MATCHES MSVC)
     #target_compile_options(vorlage PRIVATE "$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 endif()
 
+if(APPLE AND NOT CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_custom_command(TARGET vorlage POST_BUILD
+        COMMAND codesign -f -s - --entitlements ${CMAKE_SOURCE_DIR}/cmake/debug.entitlements $<TARGET_FILE:vorlage>
+        COMMENT "Signing vorlage with debug entitlements"
+    )
+endif()
+

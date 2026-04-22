@@ -59,6 +59,7 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <optional>
 
 #ifdef VAX
 #include <descrip.h>
@@ -113,6 +114,52 @@ int g_nERROR;           // Fehler-Code
 std::string g_sERTOK;   // Fehler-Token
 int g_nERPOS;           // Fehler-Position
 const char* g_pcERANC;  // Hilfspointer zur g_nERPOS-Berechnung
+
+namespace {
+
+enum class BinOp : uint8_t { ADD, SUB, MUL, DIV, MOD, POW, LT, GT, LE, GE, EQ, NE, AND, OR };
+
+struct BinOpInfo { int prec; bool rightAssoc; };
+
+constexpr BinOpInfo kBinOpInfo[] = {
+    {30, false},  // ADD
+    {30, false},  // SUB
+    {40, false},  // MUL
+    {40, false},  // DIV
+    {40, false},  // MOD
+    {50, true},   // POW
+    {20, false},  // LT
+    {20, false},  // GT
+    {20, false},  // LE
+    {20, false},  // GE
+    {20, false},  // EQ
+    {20, false},  // NE
+    {10, false},  // AND
+    {10, false},  // OR
+};
+
+inline std::optional<BinOp> tokenToBinOp(const std::string& t) noexcept
+{
+    if (t.empty())
+        return std::nullopt;
+    switch (t[0]) {
+        case '+': return BinOp::ADD;
+        case '-': return BinOp::SUB;
+        case '*': return BinOp::MUL;
+        case '/': return BinOp::DIV;
+        case '%': return BinOp::MOD;
+        case '^': return BinOp::POW;
+        case '<': return t.size() > 1 ? BinOp::LE : BinOp::LT;
+        case '>': return t.size() > 1 ? BinOp::GE : BinOp::GT;
+        case '=': return t.size() > 1 ? std::optional<BinOp>(BinOp::EQ) : std::nullopt;  // == only, not =
+        case '!': return t.size() > 1 ? std::optional<BinOp>(BinOp::NE) : std::nullopt;  // != only, not !
+        case '&': return BinOp::AND;
+        case '|': return BinOp::OR;
+        default:  return std::nullopt;
+    }
+}
+
+} // namespace
 
 /////////////////////////////////////////////////////////////////////
 //.block: Mathematische Funktionen die in Ausdruecken erlaubt sind
@@ -294,7 +341,11 @@ void Expression::clearAllVars()
 bool Expression::clearVar(const char* name)
 {
     // false wenn Var nicht gefunden
-    return _vars.erase(std::string(name)) > 0;
+    auto it = _vars.find(name);
+    if (it == _vars.end())
+        return false;
+    _vars.erase(it);
+    return true;
 }
 
 bool Expression::isContainer(const char* name, Value** pvalue)
@@ -305,7 +356,7 @@ bool Expression::isContainer(const char* name, Value** pvalue)
         *pvalue = 0;
     }
 
-    i = _context->find(std::string(name));
+    i = _context->find(name);
     if (i != _context->end()) {
         if ((*i).second.getType() == VT_MAP || (*i).second.getType() == VT_VECTOR) {
             if (pvalue)
@@ -314,7 +365,7 @@ bool Expression::isContainer(const char* name, Value** pvalue)
         }
         return false;
     }
-    i = _vars.find(std::string(name));
+    i = _vars.find(name);
     if (i != _vars.end()) {
         if ((*i).second.getType() == VT_MAP || (*i).second.getType() == VT_VECTOR) {
             if (pvalue)
@@ -330,11 +381,11 @@ Value* Expression::getValueRef(const char* name)
 {
     Variables::iterator i;
 
-    i = _context->find(std::string(name));
+    i = _context->find(name);
     if (i != _context->end()) {
         return &(*i).second;
     }
-    i = _vars.find(std::string(name));
+    i = _vars.find(name);
     if (i != _vars.end()) {
         return &(*i).second;
     }
@@ -347,12 +398,12 @@ bool Expression::getValue(const char* name, Value* value)
 {
     Variables::iterator i;
 
-    i = _context->find(std::string(name));
+    i = _context->find(name);
     if (i != _context->end()) {
         *value = (*i).second;
         return true;
     }
-    i = _vars.find(std::string(name));
+    i = _vars.find(name);
     if (i != _vars.end()) {
         *value = (*i).second;
         return true;
@@ -370,12 +421,12 @@ bool Expression::setValue(const char* name, const Value* value, bool bForce)
 {
     Variables::iterator i;
     if (_context) {
-        i = _context->find(std::string(name));
+        i = _context->find(name);
         if (i != _context->end()) {
             (*i).second = *value;
         }
         else {
-            i = _vars.find(std::string(name));
+            i = _vars.find(name);
             if (i != _vars.end()) {
                 (*i).second = *value;
             }
@@ -398,12 +449,12 @@ bool Expression::setValue(const char* name, const Value* value, bool bForce)
 bool Expression::setValue(Variables& oContext, const char* name, const Value* value, bool bForce)
 {
     Variables::iterator i;
-    i = oContext.find(std::string(name));
+    i = oContext.find(name);
     if (i != oContext.end()) {
         (*i).second = *value;
     }
     else {
-        i = _vars.find(std::string(name));
+        i = _vars.find(name);
         if (i != _vars.end()) {
             (*i).second = *value;
         }
@@ -424,7 +475,7 @@ bool Expression::setValue(Variables& oContext, const char* name, const Value* va
 bool Expression::setGlobal(const char* name, const Value* value, bool bForce)
 {
     Variables::iterator i;
-    i = _vars.find(std::string(name));
+    i = _vars.find(name);
     if (i != _vars.end()) {
         (*i).second = *value;
     }
@@ -444,7 +495,7 @@ bool Expression::setGlobal(const char* name, const Value* value, bool bForce)
 void Expression::setConstant(const char* name, const Value* value)
 {
     Variables::iterator i;
-    i = _consts.find(std::string(name));
+    i = _consts.find(name);
     if (i != _consts.end()) {
         (*i).second = *value;
     }
@@ -456,11 +507,11 @@ void Expression::setConstant(const char* name, const Value* value)
 Value Expression::getGlobal(const char* name)
 {
     Variables::iterator i;
-    i = _vars.find(std::string(name));
+    i = _vars.find(name);
     if (i != _vars.end()) {
         return (*i).second;
     }
-    i = _consts.find(std::string(name));
+    i = _consts.find(name);
     if (i != _consts.end()) {
         return (*i).second;
     }
@@ -470,11 +521,11 @@ Value Expression::getGlobal(const char* name)
 Value* Expression::getGlobalRef(const char* name)
 {
     Variables::iterator i;
-    i = _vars.find(std::string(name));
+    i = _vars.find(name);
     if (i != _vars.end()) {
         return &(*i).second;
     }
-    i = _consts.find(std::string(name));
+    i = _consts.find(name);
     if (i != _consts.end()) {
         return &(*i).second;
     }
@@ -484,7 +535,7 @@ Value* Expression::getGlobalRef(const char* name)
 Value* Expression::getLocalRef(Expression::Variables& oContext, const char* name)
 {
     Variables::iterator i;
-    i = oContext.find(std::string(name));
+    i = oContext.find(name);
     if (i != oContext.end()) {
         return &(*i).second;
     }
@@ -871,124 +922,95 @@ int Expression::parseAssignment(Value* r)
 void Expression::evalExpr(Value* r)
 {
     std::vector<Value> valStack;
-    std::vector<std::string> opStack;
+    std::vector<BinOp> opStack;
+    valStack.reserve(8);
+    opStack.reserve(8);
 
     // Apply the top operator in opStack to the top two values in valStack.
     auto applyTop = [&]() {
-        std::string op = opStack.back();
+        BinOp op = opStack.back();
         opStack.pop_back();
-        // Copy-construct before pop_back() to avoid dangling-reference UB with unique_ptr members.
-        Value rhs = valStack.back();
+        // Move-construct before pop_back() to avoid dangling-reference UB with unique_ptr members.
+        Value rhs = std::move(valStack.back());
         valStack.pop_back();
-        Value lhs = valStack.back();
+        Value lhs = std::move(valStack.back());
         valStack.pop_back();
         Value res;
 
-        if (op == "+")
-            res = lhs + rhs;
-        else if (op == "-")
-            res = lhs - rhs;
-        else if (op == "*")
-            res = lhs * rhs;
-        else if (op == "/") {
-            res = lhs / rhs;
-            if (res.getType() == VT_ERROR)
-                throw ExpressionException(res.asString());
-        }
-        else if (op == "%") {
-            res = lhs % rhs;
-            if (res.getType() == VT_ERROR)
-                throw ExpressionException(res.asString());
-        }
-        else if (op == "^")
-            res = lhs.pow(rhs);
-        else if (op == "<")
-            res = Value(lhs < rhs ? 1 : 0);
-        else if (op == ">")
-            res = Value(lhs > rhs ? 1 : 0);
-        else if (op == "<=")
-            res = Value(lhs <= rhs ? 1 : 0);
-        else if (op == ">=")
-            res = Value(lhs >= rhs ? 1 : 0);
-        else if (op == "==")
-            res = Value(lhs == rhs ? 1 : 0);
-        else if (op == "!=")
-            res = Value(lhs == rhs ? 0 : 1);
-        else if (op[0] == '&')  // & or &&
-            res = Value((lhs && rhs) ? 1 : 0);
-        else if (op[0] == '|')  // | or ||
-            res = Value((lhs || rhs) ? 1 : 0);
-        else {
-            ERR(E_SYNTAX);
+        switch (op) {
+            case BinOp::ADD: res = lhs + rhs; break;
+            case BinOp::SUB: res = lhs - rhs; break;
+            case BinOp::MUL: res = lhs * rhs; break;
+            case BinOp::DIV:
+                res = lhs / rhs;
+                if (res.getType() == VT_ERROR)
+                    throw ExpressionException(res.asString());
+                break;
+            case BinOp::MOD:
+                res = lhs % rhs;
+                if (res.getType() == VT_ERROR)
+                    throw ExpressionException(res.asString());
+                break;
+            case BinOp::POW: res = lhs.pow(rhs); break;
+            case BinOp::LT:  res = Value(lhs < rhs ? 1 : 0); break;
+            case BinOp::GT:  res = Value(lhs > rhs ? 1 : 0); break;
+            case BinOp::LE:  res = Value(lhs <= rhs ? 1 : 0); break;
+            case BinOp::GE:  res = Value(lhs >= rhs ? 1 : 0); break;
+            case BinOp::EQ:  res = Value(lhs == rhs ? 1 : 0); break;
+            case BinOp::NE:  res = Value(lhs == rhs ? 0 : 1); break;
+            case BinOp::AND: res = Value((lhs && rhs) ? 1 : 0); break;
+            case BinOp::OR:  res = Value((lhs || rhs) ? 1 : 0); break;
+            default: ERR(E_SYNTAX); break;
         }
 
-        valStack.push_back(res);
+        valStack.push_back(std::move(res));
     };
 
-    // Returns true when the current token is a binary operator.
+    // Returns the BinOp for the current token, or nullopt if it is not a binary operator.
     // Guards TokenType::STRING so string-valued tokens are never misread as operators.
-    auto isBinOp = [&]() -> bool {
+    auto asBinOp = [&]() -> std::optional<BinOp> {
         if (_type == TokenType::STRING)
-            return false;
-        if (_token.empty())
-            return false;
-        if (_token[0] == '&' || _token[0] == '|')
-            return true;  // & && | ||
-        if (_token[0] == '<' || _token[0] == '>')
-            return true;  // < <= > >=
-        if (_token[0] == '=' && _token[1] == '=')
-            return true;  // == (not single =)
-        if (_token[0] == '!' && _token[1] == '=')
-            return true;  // != (not unary !)
-        if (_token[0] == '+' || _token[0] == '-')
-            return true;
-        if (_token[0] == '*' || _token[0] == '/' || _token[0] == '%')
-            return true;
-        if (_token[0] == '^')
-            return true;
-        return false;
+            return std::nullopt;
+        return tokenToBinOp(_token);
     };
 
     // Parse first primary expression (parseUnary handles unary ops and calls parsePrimary).
     Value first;
     parseUnary(&first);
-    valStack.push_back(first);
+    valStack.push_back(std::move(first));
 
     // Main Shunting-Yard loop.
-    while (isBinOp()) {
-        std::string op = _token;
-
+    while (auto op = asBinOp()) {
         // Emit legacy warning for single-char & or | (use && / || instead).
-        if (IsFlag(VF_VERSION2WARNING) && op.length() == 1 && (op[0] == '&' || op[0] == '|')) {
+        if (IsFlag(VF_VERSION2WARNING) && _token.size() == 1 && (_token[0] == '&' || _token[0] == '|')) {
             ERRMSG(0, ("%s(%d) : Warnung: Ab Version 2.0 wird statt & bzw. | nur noch && bzw. || akzeptiert!\n", _file, _line));
         }
 
-        int prec = static_cast<int>(getPrecedence(op));
-        bool rightAssoc = (getAssociativity(op) == ASSOC_RIGHT);
+        const auto& opInfo = kBinOpInfo[static_cast<int>(*op)];
 
         // Pop operators with higher precedence, or equal precedence when left-associative.
         while (!opStack.empty()) {
-            int topPrec = static_cast<int>(getPrecedence(opStack.back()));
-            if (topPrec > prec || (topPrec == prec && !rightAssoc))
+            const auto& topInfo = kBinOpInfo[static_cast<int>(opStack.back())];
+            if (topInfo.prec > opInfo.prec || (topInfo.prec == opInfo.prec && !opInfo.rightAssoc))
                 applyTop();
             else
                 break;
         }
 
-        opStack.push_back(op);
+        opStack.push_back(*op);
         nextToken();
 
         // Parse next primary expression.
         Value next;
         parseUnary(&next);
-        valStack.push_back(next);
+        valStack.push_back(std::move(next));
     }
 
     // Drain remaining operators.
     while (!opStack.empty())
         applyTop();
 
-    *r = valStack.back();
+    *r = std::move(valStack.back());
 }
 
 // Vorzeichen und Logisches Nicht
@@ -1350,30 +1372,4 @@ Value* Expression::getObjectReference(Expression::Variables& oContext, const std
     oExp._valueRef = 0;
     oExp.parseObject(true);
     return oExp._valueRef;
-}
-
-Expression::Precedence Expression::getPrecedence(const std::string& token)
-{
-    if (token == "&" || token == "|" || token == "&&" || token == "||")
-        return PREC_LOGICAL;
-    if (token == "<" || token == ">" || token == "<=" || token == ">=" || token == "==" || token == "!=")
-        return PREC_COMPARISON;
-    if (token == "+" || token == "-")
-        return PREC_ADDITIVE;
-    if (token == "*" || token == "/" || token == "%")
-        return PREC_MULTIPLICATIVE;
-    if (token == "^")
-        return PREC_EXPONENT;
-    if (token == "!" || token == "UNARY_MINUS")
-        return PREC_UNARY;
-    return PREC_NONE;
-}
-
-Expression::Associativity Expression::getAssociativity(const std::string& token)
-{
-    if (token == "^")
-        return ASSOC_RIGHT;
-    if (token == "!" || token == "UNARY_MINUS")
-        return ASSOC_RIGHT;
-    return ASSOC_LEFT;
 }

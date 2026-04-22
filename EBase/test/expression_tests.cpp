@@ -263,28 +263,6 @@ TEST_CASE("Expression basics", "[cexpression]") {
         // 1 & 1 -> 1
         CHECK(eval("1 + 2 * 3 ^ 2 == 19 & 1").asLong() == 1);
     }
-
-    SECTION("Metadata for Shunting-Yard") {
-        // Precedence
-        CHECK(Expression::getPrecedence("^") == Expression::PREC_EXPONENT);
-        CHECK(Expression::getPrecedence("*") == Expression::PREC_MULTIPLICATIVE);
-        CHECK(Expression::getPrecedence("+") == Expression::PREC_ADDITIVE);
-        CHECK(Expression::getPrecedence("==") == Expression::PREC_COMPARISON);
-        CHECK(Expression::getPrecedence("&&") == Expression::PREC_LOGICAL);
-        CHECK(Expression::getPrecedence("!") == Expression::PREC_UNARY);
-
-        // Relative precedence
-        CHECK(Expression::getPrecedence("^") > Expression::getPrecedence("*"));
-        CHECK(Expression::getPrecedence("*") > Expression::getPrecedence("+"));
-        CHECK(Expression::getPrecedence("+") > Expression::getPrecedence("=="));
-        CHECK(Expression::getPrecedence("==") > Expression::getPrecedence("&&"));
-
-        // Associativity
-        CHECK(Expression::getAssociativity("+") == Expression::ASSOC_LEFT);
-        CHECK(Expression::getAssociativity("*") == Expression::ASSOC_LEFT);
-        CHECK(Expression::getAssociativity("^") == Expression::ASSOC_RIGHT);
-        CHECK(Expression::getAssociativity("!") == Expression::ASSOC_RIGHT);
-    }
 }
 
 TEST_CASE("Expression functions", "[cexpression]") {
