@@ -51,9 +51,10 @@
 
 #include <EBase/Value.h>
 
-#include <map>
 #include <memory>
 #include <string>
+#include <string_view>
+#include <unordered_map>
 #include <vector>
 
 // Token types produced by the lexer (nextToken).
@@ -87,7 +88,11 @@ class Expression
 public:
     enum RC { E_OK, E_SYNTAX, E_UNBALAN, E_DIVZERO, E_UNKNOWN, E_BADFUNC, E_NUMARGS, E_NOARG, E_EMPTY, E_VALUE, E_RECOVL, E_BADINDEX, E_INTERNAL, E_FLOAT, E_RESTRICTED };
 
-    typedef std::map<std::string, Value> Variables;
+    struct StringHash {
+        using is_transparent = void;
+        size_t operator()(std::string_view sv) const noexcept { return std::hash<std::string_view>{}(sv); }
+    };
+    typedef std::unordered_map<std::string, Value, StringHash, std::equal_to<>> Variables;
 
     typedef struct
     {
@@ -140,8 +145,8 @@ public:
 
     enum Associativity { ASSOC_NONE, ASSOC_LEFT, ASSOC_RIGHT };
 
-    static Precedence getPrecedence(const std::string& token);
-    static Associativity getAssociativity(const std::string& token);
+    //static Precedence getPrecedence(const std::string& token);
+    //static Associativity getAssociativity(const std::string& token);
     static bool inAssignment() { return _inAssign; }
 
 protected:

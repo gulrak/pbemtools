@@ -67,16 +67,17 @@ configure_file(${PROJECT_SOURCE_DIR}/version.h.in ${CMAKE_BINARY_DIR}/${PROJECT_
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 # make sure c++14 is used
-message("Configure build files to use C++14")
-set(CMAKE_CXX_STANDARD 14)
+message("Configure build files to use C++20")
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
 
 if(UNIX)
     set(COMMON_WARNINGS "-Wall -Wextra -Wno-unknown-warning-option -Wshadow -Wmissing-include-dirs -Wfloat-equal -Wpointer-arith -Wunreachable-code -Wno-non-virtual-dtor -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-format-nonliteral -Wno-format -Wno-format-security -Wno-psabi -Werror")
     if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
         set(SYSTEM_LIBS dl)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMMON_WARNINGS}")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMMON_WARNINGS} -fno-omit-frame-pointer")
         #set(CMAKE_CXX_FLAGS "-static ${CMAKE_CXX_FLAGS} ${COMMON_WARNINGS}")
         #set(CMAKE_C_FLAGS "-static ${CMAKE_C_FLAGS}")
     elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
