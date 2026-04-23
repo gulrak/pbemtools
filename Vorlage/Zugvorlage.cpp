@@ -811,7 +811,9 @@ void CVorlage::Vorlage(CReport& oReport, CReport* poRep2, bool bTime)
     m_poCurrentReport = &oReport;
     CMessage::SelectRenderer(oReport.MessageRenderer(), oReport.MessageRules());
     oReport.CalculateStatistics();
-
+    if (poRep2) {
+        poRep2->CalculateStatistics();
+    }
     m_nPlayer = oReport.Partei();
     for (CReport::Einheiten::iterator ei = oReport.GEinheiten().begin(); ei != oReport.GEinheiten().end(); ei++) {
         if ((*ei).second->Partei() == m_nPlayer) {
