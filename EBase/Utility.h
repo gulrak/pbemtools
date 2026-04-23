@@ -54,6 +54,8 @@
 #include <string>
 #include <vector>
 
+#include <fmt/format.h>
+
 #define IsAlpha(c) isalpha((unsigned char)(c))
 #define IsAlNum(c) isalnum((unsigned char)(c))
 #define IsDigit(c) isdigit((unsigned char)(c))
@@ -340,6 +342,17 @@ public:
 
     static void TWrite(const std::string& sID, const std::string& sTxt);
     static void TPrintf(const std::string& sID, const char* msg, ...);
+
+    // Compile-time-safe formatted output via fmtlib.
+    // fmt::format_string<Args...> validates the format string and argument types
+    // at compile time — wrong types or argument count are caught as errors, not
+    // as runtime crashes or silent truncation like TPrintf.
+    template <typename... Args>
+    static void TPrint(const std::string& sID, fmt::format_string<Args...> fmt, Args&&... args)
+    {
+        Target(sID)->Write(fmt::format(fmt, std::forward<Args>(args)...));
+    }
+
     static void CloseTargets();
     static void SetTarget(const std::string& sID, COutput* poTrace);
     static void SetFilter(const std::string& sID, const std::string& sFilter);
