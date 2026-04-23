@@ -2083,7 +2083,7 @@ COutput::COutput(const std::string& sFileName, bool bFlushed)
     , m_hFile(0)
     , m_poRoute(0)
 {
-    std::map<std::string, COutput*>::const_iterator di = g_cpoDestinations.find(sFileName);
+    auto di = g_cpoDestinations.find(sFileName);
     if (di == g_cpoDestinations.end()) {
         m_hFile = fopen(sFileName.c_str(), "w");
         if (m_hFile) {
@@ -2215,7 +2215,7 @@ extern bool DoUserFunction(const std::string& sName, ArgumentList& coArgs, Value
 
 void COutput::FilterWrite(const char* pcTxt)
 {
-    std::map<std::string, std::string>::iterator i = g_csFilter.find(m_sTargetName);
+    auto i = g_csFilter.find(m_sTargetName);
     if (i != g_csFilter.end()) {
         ArgumentList coArgs;
         Value oVal;
@@ -2239,7 +2239,7 @@ void COutput::FilterWrite(const char* pcTxt)
 
 void COutput::Write(const char* pcTxt)
 {
-    std::map<std::string, std::string>::iterator i = g_csFilter.find(m_sTargetName);
+    auto i = g_csFilter.find(m_sTargetName);
     if (i == g_csFilter.end()) {
         DoWrite(pcTxt);
         return;
@@ -2293,7 +2293,7 @@ void COutput::TPrintf(const std::string& sID, const char* msg, ...)
 
 void COutput::CloseTargets()
 {
-    std::map<std::string, COutput*>::iterator ti = g_cpoTargets.begin();
+    auto ti = g_cpoTargets.begin();
     std::list<COutput*> cpoHelp;
 
     while (ti != g_cpoTargets.end()) {
@@ -2305,7 +2305,7 @@ void COutput::CloseTargets()
         }
     }
     g_cpoTargets.clear();
-    std::list<COutput*>::iterator hi = cpoHelp.begin();
+    auto hi = cpoHelp.begin();
     while (hi != cpoHelp.end()) {
         delete (*hi++);
     }
@@ -2315,7 +2315,7 @@ void COutput::CloseTargets()
 
 void COutput::SetTarget(const std::string& sID, COutput* poTarget)
 {
-    std::map<std::string, COutput*>::iterator ti = g_cpoTargets.find(sID);
+    auto ti = g_cpoTargets.find(sID);
     poTarget->m_sTargetName = sID;
 
     if (ti == g_cpoTargets.end()) {
@@ -2341,7 +2341,7 @@ void COutput::SetFilter(const std::string& sID, const std::string& sFilter)
 
 void COutput::RenameTarget(const std::string& sIDOld, const std::string& sIDNew)
 {
-    std::map<std::string, COutput*>::iterator ti = g_cpoTargets.find(sIDOld);
+    auto ti = g_cpoTargets.find(sIDOld);
     COutput* poTarget;
     if (ti != g_cpoTargets.end()) {
         poTarget = (*ti).second;
@@ -2352,7 +2352,7 @@ void COutput::RenameTarget(const std::string& sIDOld, const std::string& sIDNew)
 
 COutput* COutput::Target(const std::string& sID)
 {
-    std::map<std::string, COutput*>::const_iterator ti = g_cpoTargets.find(sID);
+    auto ti = g_cpoTargets.find(sID);
     if (ti == g_cpoTargets.end()) {
         SetTarget(sID, new COutput(stderr));
         ERRMSG(0, ("FEHLER: Der interne Ausgabekanal '%s' wurde nicht gefunden!", sID.c_str()));

@@ -2203,7 +2203,7 @@ void CReport::Import(const std::string& sFName)
             int32_t nUnit = -1;
             int nBuilding = -1;
             bool bDrop = false;
-            CMessage::Ptr pMsg(new CMessage(oRS, m_nRunde));
+            auto pMsg = std::make_unique<CMessage>(oRS, m_nRunde);
             if (inBattle && pMsg->GetValue("region", Value("")).asString().empty()) {
                 pMsg->SetValue("region", Value(battle_x));
                 pMsg->SetValue("region:1", Value(battle_y));
@@ -2297,7 +2297,7 @@ void CReport::Import(const std::string& sFName)
                 z = pMsg->GetValue("region:2").asLong();
                 bRegion = true;
             }
-            m_cpoMessages.insert(std::make_pair(m_cpoMessages.size(), pMsg));
+            m_cpoMessages.push_back(std::move(pMsg));
             if (!bDrop && (nAmount || (nBuilding > 0 && ((m_nRunde < 227 && nType == 7835) || (m_nRunde == 227 && nType == -1376149197L) || (m_nRunde > 227 && nType == 761324692L))))) {
                 if (nFrom == Partei())
                     nAmount = -nAmount;
@@ -2537,9 +2537,9 @@ void CReport::Import(const std::string& sFName)
         }
         else if (oRS.GetType() == CReportStream::enBLOCK && (oRS.GetValue() == "REGION" || oRS.GetValue() == "DURCHREISEREGION" || oRS.GetValue() == "SPEZIALREGION")) {
             if (bFirstRegion) {
-                CMessage::Ptr pMsg(new CMessage(m_nRunde));
+                auto pMsg = std::make_unique<CMessage>(m_nRunde);
                 pMsg->SetValue("type", Value(-2));
-                m_cpoMessages[m_cpoMessages.size()] = pMsg;
+                m_cpoMessages.push_back(std::move(pMsg));
                 bFirstRegion = false;
             }
 
@@ -2550,12 +2550,12 @@ void CReport::Import(const std::string& sFName)
             battle_x = oRS.GetDat(0);
             battle_y = oRS.GetDat(1);
             battle_z = oRS.GetDat(2);
-            CMessage::Ptr pMsg(new CMessage(m_nRunde));
+            auto pMsg = std::make_unique<CMessage>(m_nRunde);
             pMsg->SetValue("region", Value(battle_x));
             pMsg->SetValue("region:1", Value(battle_y));
             pMsg->SetValue("region:2", Value(battle_z));
             pMsg->SetValue("type", Value(-1));
-            m_cpoMessages[m_cpoMessages.size()] = pMsg;
+            m_cpoMessages.push_back(std::move(pMsg));
             oRS.Next();
             while (!oRS.EOS() && (oRS.GetType() != CReportStream::enBLOCK || oRS.GetValue() != "MESSAGE"))
                 oRS.Next();
@@ -2599,72 +2599,72 @@ void CReport::Import(const std::string& sFName)
     SetMessageSection(-1, "battle");
     SetMessageSection(-2, "dummy");
 
-    for (Messages::const_iterator mi = m_cpoMessages.begin(); mi != m_cpoMessages.end(); mi++) {
+    for (const auto& mi : m_cpoMessages) {
+        CMessage* pMsg = mi.get();
         bUsed = false;
-        // TRACEMSG(( "%s\n", ((CMessage*)((*mi).second.get()))->Render( this ).c_str() ));
-        en1 = (*mi).second->GetValue("unit", Value("")).asLong();
-        en2 = (*mi).second->GetValue("target", Value("")).asLong();
-        en3 = (*mi).second->GetValue("teacher", Value("")).asLong();
-        en4 = (*mi).second->GetValue("student", Value("")).asLong();
+        en1 = pMsg->GetValue("unit", Value("")).asLong();
+        en2 = pMsg->GetValue("target", Value("")).asLong();
+        en3 = pMsg->GetValue("teacher", Value("")).asLong();
+        en4 = pMsg->GetValue("student", Value("")).asLong();
         if (en1) {
             ui = m_cpoGEinheiten.find(en1);
             if (ui != m_cpoGEinheiten.end() && (*ui).second->Partei() == Partei()) {
-                (*ui).second->AddMessage((*mi).second);
+                (*ui).second->AddMessage(pMsg);
                 bUsed = true;
             }
         }
         if (en2) {
             ui = m_cpoGEinheiten.find(en2);
             if (ui != m_cpoGEinheiten.end() && (*ui).second->Partei() == Partei()) {
-                (*ui).second->AddMessage((*mi).second);
+                (*ui).second->AddMessage(pMsg);
                 bUsed = true;
             }
         }
         if (en3) {
             ui = m_cpoGEinheiten.find(en3);
             if (ui != m_cpoGEinheiten.end() && (*ui).second->Partei() == Partei()) {
-                (*ui).second->AddMessage((*mi).second);
+                (*ui).second->AddMessage(pMsg);
                 bUsed = true;
             }
         }
         if (en4) {
             ui = m_cpoGEinheiten.find(en4);
             if (ui != m_cpoGEinheiten.end() && (*ui).second->Partei() == Partei()) {
-                (*ui).second->AddMessage((*mi).second);
+                (*ui).second->AddMessage(pMsg);
                 bUsed = true;
             }
         }
         if (!bUsed) {
-            if (!(*mi).second->GetValue("region", Value("")).asString().empty()) {
+            if (!pMsg->GetValue("region", Value("")).asString().empty()) {
                 int32_t x, y, z;
-                ((CMessage*)((*mi).second.get()))->GetCoords(/*(*mi).second->GetValue(*/ "region" /*, Value( "" ) ).asString()*/, x, y, z);
+                pMsg->GetCoords("region", x, y, z);
                 CRegion* pReg = GetMap()->GetFromECords(x, y, z);
                 if (pReg) {
-                    pReg->AddMessage((*mi).second);
+                    pReg->AddMessage(pMsg);
                     bUsed = true;
                 }
             }
-            if (!(*mi).second->GetValue("start", Value("")).asString().empty()) {
+            if (!pMsg->GetValue("start", Value("")).asString().empty()) {
                 int32_t x, y, z;
-                ((CMessage*)((*mi).second.get()))->GetCoords(/*(*mi).second->GetValue(*/ "start" /*, Value( "" ) ).asString()*/, x, y, z);
+                pMsg->GetCoords("start", x, y, z);
                 CRegion* pReg = GetMap()->GetFromECords(x, y, z);
                 if (pReg) {
-                    pReg->AddMessage((*mi).second);
+                    pReg->AddMessage(pMsg);
                     bUsed = true;
                 }
             }
-            if (!(*mi).second->GetValue("end", Value("")).asString().empty()) {
+            if (!pMsg->GetValue("end", Value("")).asString().empty()) {
                 int32_t x, y, z;
-                ((CMessage*)((*mi).second.get()))->GetCoords(/*(*mi).second->GetValue( */ "end" /*, Value( "" ) ).asString()*/, x, y, z);
+                pMsg->GetCoords("end", x, y, z);
                 CRegion* pReg = GetMap()->GetFromECords(x, y, z);
                 if (pReg) {
-                    pReg->AddMessage((*mi).second);
+                    pReg->AddMessage(pMsg);
                     bUsed = true;
                 }
             }
         }
         if (bUsed) {
-            (*mi).second->SetValue("_used", Value(1));
+            pMsg->SetValue("_used", Value(1));
         }
     }
 
@@ -2821,52 +2821,53 @@ void CReport::CalculateStatistics()
     m_nEinkommen = m_nMsgEinkommen;
     m_nAusgaben = m_nMsgAusgaben;
 
-    for (Messages::const_iterator mi = m_cpoMessages.begin(); mi != m_cpoMessages.end(); mi++) {
+    for (const auto& mi : m_cpoMessages) {
+        const CMessage* pMsg = mi.get();
         if (m_nRunde < 227) {
-            switch ((*mi).second->GetValue("type").asLong()) {
+            switch (pMsg->GetValue("type").asLong()) {
                 case 581:
-                    nP1 = PNrFromENr((*mi).second->GetValue("unit").asLong());
-                    nP2 = PNrFromENr((*mi).second->GetValue("target").asLong());
+                    nP1 = PNrFromENr(pMsg->GetValue("unit").asLong());
+                    nP2 = PNrFromENr(pMsg->GetValue("target").asLong());
                     if (nP1 != nP2) {
                         if (nP1 == m_nPartei)
-                            InsertHandel(nP2, -(*mi).second->GetValue("amount").asLong(), (*mi).second->GetValue("resource").asString());
+                            InsertHandel(nP2, -pMsg->GetValue("amount").asLong(), pMsg->GetValue("resource").asString());
                         else
-                            InsertHandel(nP1, (*mi).second->GetValue("amount").asLong(), (*mi).second->GetValue("resource").asString());
+                            InsertHandel(nP1, pMsg->GetValue("amount").asLong(), pMsg->GetValue("resource").asString());
                     }
                     break;
                 case 9386:
-                    nP1 = (*mi).second->GetValue("from").asLong();
-                    nP2 = (*mi).second->GetValue("to").asLong();
+                    nP1 = pMsg->GetValue("from").asLong();
+                    nP2 = pMsg->GetValue("to").asLong();
                     if (nP1 != nP2) {
                         if (nP1 == m_nPartei)
-                            InsertHandel(nP2, -(*mi).second->GetValue("amount").asLong(), (*mi).second->GetValue("resource", Value("Silber")).asString());
+                            InsertHandel(nP2, -pMsg->GetValue("amount").asLong(), pMsg->GetValue("resource", Value("Silber")).asString());
                         else
-                            InsertHandel(nP1, (*mi).second->GetValue("amount").asLong(), (*mi).second->GetValue("resource", Value("Silber")).asString());
+                            InsertHandel(nP1, pMsg->GetValue("amount").asLong(), pMsg->GetValue("resource", Value("Silber")).asString());
                     }
                     break;
             }
         }
         else if (m_nRunde >= 227) {
-            switch ((*mi).second->GetValue("type").asLong()) {
+            switch (pMsg->GetValue("type").asLong()) {
                 case 5281483:
                 case 1235024123:
-                    nP1 = PNrFromENr((*mi).second->GetValue("unit").asLong());
-                    nP2 = PNrFromENr((*mi).second->GetValue("target").asLong());
+                    nP1 = PNrFromENr(pMsg->GetValue("unit").asLong());
+                    nP2 = PNrFromENr(pMsg->GetValue("target").asLong());
                     if (nP1 != nP2) {
                         if (nP1 == m_nPartei)
-                            InsertHandel(nP2, -(*mi).second->GetValue("amount").asLong(), (*mi).second->GetValue("resource").asString());
+                            InsertHandel(nP2, -pMsg->GetValue("amount").asLong(), pMsg->GetValue("resource").asString());
                         else
-                            InsertHandel(nP1, (*mi).second->GetValue("amount").asLong(), (*mi).second->GetValue("resource").asString());
+                            InsertHandel(nP1, pMsg->GetValue("amount").asLong(), pMsg->GetValue("resource").asString());
                     }
                     break;
                 case 1682429624:
-                    nP1 = (*mi).second->GetValue("from").asLong();
-                    nP2 = (*mi).second->GetValue("to").asLong();
+                    nP1 = pMsg->GetValue("from").asLong();
+                    nP2 = pMsg->GetValue("to").asLong();
                     if (nP1 != nP2) {
                         if (nP1 == m_nPartei)
-                            InsertHandel(nP2, -(*mi).second->GetValue("amount").asLong(), (*mi).second->GetValue("resource", Value("Silber")).asString());
+                            InsertHandel(nP2, -pMsg->GetValue("amount").asLong(), pMsg->GetValue("resource", Value("Silber")).asString());
                         else
-                            InsertHandel(nP1, (*mi).second->GetValue("amount").asLong(), (*mi).second->GetValue("resource", Value("Silber")).asString());
+                            InsertHandel(nP1, pMsg->GetValue("amount").asLong(), pMsg->GetValue("resource", Value("Silber")).asString());
                     }
                     break;
             }
@@ -3624,9 +3625,9 @@ CRegion::CRegion(CReportStream& oRS, CKarte* poMap, int nRunde, int32_t nPos)
                     oRS.Next();
             }
             else if (oRS.GetValue() == "MESSAGE") {
-                CMessage::Ptr pMsg(new CMessage(oRS, m_nRunde));
-                //                m_cpoMessages.push_back( pMsg );
-                Map()->Report()->AddMessage(pMsg);
+                auto pMsgOwned = std::make_unique<CMessage>(oRS, m_nRunde);
+                CMessage* pMsg = pMsgOwned.get();
+                Map()->Report()->AddMessage(std::move(pMsgOwned));
                 if (IsEqual(Map()->Report()->m_sSpiel, "eressea") && pMsg->GetValue("type").asLong() == 1638122429)
                     m_bVerorkt = true;
                 pMsg->SetValue(std::string("localmsg"), Value(1));

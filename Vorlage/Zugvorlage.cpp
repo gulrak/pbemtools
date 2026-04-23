@@ -2249,8 +2249,8 @@ void CVorlage::Einheitenvorlage(CEinheit* poUnit, CReport* poRep2)
                 WrapOut("  ;   ", (*bi), (size_t)g_nLineSize, "  ; ");
                 //			COutput::TPrintf( "vorlage", "  ; %s\n", (*bi).c_str() );
             }
-            for (CEinheit::Messages::const_iterator mi = poUnit->m_cpoMessages.begin(); mi != poUnit->m_cpoMessages.end(); mi++) {
-                WrapOut("  ;   ", ((CMessage*)((*mi).get()))->Render(g_poCurrentReport), (size_t)g_nLineSize, "  ; > ");
+            for (CMessage* mi : poUnit->m_cpoMessages) {
+                WrapOut("  ;   ", mi->Render(g_poCurrentReport), (size_t)g_nLineSize, "  ; > ");
             }
         }
 

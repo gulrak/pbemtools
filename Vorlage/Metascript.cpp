@@ -644,16 +644,16 @@ Value DoReport(CObjectPart* poPart)
             return oVal;
         }
         if (g_poCurrentReport->NumMessage()) {
-            CMessage::Ptr pMsg = g_poCurrentReport->GetMessage((size_t)pOP->index[0].asLong());
+            CMessage* pMsg = g_poCurrentReport->GetMessage((size_t)pOP->index[0].asLong());
             if (!pOP->next) {
-                return pMsg.get() ? Value(1) : Value(0);
+                return pMsg ? Value(1) : Value(0);
             }
-            if (!pMsg.get()) {
+            if (!pMsg) {
                 oVal.error("Index von REPORT.MESSAGE[] korrupt");
                 return oVal;
             }
             if (IsEqual(pOP->next->label.c_str(), "rendered")) {
-                return Value(((CMessage*)(pMsg.get()))->Render(g_poCurrentReport));
+                return Value(pMsg->Render(g_poCurrentReport));
             }
             else if (IsEqual(pOP->next->label.c_str(), "section")) {
                 return (*(g_poCurrentReport->MessageSections()))[pMsg->GetValue("type", Value(0)).asLong()];
@@ -1132,16 +1132,16 @@ Value _DoRegion(CObjectPart* poPart, CRegion* pReg, CRegion* pRegQ)
             return oVal;
         }
         if (pReg->NumMessage()) {
-            CMessage::Ptr pMsg = pReg->GetMessage(pOP->index[0].asLong());
+            CMessage* pMsg = pReg->GetMessage(pOP->index[0].asLong());
             if (!pOP->next) {
-                return pMsg.get() ? Value(1) : Value(0);
+                return pMsg ? Value(1) : Value(0);
             }
-            if (!pMsg.get()) {
+            if (!pMsg) {
                 oVal.error("Index von REGION.MESSAGE[] korrupt");
                 return oVal;
             }
             if (IsEqual(pOP->next->label.c_str(), "rendered")) {
-                return Value(((CMessage*)(pMsg.get()))->Render(g_poCurrentReport));
+                return Value(pMsg->Render(g_poCurrentReport));
             }
             else if (IsEqual(pOP->next->label.c_str(), "section")) {
                 return (*(g_poCurrentReport->MessageSections()))[pMsg->GetValue("type", Value(0)).asLong()];
