@@ -337,16 +337,17 @@ public:
     void Write(const char* pcTxt);
     void Write(const std::string& sTxt);
     void Printf(const char* msg, ...);
+    template <typename... Args>
+    void Print(fmt::format_string<Args...> fmt, Args&&... args)
+    {
+        Write(fmt::format(fmt, std::forward<Args>(args)...));
+    }
 
     bool Disconnect(bool bSuicide = true);
 
     static void TWrite(const std::string& sID, const std::string& sTxt);
     static void TPrintf(const std::string& sID, const char* msg, ...);
 
-    // Compile-time-safe formatted output via fmtlib.
-    // fmt::format_string<Args...> validates the format string and argument types
-    // at compile time — wrong types or argument count are caught as errors, not
-    // as runtime crashes or silent truncation like TPrintf.
     template <typename... Args>
     static void TPrint(const std::string& sID, fmt::format_string<Args...> fmt, Args&&... args)
     {

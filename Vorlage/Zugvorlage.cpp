@@ -224,8 +224,9 @@ static void WrapOut(const std::string& sPfx, const std::string& sText, size_t nL
     int c = 0;
     if (sFirstPfx.empty())
         sFPfx = sPfx;
+    auto target = COutput::Target("vorlage");
     do {
-        COutput::TPrint("vorlage", "{}{}\n", c ? sPfx : sFPfx, Wrap(sTxt, nLen - (c ? sPfx.size() : sFPfx.size())));
+        target->Print("{}{}\n", c ? sPfx : sFPfx, Wrap(sTxt, nLen - (c ? sPfx.size() : sFPfx.size())));
         c++;
     } while (!sTxt.empty());
 }
@@ -826,10 +827,11 @@ void CVorlage::Vorlage(CReport& oReport, CReport* poRep2, bool bTime)
     }
     m_nUnits = nUnits;
 
-    COutput::TPrint("vorlage", "{} {} \"{}\"\n", IsEqual(g_poCurrentReport->m_sSpiel, "eressea") ? "ERESSEA" : "PARTEI", itoan(oReport.Partei(), oReport.PNrBase()), oReport.Passwort());
+    auto* target = COutput::Target("vorlage");
+    target->Print("{} {} \"{}\"\n", IsEqual(g_poCurrentReport->m_sSpiel, "eressea") ? "ERESSEA" : "PARTEI", itoan(oReport.Partei(), oReport.PNrBase()), oReport.Passwort());
     if (IsEqual(g_poCurrentReport->m_sSpiel, "eressea") || IsEqual(g_poCurrentReport->m_sSpiel, "empiria") || IsEqual(g_poCurrentReport->m_sSpiel, "vinyambar i") || IsEqual(g_poCurrentReport->m_sSpiel, "vinyambar ii"))
-        COutput::TPrint("vorlage", "\n ; ECHECK -l -w4 -r{}\n", oReport.Rekrutierungskosten());
-    COutput::TPrint("vorlage", "\n ; {}, (C) 1999-2026 by S.Schuemann\n ; [{} {}]\n", VERSIONINFO, __DATE__, __TIME__);
+        target->Print("\n ; ECHECK -l -w4 -r{}\n", oReport.Rekrutierungskosten());
+    target->Print("\n ; {}, (C) 1999-2026 by S.Schuemann\n ; [{} {}]\n", VERSIONINFO, __DATE__, __TIME__);
     WrapOut(" ;         ", g_sCmdOptions, (size_t)g_nLineSize, " ; ");
     if (poRep2 && oReport.Version() != poRep2->Version()) {
         std::ostringstream out;
@@ -837,13 +839,13 @@ void CVorlage::Vorlage(CReport& oReport, CReport* poRep2, bool bTime)
         auto msg = out.str();
         if (bTime)
             TRACEMSG(("%s\n", msg.c_str()));
-        COutput::TPrint("vorlage", " ; {}\n", msg);
+        target->Print(" ; {}\n", msg);
     }
 
     if (oReport.Zeitalter() == 1)
-        COutput::TPrint("vorlage", "\n ; Zugvorlage aus Report Runde {}  ({} {})\n", oReport.Runde(), pcJahr[(oReport.Runde()) % 12], (oReport.Runde() - 1) / 12 + 1);
+        target->Print("\n ; Zugvorlage aus Report Runde {}  ({} {})\n", oReport.Runde(), pcJahr[(oReport.Runde()) % 12], (oReport.Runde() - 1) / 12 + 1);
     else
-        COutput::TPrint("vorlage", "\n ; Zugvorlage aus Report Runde {}  ({}. Woche, {}, {})\n", oReport.Runde(), (oReport.Runde() - 184) % 3 + 1, pcJahr2[((oReport.Runde() - 184) / 3) % 9], (oReport.Runde() - 184) / 27 + 1);
+        target->Print("\n ; Zugvorlage aus Report Runde {}  ({}. Woche, {}, {})\n", oReport.Runde(), (oReport.Runde() - 184) % 3 + 1, pcJahr2[((oReport.Runde() - 184) / 3) % 9], (oReport.Runde() - 184) / 27 + 1);
 
     CPartei::Ptr parteiInfo = oReport.GetLocalParteiInfo(oReport.Partei());
     CPartei::Ptr lastParteiInfo;
@@ -860,10 +862,10 @@ void CVorlage::Vorlage(CReport& oReport, CReport* poRep2, bool bTime)
     if (oReport.m_nPunkte > 0 && oReport.m_nPunkteschnitt > 0) {
         if (!poRep2) {
             if (maxHeroes > 0)
-                COutput::TPrint("vorlage", " ; Personen: {}, Einheiten: {}, Helden: {}/{}\n", nPersons, nUnits, heroes, maxHeroes);
+                target->Print(" ; Personen: {}, Einheiten: {}, Helden: {}/{}\n", nPersons, nUnits, heroes, maxHeroes);
             else
-                COutput::TPrint("vorlage", " ; Personen: {}, Einheiten: {}\n", nPersons, nUnits);
-            COutput::TPrint("vorlage", " ; Punkte: {} ({:.2f}% des Durchschnitts)\n", oReport.m_nPunkte, (double)oReport.m_nPunkte * 100.0 / oReport.m_nPunkteschnitt);
+                target->Print(" ; Personen: {}, Einheiten: {}\n", nPersons, nUnits);
+            target->Print(" ; Punkte: {} ({:.2f}% des Durchschnitts)\n", oReport.m_nPunkte, (double)oReport.m_nPunkte * 100.0 / oReport.m_nPunkteschnitt);
         }
         else {
             int32_t nLastUnits = 0, nLastPersons = 0;
@@ -883,15 +885,15 @@ void CVorlage::Vorlage(CReport& oReport, CReport* poRep2, bool bTime)
             if (lastParteiInfo)
                 lastHeroes = lastParteiInfo->GetValue("heroes").asLong();
             if (maxHeroes > 0)
-                COutput::TPrint("vorlage", " ; Personen: {} ({:+}), Einheiten: {} ({:+}), Helden: {}/{} ({:+}/{:+})\n", nPersons, nPersons - nLastPersons, nUnits, nUnits - nLastUnits, heroes, maxHeroes, heroes - lastHeroes, maxHeroes - lastMaxHeroes);
+                target->Print(" ; Personen: {} ({:+}), Einheiten: {} ({:+}), Helden: {}/{} ({:+}/{:+})\n", nPersons, nPersons - nLastPersons, nUnits, nUnits - nLastUnits, heroes, maxHeroes, heroes - lastHeroes, maxHeroes - lastMaxHeroes);
             else
-                COutput::TPrint("vorlage", " ; Personen: {} ({:+}), Einheiten: {} ({:+})\n", nPersons, nPersons - nLastPersons, nUnits, nUnits - nLastUnits);
+                target->Print(" ; Personen: {} ({:+}), Einheiten: {} ({:+})\n", nPersons, nPersons - nLastPersons, nUnits, nUnits - nLastUnits);
 
             if (poRep2->m_nPunkte)
-                COutput::TPrint("vorlage", " ; Punkte: {} ({:.2f}% des Durchschnitts, {:+.2f}%)\n", oReport.m_nPunkte, (double)oReport.m_nPunkte * 100.0 / oReport.m_nPunkteschnitt,
+                target->Print(" ; Punkte: {} ({:.2f}% des Durchschnitts, {:+.2f}%)\n", oReport.m_nPunkte, (double)oReport.m_nPunkte * 100.0 / oReport.m_nPunkteschnitt,
                                 (double)oReport.m_nPunkte * 100.0 / oReport.m_nPunkteschnitt - (double)poRep2->m_nPunkte * 100.0 / poRep2->m_nPunkteschnitt);
             else
-                COutput::TPrint("vorlage", " ; Punkte: {} ({:.2f}% des Durchschnitts)\n", oReport.m_nPunkte, (double)oReport.m_nPunkte * 100.0 / oReport.m_nPunkteschnitt);
+                target->Print(" ; Punkte: {} ({:.2f}% des Durchschnitts)\n", oReport.m_nPunkte, (double)oReport.m_nPunkte * 100.0 / oReport.m_nPunkteschnitt);
         }
     }
 
@@ -966,7 +968,7 @@ void CVorlage::Vorlage(CReport& oReport, CReport* poRep2, bool bTime)
     if (!m_coInitCmd.empty()) {
         for (int32_t i = 0; i < (int32_t)m_coInitCmd.size(); i++) {
             if (m_coInitCmd[i].empty()) {
-                COutput::TWrite("vorlage", "\n");
+                target->Write("\n");
             }
             else {
                 if (m_coInitCmd[i].asString()[0] == ';')
@@ -976,17 +978,17 @@ void CVorlage::Vorlage(CReport& oReport, CReport* poRep2, bool bTime)
     }
 
     if (IsFlag(VF_SHOWHANDEL)) {
-        COutput::TWrite("vorlage", "\n ; Wirtschaftsbilanz:\n");
-        COutput::TPrint("vorlage", " ; Gesamteinkommen:{:9} Silber\n", oReport.m_nEinkommen);
-        COutput::TPrint("vorlage", " ; Gesamtausgaben: {:9} Silber {}\n", oReport.m_nAusgaben + nNeededFood /*Eater*10*/, oReport.Version() > 40 ? "" : "(z.Zt. ohne kostenpfl. Talente)");
+        target->Write("\n ; Wirtschaftsbilanz:\n");
+        target->Print(" ; Gesamteinkommen:{:9} Silber\n", oReport.m_nEinkommen);
+        target->Print(" ; Gesamtausgaben: {:9} Silber {}\n", oReport.m_nAusgaben + nNeededFood /*Eater*10*/, oReport.Version() > 40 ? "" : "(z.Zt. ohne kostenpfl. Talente)");
         int64_t nVermoegen = 0;
         for (CKarte::RegionMap::const_iterator rmi = m_poKarte->Regions().begin(); rmi != m_poKarte->Regions().end(); rmi++) {
             nVermoegen += (*rmi).second->SilverOf(oReport.Partei());
         }
-        COutput::TPrint("vorlage", " ; Gesamtverm\xF6gen: {:9} Silber\n", nVermoegen);
+        target->Print(" ; Gesamtverm\xF6gen: {:9} Silber\n", nVermoegen);
 
         if (oReport.m_cpoHPartner.size())
-            COutput::TWrite("vorlage", "\n ; Warenaustausch:\n");
+            target->Write("\n ; Warenaustausch:\n");
 
         for (CReport::Handelspartner::const_iterator rhi = oReport.m_cpoHPartner.begin(); rhi != oReport.m_cpoHPartner.end(); rhi++) {
             std::ostringstream out;
@@ -1012,12 +1014,12 @@ void CVorlage::Vorlage(CReport& oReport, CReport* poRep2, bool bTime)
     std::stable_sort(cpoRegions.begin(), cpoRegions.end(), CRegionSorter(IsFlag(VF_SORTISLANDS)));
 
     if (IsFlag(VF_SHOWKOMPKARTE)) {
-        COutput::TWrite("vorlage", "\n ; Uebersichtskarte:\n");
+        target->Write("\n ; Uebersichtskarte:\n");
         oReport.Karte()->DumpFullMap("vorlage", " ; ");
     }
 
     if (IsFlag(VF_SHOWWORLDKARTE)) {
-        COutput::TWrite("vorlage", "\n ; Karte der bekannten Welt:\n");
+        target->Write("\n ; Karte der bekannten Welt:\n");
         oReport.Karte()->DumpWorldMap("vorlage", " ; ");
     }
 
@@ -1039,12 +1041,12 @@ void CVorlage::Vorlage(CReport& oReport, CReport* poRep2, bool bTime)
         }
     }
 
-    COutput::TWrite("vorlage", "\n NAECHSTER\n\n");
+    target->Write("\n NAECHSTER\n\n");
 
     if (!m_coExitCmd.empty()) {
         for (int32_t i = 0; i < (int32_t)m_coExitCmd.size(); i++) {
             if (m_coExitCmd[i].empty()) {
-                COutput::TWrite("vorlage", "\n");
+                target->Write("\n");
             }
             else {
                 if (m_coExitCmd[i].asString()[0] == ';')
@@ -1091,15 +1093,15 @@ void CVorlage::Vorlage(CReport& oReport, CReport* poRep2, bool bTime)
             if (!bKonfiguration && sLine.length() > 15 && CRegExp::Match(sLine, "^(\"[^\"]*\"\\s*;\\s*(?i:Konfiguration)|[A-Z]+)")) {
                 bKonfiguration = true;
                 if (CRegExp::Match(sLine, "^\"[^\"]*\"\\s*;\\s*(?i:Konfiguration)")) {
-                    COutput::TWrite("vorlage", "\"Vorlage\";Konfiguration\n");
+                    target->Write("\"Vorlage\";Konfiguration\n");
                 }
                 else {
-                    COutput::TWrite("vorlage", "\"Vorlage\";Konfiguration\n");
-                    COutput::TPrint("vorlage", "{}\n", sLine);
+                    target->Write("\"Vorlage\";Konfiguration\n");
+                    target->Print("{}\n", sLine);
                 }
             }
             else {
-                COutput::TPrint("vorlage", "{}\n", sLine);
+                target->Print("{}\n", sLine);
             }
 
             if (!strncmp(sLine.c_str(), "REGION ", 7)) {
@@ -1154,7 +1156,7 @@ void CVorlage::Vorlage(CReport& oReport, CReport* poRep2, bool bTime)
                     for (int32_t i = 0; i < (int32_t)poUnit->m_csKommandos.size(); i++) {
                         std::string strVal = Escape(poUnit->m_csKommandos[i].asString(), true);
                         if (!poUnit->m_csKommandos[i].empty())
-                            COutput::TPrint("vorlage", "\"{}\"\n", oReport.m_bUTF8 ? iso885915ToUtf8(strVal) : strVal);
+                            target->Print("\"{}\"\n", oReport.m_bUTF8 ? iso885915ToUtf8(strVal) : strVal);
                     }
                 }
 
@@ -1173,11 +1175,11 @@ void CVorlage::Vorlage(CReport& oReport, CReport* poRep2, bool bTime)
                             sCmd.erase(sCmd.size() - 1, 1);
                     }
                     std::string strVal = Escape(sCmd, true);
-                    COutput::TPrint("vorlage", "\"{}\"\n", oReport.m_bUTF8 ? iso885915ToUtf8(strVal) : strVal);
+                    target->Print("\"{}\"\n", oReport.m_bUTF8 ? iso885915ToUtf8(strVal) : strVal);
                 }
 
                 if (poUnit->m_csMetaOut.empty() && (poUnit->m_csKommandos.empty() || IsFlag(VF_FULLCOMMANDOUTPUT))) {
-                    COutput::TWrite("vorlage", "\"\"\n");
+                    target->Write("\"\"\n");
                 }
 
                 bGotLine = true;
@@ -1274,6 +1276,7 @@ void CVorlage::Regionsvorlage(CRegion* poReg, CRegion* poReg2, CReport* poRep2)
     CRegion::VEinheiten* poVE = &poReg->GetVEinheiten();
     m_poCurrentRegion = poReg;
     g_poCurrentRegion = poReg;
+    auto* target = COutput::Target("vorlage");
 
     if (poReg->GetVBauwerke()) {
         coBauwerke.insert(poReg->GetVBauwerke()->begin(), poReg->GetVBauwerke()->end());
@@ -1310,17 +1313,17 @@ void CVorlage::Regionsvorlage(CRegion* poReg, CRegion* poReg2, CReport* poRep2)
             }
             if (!bRegHead) {
                 if (IsFlag(VF_SHOWVERBOSEINFO)) {
-                    COutput::TWrite("vorlage", "\n; --------------------------------------------------------------\n\n");
+                    target->Write("\n; --------------------------------------------------------------\n\n");
                 }
                 else {
-                    COutput::TWrite("vorlage", "\n");
+                    target->Write("\n");
                 }
                 if (CMetaCommand::ProcExists("CreateRegionHeader")) {
                     VKommandos coOutput;
                     CMetaCommand::Call("CreateRegionHeader", coOutput);
                     if (!coOutput.empty()) {
                         for (size_t j = 0; j < coOutput.size(); j++) {
-                            COutput::TPrint("vorlage", " {}\n", coOutput[(int32_t)j].c_str());
+                            target->Print(" {}\n", coOutput[(int32_t)j].c_str());
                         }
                     }
                 }
@@ -1328,45 +1331,45 @@ void CVorlage::Regionsvorlage(CRegion* poReg, CRegion* poReg2, CReport* poRep2)
                     if (IsEqual(g_poCurrentReport->m_sSpiel, "Verdanon")) {
                         if (!IsFlag(VF_SHOWVERBOSEINFO)) {
                             if (poReg->GetEZ()) {
-                                COutput::TPrint("vorlage", " ; {} ({},{},{})\n", poReg->GetName().empty() ? poReg->GetRegionTypeName() : poReg->GetName(), poReg->GetEX(), poReg->GetEY(), poReg->GetEZ());
+                                target->Print(" ; {} ({},{},{})\n", poReg->GetName().empty() ? poReg->GetRegionTypeName() : poReg->GetName(), poReg->GetEX(), poReg->GetEY(), poReg->GetEZ());
                             }
                             else {
-                                COutput::TPrint("vorlage", " ; {} ({},{})\n", poReg->GetName().empty() ? poReg->GetRegionTypeName() : poReg->GetName(), poReg->GetEX(), poReg->GetEY());
+                                target->Print(" ; {} ({},{})\n", poReg->GetName().empty() ? poReg->GetRegionTypeName() : poReg->GetName(), poReg->GetEX(), poReg->GetEY());
                             }
                         }
                         else if (poReg->GetBlock() == CRegion::enSPEZIALREGION) {
-                            COutput::TPrint("vorlage", " ; Astralebene ({}, {} Personen, {}$ Silber)\n", poReg->GetRegionTypeName(), poReg->PersonsOf(m_nPlayer, true), poReg->SilverOf(m_nPlayer));
+                            target->Print(" ; Astralebene ({}, {} Personen, {}$ Silber)\n", poReg->GetRegionTypeName(), poReg->PersonsOf(m_nPlayer, true), poReg->SilverOf(m_nPlayer));
                         }
                         else if (poReg->GetEZ()) {
-                            COutput::TPrint("vorlage", " ; {} ({},{},{}) ({}, {} Personen, {}$ Silber) {}\n", poReg->GetName(), poReg->GetEX(), poReg->GetEY(), poReg->GetEZ(), poReg->GetRegionTypeName(), poReg->PersonsOf(m_nPlayer, true),
+                            target->Print(" ; {} ({},{},{}) ({}, {} Personen, {}$ Silber) {}\n", poReg->GetName(), poReg->GetEX(), poReg->GetEY(), poReg->GetEZ(), poReg->GetRegionTypeName(), poReg->PersonsOf(m_nPlayer, true),
                                             poReg->SilverOf(m_nPlayer), sInsel);
                         }
                         else {
-                            COutput::TPrint("vorlage", " ; {} ({},{}) ({}, {} Personen, {}$ Silber) {}\n", poReg->GetName(), poReg->GetEX(), poReg->GetEY(), poReg->GetRegionTypeName(), poReg->PersonsOf(m_nPlayer, true),
+                            target->Print(" ; {} ({},{}) ({}, {} Personen, {}$ Silber) {}\n", poReg->GetName(), poReg->GetEX(), poReg->GetEY(), poReg->GetRegionTypeName(), poReg->PersonsOf(m_nPlayer, true),
                                             poReg->SilverOf(m_nPlayer), sInsel);
                         }
                     }
                     else {
                         if (!IsFlag(VF_SHOWVERBOSEINFO)) {
                             if (poReg->GetEZ()) {
-                                COutput::TPrint("vorlage", " REGION {},{},{} ; {}\n", poReg->GetEX(), poReg->GetEY(), poReg->GetEZ(), poReg->GetName().empty() ? poReg->GetRegionTypeName() : poReg->GetName());
+                                target->Print(" REGION {},{},{} ; {}\n", poReg->GetEX(), poReg->GetEY(), poReg->GetEZ(), poReg->GetName().empty() ? poReg->GetRegionTypeName() : poReg->GetName());
                             }
                             else {
-                                COutput::TPrint("vorlage", " REGION {},{} ; {}\n", poReg->GetEX(), poReg->GetEY(), poReg->GetName().empty() ? poReg->GetRegionTypeName() : poReg->GetName());
+                                target->Print(" REGION {},{} ; {}\n", poReg->GetEX(), poReg->GetEY(), poReg->GetName().empty() ? poReg->GetRegionTypeName() : poReg->GetName());
                             }
                         }
                         else if (poReg->GetBlock() == CRegion::enSPEZIALREGION) {
-                            COutput::TPrint("vorlage", " REGION; Astralebene ({}, {} Personen, {}$ Silber)\n", poReg->GetRegionTypeName(), poReg->PersonsOf(m_nPlayer, true), poReg->SilverOf(m_nPlayer));
+                            target->Print(" REGION; Astralebene ({}, {} Personen, {}$ Silber)\n", poReg->GetRegionTypeName(), poReg->PersonsOf(m_nPlayer, true), poReg->SilverOf(m_nPlayer));
                         }
                         else if (poReg->GetEZ()) {
-                            COutput::TPrint("vorlage", " REGION {},{},{} ; {} ({}, {} Personen, {}$ Silber) {}\n", poReg->GetEX(), poReg->GetEY(), poReg->GetEZ(), poReg->GetName(), poReg->GetRegionTypeName(),
+                            target->Print(" REGION {},{},{} ; {} ({}, {} Personen, {}$ Silber) {}\n", poReg->GetEX(), poReg->GetEY(), poReg->GetEZ(), poReg->GetName(), poReg->GetRegionTypeName(),
                                             poReg->PersonsOf(m_nPlayer, true), poReg->SilverOf(m_nPlayer), sInsel);
                         }
                         else {
-                            COutput::TPrint("vorlage", " REGION {},{} ; {} ({}, {} Personen, {}$ Silber) {}\n", poReg->GetEX(), poReg->GetEY(), poReg->GetName(), poReg->GetRegionTypeName(), poReg->PersonsOf(m_nPlayer, true),
+                            target->Print(" REGION {},{} ; {} ({}, {} Personen, {}$ Silber) {}\n", poReg->GetEX(), poReg->GetEY(), poReg->GetName(), poReg->GetRegionTypeName(), poReg->PersonsOf(m_nPlayer, true),
                                             poReg->SilverOf(m_nPlayer), sInsel);
                         }
-                        COutput::TPrint("vorlage", " ; ECheck Lohn {}\n", poReg->GetLohn() ? poReg->GetLohn() : 10);
+                        target->Print(" ; ECheck Lohn {}\n", poReg->GetLohn() ? poReg->GetLohn() : 10);
                     }
                     if (poReg->GetBlock() != CRegion::enSPEZIALREGION && IsFlag(VF_SHOWMINIKARTE)) {
                         static const std::set<std::string> explicitResources{"Bauern", "Silber", "Unterhalt", "Rekruten", "Pferde", "Gewinn", "Pl. frei"};
@@ -1591,7 +1594,7 @@ void CVorlage::Regionsvorlage(CRegion* poReg, CRegion* poReg2, CReport* poRep2)
                         if (IsFlag(VF_SHOWLUXUS) || IsFlag(VF_SHOWLPROD)) {
                             static char Delta[32];
                             if (poReg->GetVerkauf() >= 0 && size_t(poReg->GetVerkauf()) < poReg->GetLuxusgueter().size()) {
-                                COutput::TWrite("vorlage", " ; Prod.: ");
+                                target->Write(" ; Prod.: ");
                                 if (bDiff) {
                                     snprintf(Delta, sizeof(Delta), "%+5ld",
                                              (poReg2->GetLuxusgueter().size() > size_t(poReg2->GetVerkauf())) ? poReg->GetLuxusgueter()[size_t(poReg->GetVerkauf())].second - poReg2->GetLuxusgueter()[size_t(poReg2->GetVerkauf())].second : 0);
@@ -1599,18 +1602,18 @@ void CVorlage::Regionsvorlage(CRegion* poReg, CRegion* poReg2, CReport* poRep2)
                                 else {
                                     Delta[0] = 0;
                                 }
-                                COutput::TPrint("vorlage", "{:<10}{:4}{}    max. handelbar: {}\n", poReg->GetLuxusgueter()[size_t(poReg->GetVerkauf())].first + ":", poReg->GetLuxusgueter()[size_t(poReg->GetVerkauf())].second, Delta,
+                                target->Print("{:<10}{:4}{}    max. handelbar: {}\n", poReg->GetLuxusgueter()[size_t(poReg->GetVerkauf())].first + ":", poReg->GetLuxusgueter()[size_t(poReg->GetVerkauf())].second, Delta,
                                                poReg->GetBauern() / 100);
                             }
                         }
                         if (IsFlag(VF_SHOWMINIKARTE)) {
                             if (poRQ->DeepGetValue("herb").asString().size() > 2) {
-                                COutput::TPrint("vorlage", " ; Kraut: {}\n", poRQ->DeepGetValue("herb").asString());
+                                target->Print(" ; Kraut: {}\n", poRQ->DeepGetValue("herb").asString());
                             }
                         }
 
                         if (poReg->isVerorkt())
-                            COutput::TWrite("vorlage", " ; Die Region ist verorkt!\n");
+                            target->Write(" ; Die Region ist verorkt!\n");
 
                         if (poReg->GetVGrenzen() && !poReg->GetVGrenzen()->empty()) {
                             std::ostringstream os;
@@ -1640,7 +1643,7 @@ void CVorlage::Regionsvorlage(CRegion* poReg, CRegion* poReg2, CReport* poRep2)
                                         break;
                                 }
                                 os << " ; " << (*(poReg->GetVGrenzen()))[j] -> Typ() << " (" << (*(poReg->GetVGrenzen()))[j] -> Prozent() << "%) in " << sGrenze;
-                                COutput::TPrint("vorlage", "{}\n", getAndReset(os));
+                                target->Print("{}\n", getAndReset(os));
                             }
                         }
                     }
@@ -1656,13 +1659,13 @@ void CVorlage::Regionsvorlage(CRegion* poReg, CRegion* poReg2, CReport* poRep2)
                             }
                         }
                         if (poReg->GetEinkommen() > 0) {
-                            COutput::TPrint("vorlage", " ; Regionseinnahmen:{:6} Silber\n", poReg->GetEinkommen());
+                            target->Print(" ; Regionseinnahmen:{:6} Silber\n", poReg->GetEinkommen());
                         }
                         if (poReg->GetAusgaben() > 0) {
-                            COutput::TPrint("vorlage", " ; Regionsausgaben: {:6} Silber\n", poReg->GetAusgaben() + nKosten);
+                            target->Print(" ; Regionsausgaben: {:6} Silber\n", poReg->GetAusgaben() + nKosten);
                         }
                         else if (nKosten) {
-                            COutput::TPrint("vorlage", " ; Nahrungskosten:  {:6} Silber\n", nKosten);
+                            target->Print(" ; Nahrungskosten:  {:6} Silber\n", nKosten);
                         }
                     }
                 }
@@ -1718,17 +1721,17 @@ void CVorlage::Regionsvorlage(CRegion* poReg, CRegion* poReg2, CReport* poRep2)
                     }
                     CRegion::Durchreisen::const_iterator di;
                     for (di = poReg->GetDurchreisen().begin(); di != poReg->GetDurchreisen().end(); di++) {
-                        COutput::TPrint("vorlage", " ; Durchgereist:  {}\n", *di);
+                        target->Print(" ; Durchgereist:  {}\n", *di);
                     }
                     for (di = poReg->GetDurchschiffungen().begin(); di != poReg->GetDurchschiffungen().end(); di++) {
-                        COutput::TPrint("vorlage", " ; Durchgesegelt: {}\n", *di);
+                        target->Print(" ; Durchgesegelt: {}\n", *di);
                     }
                 }
 
                 if (!poReg->GetKommandos().empty()) {
                     for (int32_t j = 0; j < (int32_t)poReg->GetKommandos().size(); j++) {
                         if (poReg->GetKommandos()[j].empty()) {
-                            COutput::TWrite("vorlage", "\n");
+                            target->Write("\n");
                         }
                         else {
                             if (poReg->GetKommandos()[j].asString()[0] == ';') {
@@ -1738,7 +1741,7 @@ void CVorlage::Regionsvorlage(CRegion* poReg, CRegion* poReg2, CReport* poRep2)
                     }
                 }
                 if (!IsFlag(VF_SHOWVERBOSEINFO)) {
-                    COutput::TWrite("vorlage", "\n");
+                    target->Write("\n");
                 }
                 if (poReg->PersonsOf(m_nPlayer) - poReg->PersonsOf(m_nPlayer, true) > 0) {
                     WrapOut(" ; ", std::string("In dieser Region sind Einheiten als (") + itoan(m_nPlayer, g_poCurrentReport->PNrBase()) + ") getarnt!", (size_t)g_nLineSize);
@@ -1750,9 +1753,9 @@ void CVorlage::Regionsvorlage(CRegion* poReg, CRegion* poReg2, CReport* poRep2)
             if (!IsFlag(VF_SUPPRESSUNITS)) {
                 if (IsFlag(VF_SORTBURGEN) && nOrt != poReg->GetVEinheiten()[i]->Aufenthaltsort()) {
                     nOrt = poReg->GetVEinheiten()[i]->Aufenthaltsort();
-                    COutput::TWrite("vorlage", "\n ; -   -   -   -   -   -   -   -   -   -   -   -\n");
+                    target->Write("\n ; -   -   -   -   -   -   -   -   -   -   -   -\n");
                     if (!nOrt) {
-                        COutput::TWrite("vorlage", " ; Auf freiem Feld:\n");
+                        target->Write(" ; Auf freiem Feld:\n");
                     }
                     else if (nOrt > 0x10000000) {
                         if (poReg->GetShip(nOrt - 0x10000000)) {
@@ -1786,13 +1789,13 @@ void CVorlage::Regionsvorlage(CRegion* poReg, CRegion* poReg2, CReport* poRep2)
 
     if (IsFlag(VF_SORTBURGEN)) {
         while (!coBauwerke.empty()) {
-            COutput::TWrite("vorlage", "\n ; -   -   -   -   -   -   -   -   -   -   -   -\n");
+            target->Write("\n ; -   -   -   -   -   -   -   -   -   -   -   -\n");
             BauwerkAusgabe(*(coBauwerke.begin()));
             coBauwerke.erase(coBauwerke.begin());
         }
 
         while (!coSchiffe.empty()) {
-            COutput::TWrite("vorlage", "\n ; -   -   -   -   -   -   -   -   -   -   -   -\n");
+            target->Write("\n ; -   -   -   -   -   -   -   -   -   -   -   -\n");
             SchiffAusgabe(*(coSchiffe.begin()));
             coSchiffe.erase(coSchiffe.begin());
         }
@@ -1807,12 +1810,12 @@ void CVorlage::Regionsvorlage(CRegion* poReg, CRegion* poReg2, CReport* poRep2)
             poLU = poRep2 ? poRep2->SearchUnit(poHU->Nummer(), false) : 0;
             if ((!IsFlag(VF_SHOWUNITSNEW) || !poLU || (poLU && poLU->Region()->GetKey() != poHU->Region()->GetKey())) && (poHU->Partei() != m_nPlayer)) {
                 if (!bHead) {
-                    COutput::TWrite("vorlage", "\n ; -   -   -   -   -   -   -   -   -   -   -   -\n");
+                    target->Write("\n ; -   -   -   -   -   -   -   -   -   -   -   -\n");
                     if (IsFlag(VF_SHOWUNITSNEW)) {
-                        COutput::TWrite("vorlage", " ; Neue fremde Einheiten:\n");
+                        target->Write(" ; Neue fremde Einheiten:\n");
                     }
                     else {
-                        COutput::TWrite("vorlage", " ; Fremde Einheiten:\n");
+                        target->Write(" ; Fremde Einheiten:\n");
                     }
                     bHead = true;
                 }
@@ -1826,8 +1829,8 @@ void CVorlage::Regionsvorlage(CRegion* poReg, CRegion* poReg2, CReport* poRep2)
     }
 
     if (bRegHead && IsFlag(VF_SHOWTRIBEOVERVIEW) && coPersonen.size() > 1) {
-        COutput::TWrite("vorlage", "\n ; -   -   -   -   -   -   -   -   -   -   -   -\n");
-        COutput::TWrite("vorlage", " ; Partei\xFC" "bersicht:\n");
+        target->Write("\n ; -   -   -   -   -   -   -   -   -   -   -   -\n");
+        target->Write(" ; Partei\xFC" "bersicht:\n");
         std::string sPfx;
 
         if (poReg2 && IsFlag(VF_SHOWTDIFF)) {
@@ -1845,7 +1848,7 @@ void CVorlage::Regionsvorlage(CRegion* poReg, CRegion* poReg2, CReport* poRep2)
             if ((*ppi).first != m_nPlayer) {
                 std::map<int32_t, int32_t>::iterator ppi2 = coPersonen2.find((*ppi).first);
 
-                COutput::TWrite("vorlage", "\n");
+                target->Write("\n");
                 out.str("");
                 out.clear();
 
@@ -1921,7 +1924,7 @@ void CVorlage::Regionsvorlage(CRegion* poReg, CRegion* poReg2, CReport* poRep2)
     if (bRegHead && !poReg->GetEndKommandos().empty()) {
         for (int32_t i = 0; i < (int32_t)poReg->GetEndKommandos().size(); i++) {
             if (poReg->GetEndKommandos()[i].empty()) {
-                COutput::TWrite("vorlage", "\n");
+                target->Write("\n");
             }
             else {
                 if (poReg->GetEndKommandos()[i].asString()[0] == ';') {
@@ -1939,6 +1942,7 @@ void CVorlage::ShowInvisibles(CRegion* poReg, CRegion* poReg2, CReport* poRep2)
     CEinheit* poHU;
     bool bHead = false;
 
+    auto* target = COutput::Target("vorlage");
     poUnits = &g_coREDB[poReg->GetKey()];
 
     for (ui = poUnits->begin(); ui != poUnits->end(); ui++) {
@@ -1953,8 +1957,8 @@ void CVorlage::ShowInvisibles(CRegion* poReg, CRegion* poReg2, CReport* poRep2)
                         const CRegion* pRH = (*edbi).second->Region();
                         if (pRH && pRH->GetKey() == poReg->GetKey()) {
                             if (!bHead) {
-                                COutput::TWrite("vorlage", "\n ; -   -   -   -   -   -   -   -   -   -   -   -\n");
-                                COutput::TWrite("vorlage", " ; Unsichtbare oder getarnte fremde Einheiten:\n");
+                                target->Write("\n ; -   -   -   -   -   -   -   -   -   -   -   -\n");
+                                target->Write(" ; Unsichtbare oder getarnte fremde Einheiten:\n");
                                 bHead = true;
                             }
                             FremdEinheiten((*ui).second, poRep2);
@@ -1978,9 +1982,10 @@ void CVorlage::BauwerkAusgabe(CBauwerk* pBuilding, CRegion::VEinheiten* poVE)
             }
         }
     }
+    auto* target = COutput::Target("vorlage");
     int32_t nKap = CBlockBase::GetValue(CBuildingInfo::Lookup(pBuilding->XTyp()), "kapazitaet").asLong();
     int32_t nCountUnits = CBlockBase::GetValue(CBuildingInfo::Lookup(pBuilding->XTyp()), "einheiten").asLong();
-    COutput::TPrint("vorlage", " ; In {} '{}' ({}) [{}/{}{}]:\n", pBuilding->XTyp(), pBuilding->Name(), itoan(pBuilding->Nummer(), g_poCurrentReport->BNrBase()), nCountUnits > 0 ? nUnits : nPers, nKap ? nKap : pBuilding->Groesse(),
+    target->Print(" ; In {} '{}' ({}) [{}/{}{}]:\n", pBuilding->XTyp(), pBuilding->Name(), itoan(pBuilding->Nummer(), g_poCurrentReport->BNrBase()), nCountUnits > 0 ? nUnits : nPers, nKap ? nKap : pBuilding->Groesse(),
                    nKap && nKap != pBuilding->Groesse() ? "/" + std::to_string(pBuilding->Groesse()) : "");
 
     if (IsFlag(VF_SHOWBESCHREIBUNG) && !(pBuilding->Beschreibung().empty())) {
@@ -1988,7 +1993,7 @@ void CVorlage::BauwerkAusgabe(CBauwerk* pBuilding, CRegion::VEinheiten* poVE)
     }
 
     if (pBuilding->m_nBelagerer) {
-        COutput::TPrint("vorlage", " ; Belagert von: {}\n", pBuilding->m_nBelagerer);
+        target->Print(" ; Belagert von: {}\n", pBuilding->m_nBelagerer);
     }
     if (!pBuilding->m_coEffects.empty() && IsFlag(VF_SHOWVERBOSEINFO)) {
         for (size_t i = 0; i < pBuilding->m_coEffects.size(); i++) {
@@ -1999,7 +2004,7 @@ void CVorlage::BauwerkAusgabe(CBauwerk* pBuilding, CRegion::VEinheiten* poVE)
     if (!pBuilding->GetKommandos().empty()) {
         for (int32_t i = 0; i < (int32_t)pBuilding->GetKommandos().size(); i++) {
             if (pBuilding->GetKommandos()[i].empty()) {
-                COutput::TWrite("vorlage", "\n");
+                target->Write("\n");
             }
             else {
                 if (pBuilding->GetKommandos()[i].asString()[0] == ';') {
@@ -2012,15 +2017,16 @@ void CVorlage::BauwerkAusgabe(CBauwerk* pBuilding, CRegion::VEinheiten* poVE)
 
 void CVorlage::SchiffAusgabe(CSchiff* pSchiff)
 {
+    auto* target = COutput::Target("vorlage");
     int32_t count = pSchiff->Anzahl();
     std::string anzahl = count == 1 ? "" : ", Anzahl " + std::to_string(count) + ",";
     // static int dbgcount = 0;
     if (pSchiff->MaxHolz() && pSchiff->MaxHolz() * count != pSchiff->Holz()) {
-        COutput::TPrint("vorlage", " ; An Bord von {} '{}' ({}){} ({}/0) im Bau ({}/{}):\n", pSchiff->Typ(), pSchiff->Name(), itoan(pSchiff->Nummer(), g_poCurrentReport->BNrBase()), anzahl, pSchiff->Ladung(), pSchiff->Holz(),
+        target->Print(" ; An Bord von {} '{}' ({}){} ({}/0) im Bau ({}/{}):\n", pSchiff->Typ(), pSchiff->Name(), itoan(pSchiff->Nummer(), g_poCurrentReport->BNrBase()), anzahl, pSchiff->Ladung(), pSchiff->Holz(),
                         pSchiff->MaxHolz() * count);
     }
     else {
-        COutput::TPrint("vorlage", " ; An Bord von {} '{}' ({}){} Kap: {}GE/{}GE({}%):\n", pSchiff->Typ(), pSchiff->Name(), itoan(pSchiff->Nummer(), g_poCurrentReport->BNrBase()), anzahl, pSchiff->MaxLadung() - pSchiff->Ladung(),
+        target->Print(" ; An Bord von {} '{}' ({}){} Kap: {}GE/{}GE({}%):\n", pSchiff->Typ(), pSchiff->Name(), itoan(pSchiff->Nummer(), g_poCurrentReport->BNrBase()), anzahl, pSchiff->MaxLadung() - pSchiff->Ladung(),
                         pSchiff->MaxLadung(), pSchiff->Schaden());
     }
     if (IsFlag(VF_SHOWBESCHREIBUNG) && !(pSchiff->Beschreibung().empty())) {
@@ -2036,7 +2042,7 @@ void CVorlage::SchiffAusgabe(CSchiff* pSchiff)
     if (!pSchiff->GetKommandos().empty()) {
         for (int32_t i = 0; i < (int32_t)pSchiff->GetKommandos().size(); i++) {
             if (pSchiff->GetKommandos()[i].empty()) {
-                COutput::TWrite("vorlage", "\n");
+                target->Write("\n");
             }
             else {
                 if (pSchiff->GetKommandos()[i].asString()[0] == ';') {
@@ -2057,6 +2063,7 @@ void CVorlage::Einheitenvorlage(CEinheit* poUnit, CReport* poRep2)
     bool bKommando = false;
     size_t i;
 
+    auto* target = COutput::Target("vorlage");
     m_poCurrentUnit = poUnit;
     g_poCurrentUnit = poUnit;
 
@@ -2154,38 +2161,38 @@ void CVorlage::Einheitenvorlage(CEinheit* poUnit, CReport* poRep2)
         CMetaCommand::Call("CreateUnitHeader", coOutput);
         if (!coOutput.empty()) {
             for (int32_t j = 0; j < (int32_t)coOutput.size(); j++) {
-                COutput::TPrint("vorlage", "  {}\n", coOutput[j].c_str());
+                target->Print("  {}\n", coOutput[j].c_str());
             }
         }
     }
     else {
         //	if( IsFlag( VF_BASE36 ) )
         if (IsFlag(VF_SHOWVERBOSEINFO)) {
-            COutput::TPrint("vorlage", "\n  EINHEIT {};  {} [{},{}${}] {}{}{}{}{}{}\n", itoan(poUnit->m_nNummer, g_poCurrentReport->ENrBase()), poUnit->m_sName, poUnit->m_nAnzahl, poUnit->m_nSilber, getAndReset(out),
+            target->Print("\n  EINHEIT {};  {} [{},{}${}] {}{}{}{}{}{}\n", itoan(poUnit->m_nNummer, g_poCurrentReport->ENrBase()), poUnit->m_sName, poUnit->m_nAnzahl, poUnit->m_nSilber, getAndReset(out),
                             !poUnit->WahrerTyp().empty() ? poUnit->Typ() + ", " : "", poUnit->m_nParteitarnung ? "parteigetarnt, " : "", poUnit->m_nBewacht ? "bewacht, " : "",
                             poUnit->m_shp.empty() ? std::string{} : poUnit->m_shp + ", ", pcKampf, poUnit->m_nHunger ? ", hungert" : "");
             if (poUnit->m_nVerkleidung) {
-                COutput::TPrint("vorlage", "  ; Verkleidet als {} ({})\n", poUnit->Region()->Map()->Report()->Parteiname(poUnit->m_nVerkleidung).substr(1), itoan(poUnit->m_nVerkleidung, g_poCurrentReport->PNrBase()));
+                target->Print("  ; Verkleidet als {} ({})\n", poUnit->Region()->Map()->Report()->Parteiname(poUnit->m_nVerkleidung).substr(1), itoan(poUnit->m_nVerkleidung, g_poCurrentReport->PNrBase()));
             }
             if (poUnit->m_nVerraeter) {
-                COutput::TWrite("vorlage", "  ; VERR\xC4TER!\n");
+                target->Write("  ; VERR\xC4TER!\n");
             }
             //	else
             //	    COutput::TPrintf( "vorlage", "\n  EINHEIT %6d;  %s [%d,%d$%s] %s%s%s%s%s%s\n", poUnit->m_nNummer, poUnit->m_sName.c_str(), poUnit->m_nAnzahl, poUnit->m_nSilber, Buff, (!poUnit->m_sWahrerTyp.empty())?poUnit->m_sTyp.c_str():"",
             // poUnit->m_nParteitarnung?"parteigetarnt, ":"", poUnit->m_nBewacht?"bewacht, ":"", poUnit->m_shp.empty()?"":std::string( poUnit->m_shp + ", " ).c_str(), pcKampf, (poUnit->m_nHunger)?", hungert":"" );
         }
         else {
-            COutput::TPrint("vorlage", "  EINHEIT {};  {} [{},{}${}]\n", itoan(poUnit->m_nNummer, g_poCurrentReport->ENrBase()), poUnit->m_sName, poUnit->m_nAnzahl, poUnit->m_nSilber, getAndReset(out));
+            target->Print("  EINHEIT {};  {} [{},{}${}]\n", itoan(poUnit->m_nNummer, g_poCurrentReport->ENrBase()), poUnit->m_sName, poUnit->m_nAnzahl, poUnit->m_nSilber, getAndReset(out));
         }
         if (!poUnit->Gruppe().empty() && IsFlag(VF_SHOWVERBOSEINFO)) {
             WrapOut("  ; In Gruppe: ", poUnit->Gruppe(), (size_t)g_nLineSize);
         }
         if (poUnit->CBlockBase::GetValue("hero").asLong() && IsFlag(VF_SHOWVERBOSEINFO)) {
-            COutput::TWrite("vorlage", "  ; Heldenstatus!\n");
+            target->Write("  ; Heldenstatus!\n");
         }
 
         if (poUnit->GetValue("unaided", "").asLong()) {
-            COutput::TWrite("vorlage", "  ; Bekommt im Kampf keine Hilfe!\n");
+            target->Write("  ; Bekommt im Kampf keine Hilfe!\n");
         }
 
         if (IsFlag(VF_SHOWBESCHREIBUNG) && !(poUnit->Beschreibung().empty())) {
@@ -2360,12 +2367,12 @@ void CVorlage::Einheitenvorlage(CEinheit* poUnit, CReport* poRep2)
     if (!IsFlag(VF_FULLCOMMANDOUTPUT)) {
         for (int32_t j = 0; j < (int32_t)poUnit->m_csKommandos.size(); j++) {
             if (poUnit->m_csMetaOut.empty() || IsFlag(VF_DONTKILLCOMMANDS)) {
-                COutput::TPrint("vorlage", "    {}\n", poUnit->m_csKommandos[j].c_str());
+                target->Print("    {}\n", poUnit->m_csKommandos[j].c_str());
             }
             else {
                 auto p = poUnit->m_csKommandos[j].asString().find_first_not_of(" \t");
                 if (poUnit->m_csKommandos[j].empty() || (p != std::string::npos && (poUnit->m_csKommandos[j].asString()[p] == '/' || poUnit->m_csKommandos[j].asString()[p] == ';'))) {
-                    COutput::TPrint("vorlage", "    {}\n", poUnit->m_csKommandos[j].c_str());
+                    target->Print("    {}\n", poUnit->m_csKommandos[j].c_str());
                 }
                 else {
                     poUnit->m_csKommandos[j] = Value("");
@@ -2379,7 +2386,7 @@ void CVorlage::Einheitenvorlage(CEinheit* poUnit, CReport* poRep2)
             WrapOut("    ; ", poUnit->m_csMetaOut[j].c_str(), (size_t)g_nLineSize, "    ");
         }
         else if (!poUnit->m_csMetaOut[j].empty() && poUnit->m_csMetaOut[j].asString()[0] == '/') {
-            COutput::TPrint("vorlage", "    {}\n", poUnit->m_csMetaOut[j].c_str());
+            target->Print("    {}\n", poUnit->m_csMetaOut[j].c_str());
         }
         else {
             std::string sLine = poUnit->m_csMetaOut[j].c_str();
@@ -2387,11 +2394,11 @@ void CVorlage::Einheitenvorlage(CEinheit* poUnit, CReport* poRep2)
             size_t nLSize = (size_t)g_nCommandLineSize - 4;
             while (sLine.length() > nLSize) {
                 if (sLine[nLSize - 2] == ' ') {
-                    COutput::TPrint("vorlage", "    {}{}\\\n", sPref, sLine.substr(0, nLSize - 1));
+                    target->Print("    {}{}\\\n", sPref, sLine.substr(0, nLSize - 1));
                     sLine.erase(0, nLSize - 1);
                 }
                 else {
-                    COutput::TPrint("vorlage", "    {}{}\\\n", sPref, sLine.substr(0, nLSize - 2));
+                    target->Print("    {}{}\\\n", sPref, sLine.substr(0, nLSize - 2));
                     sLine.erase(0, nLSize - 2);
                 }
                 if (sPref.empty()) {
@@ -2399,7 +2406,7 @@ void CVorlage::Einheitenvorlage(CEinheit* poUnit, CReport* poRep2)
                     sPref = "    ";
                 }
             }
-            COutput::TPrint("vorlage", "    {}{}\n", sPref, sLine);
+            target->Print("    {}{}\n", sPref, sLine);
         }
         //        COutput::TPrintf( "vorlage", "    %s\n", poUnit->m_csMetaOut[i].c_str() );
     }
@@ -2408,7 +2415,7 @@ void CVorlage::Einheitenvorlage(CEinheit* poUnit, CReport* poRep2)
         for (int32_t j = 0; j < (int32_t)poUnit->m_csKommandos.size(); j++) {
             auto p = poUnit->m_csKommandos[j].asString().find_first_not_of(" \t");
             if (!poUnit->m_csKommandos[j].empty() && p != std::string::npos && poUnit->m_csKommandos[j].asString()[p] != '/') {
-                COutput::TPrint("vorlage", "    {}\n", poUnit->m_csKommandos[j].c_str());
+                target->Print("    {}\n", poUnit->m_csKommandos[j].c_str());
             }
         }
     }
