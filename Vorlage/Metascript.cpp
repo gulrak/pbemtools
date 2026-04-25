@@ -4359,12 +4359,12 @@ void CMetaCommand::RunScript(CMCI& oMCI, Expression::Variables& oContext, std::s
                                 Parse(oMCI, oContext, coCmd);
                                 if (IsFlag(VF_PROGRESSINFO)) {
                                     g_bForceEOL = true;
-                                    COutput::TPrintf("console", "\r%s", oMCI.m_sArg.c_str());
+                                    COutput::TPrint("console", "\r{}", oMCI.m_sArg.c_str());
                                 }
                             }
                             else {
                                 if (IsFlag(VF_DEBUGMODE))
-                                    COutput::TPrintf("debug", "%s\n", oMCI.m_sArg.c_str());
+                                    COutput::TPrint("debug", "{}\n", oMCI.m_sArg.c_str());
                             }
                             Parse(oMCI, oContext, coCmd);
                         }

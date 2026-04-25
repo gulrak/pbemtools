@@ -793,7 +793,7 @@ void CVorlage::Vorlage(CReport& oReport, CReport* poRep2, bool bTime)
     //	CRegion* poRQ = 0;
     //	FILE* hHold = 0;
     clock_t nStart;
-    int32_t nUnits = 0, nPersons = 0, nNeededFood = 0;
+    int32_t nUnits = 0, nPersons = 0, nNeededFood = 0, nNeededFood2 = 0;
     int ic;
 
     if (IsFlag(VF_CROUTPUT) || IsFlag(VF_SUPPRESSTURNOUTPUT)) {
@@ -822,6 +822,17 @@ void CVorlage::Vorlage(CReport& oReport, CReport* poRep2, bool bTime)
             nPersons += (*ei).second->Anzahl();
             if (0 != CRasse::Lookup((*ei).second->RealType()).GetValue(std::string("Unterhalt")).asLong()) {
                 nNeededFood += CRasse::Lookup((*ei).second->RealType()).GetValue(std::string("Unterhalt")).asLong() * (*ei).second->Anzahl();
+            }
+        }
+    }
+    if (poRep2) {
+        for (CReport::Einheiten::iterator ei = poRep2->GEinheiten().begin(); ei != poRep2->GEinheiten().end(); ei++) {
+            if ((*ei).second->Partei() == m_nPlayer) {
+                nUnits++;
+                nPersons += (*ei).second->Anzahl();
+                if (0 != CRasse::Lookup((*ei).second->RealType()).GetValue(std::string("Unterhalt")).asLong()) {
+                    nNeededFood2 += CRasse::Lookup((*ei).second->RealType()).GetValue(std::string("Unterhalt")).asLong() * (*ei).second->Anzahl();
+                }
             }
         }
     }
@@ -979,21 +990,35 @@ void CVorlage::Vorlage(CReport& oReport, CReport* poRep2, bool bTime)
 
     if (IsFlag(VF_SHOWHANDEL)) {
         target->Write("\n ; Wirtschaftsbilanz:\n");
-        target->Print(" ; Gesamteinkommen:{:9} Silber\n", oReport.m_nEinkommen);
-        target->Print(" ; Gesamtausgaben: {:9} Silber {}\n", oReport.m_nAusgaben + nNeededFood /*Eater*10*/, oReport.Version() > 40 ? "" : "(z.Zt. ohne kostenpfl. Talente)");
-        int64_t nVermoegen = 0;
-        for (CKarte::RegionMap::const_iterator rmi = m_poKarte->Regions().begin(); rmi != m_poKarte->Regions().end(); rmi++) {
+        if (poRep2 && poRep2->m_nEinkommen > 0)
+            target->Print(" ; Gesamteinkommen:{:9} ({:+}) Silber\n", oReport.m_nEinkommen, oReport.m_nEinkommen - poRep2->m_nEinkommen);
+        else
+            target->Print(" ; Gesamteinkommen:{:9} Silber\n", oReport.m_nEinkommen);
+        if (poRep2 && poRep2->m_nAusgaben > 0)
+            target->Print(" ; Gesamtausgaben: {:9} ({:+}) Silber {}\n", oReport.m_nAusgaben + nNeededFood /*Eater*10*/, (oReport.m_nAusgaben + nNeededFood) - (poRep2->m_nAusgaben + nNeededFood2), oReport.Version() > 40 ? "" : "(z.Zt. ohne kostenpfl. Talente)");
+        else
+            target->Print(" ; Gesamtausgaben: {:9} Silber {}\n", oReport.m_nAusgaben + nNeededFood /*Eater*10*/, oReport.Version() > 40 ? "" : "(z.Zt. ohne kostenpfl. Talente)");
+        int64_t nVermoegen = 0, nVermoegen2 = 0;
+        for (auto rmi = m_poKarte->Regions().begin(); rmi != m_poKarte->Regions().end(); rmi++) {
             nVermoegen += (*rmi).second->SilverOf(oReport.Partei());
         }
-        target->Print(" ; Gesamtverm\xF6gen: {:9} Silber\n", nVermoegen);
+        if (poRep2) {
+            for (auto rmi = poRep2->Karte()->Regions().begin(); rmi != poRep2->Karte()->Regions().end(); rmi++) {
+                nVermoegen2 += (*rmi).second->SilverOf(oReport.Partei());
+            }
+        }
+        if (poRep2 && nVermoegen2 > 0)
+            target->Print(" ; Gesamtverm\xF6gen: {:9} ({:+}) Silber\n", nVermoegen, nVermoegen - nVermoegen2);
+        else
+            target->Print(" ; Gesamtverm\xF6gen: {:9} Silber\n", nVermoegen);
 
         if (oReport.m_cpoHPartner.size())
             target->Write("\n ; Warenaustausch:\n");
 
-        for (CReport::Handelspartner::const_iterator rhi = oReport.m_cpoHPartner.begin(); rhi != oReport.m_cpoHPartner.end(); rhi++) {
+        for (auto rhi = oReport.m_cpoHPartner.begin(); rhi != oReport.m_cpoHPartner.end(); rhi++) {
             std::ostringstream out;
             out << oReport.Parteiname((*rhi).first).c_str() + 1 << "(" << itoan((*rhi).first, oReport.PNrBase()) << "): ";
-            for (CParteihandel::Produkte::const_iterator ppi = (*rhi).second->m_coProdukte.begin(); ppi != (*rhi).second->m_coProdukte.end(); ppi++) {
+            for (auto ppi = (*rhi).second->m_coProdukte.begin(); ppi != (*rhi).second->m_coProdukte.end(); ppi++) {
                 if (ppi != (*rhi).second->m_coProdukte.begin()) {
                     out << ", ";
                 }

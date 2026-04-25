@@ -1850,32 +1850,32 @@ void CKarte::DumpMap(const std::string& sTarget, int nCX, int nCY, int nB, int n
     snprintf(fmt2, sizeof(fmt2), "%%%ds ", sy + 1);
 
     if (pcPref)
-        COutput::TPrintf(sTarget, "%s ", pcPref);
-    COutput::TPrintf(sTarget, "    ");
+        COutput::TPrint(sTarget, "{} ", pcPref);
+    COutput::TWrite(sTarget, "    ");
     if ((y & 1) ^ (nCY & 1))
-        COutput::TPrintf(sTarget, " ");
+        COutput::TWrite(sTarget, " ");
     e = ((y & 1) ^ (nCY & 1)) ? 0 : 1;
     for (x = nCX - nB + h; x <= nCX + nB + h + e; x++)
-        COutput::TPrintf(sTarget, "%c ", (x - ((y > 0) ? y + 1 : y) / 2) < 0 ? '-' : ((x - ((y > 0) ? y + 1 : y) / 2) ? '+' : '|'));
-    COutput::TPrintf(sTarget, "\n");
+        COutput::TPrint(sTarget, "{} ", (x - ((y > 0) ? y + 1 : y) / 2) < 0 ? '-' : ((x - ((y > 0) ? y + 1 : y) / 2) ? '+' : '|'));
+    COutput::TWrite(sTarget, "\n");
 
     for (z = (int)pow((double)10, (double)sx); z > 0; z /= 10) {
         if (pcPref)
-            COutput::TPrintf(sTarget, "%s ", pcPref);
+            COutput::TPrint(sTarget, "{} ", pcPref);
         COutput::TPrintf(sTarget, fmt2, "");
         if ((y & 1) ^ (nCY & 1))
-            COutput::TPrintf(sTarget, " ");
+            COutput::TWrite(sTarget, " ");
         for (x = nCX - nB + h; x <= nCX + nB + h + e; x++)
-            COutput::TPrintf(sTarget, "%c ", ((abs(x - ((y > 0) ? y + 1 : y) / 2) / z) % 10) + '0');
-        COutput::TPrintf(sTarget, "\n");
+            COutput::TPrint(sTarget, "{} ", ((abs(x - ((y > 0) ? y + 1 : y) / 2) / z) % 10) + '0');
+        COutput::TWrite(sTarget, "\n");
     }
 
     for (--y; y >= nCY - nH; y--) {
         if (pcPref)
-            COutput::TPrintf(sTarget, "%s ", pcPref);
+            COutput::TPrint(sTarget, "{} ", pcPref);
         COutput::TPrintf(sTarget, fmt, y);
         if ((y & 1) ^ (nCY & 1))
-            COutput::TPrintf(sTarget, " ");
+            COutput::TWrite(sTarget, " ");
         h = (y & 1) & !(nCY & 1);
         for (x = nCX - nB + h; x <= nCX + nB + h; x++) {
             c = GetFromDCords(x, y, 0, true)->GetRegionChar();
@@ -1884,12 +1884,12 @@ void CKarte::DumpMap(const std::string& sTarget, int nCX, int nCY, int nB, int n
                 c = ' ';
             if (c == ' ' && !(y % 10))
                 c = '-';
-            COutput::TPrintf(sTarget, "%c%c", c, o);
+            COutput::TPrint(sTarget, "{}{}", c, o);
         }
         if (!((y & 1) ^ (nCY & 1)))
-            COutput::TPrintf(sTarget, " ");
+            COutput::TWrite(sTarget, " ");
         COutput::TPrintf(sTarget, fmt, y);
-        COutput::TPrintf(sTarget, "\n");
+        COutput::TWrite(sTarget, "\n");
     }
 
     h = (y & 1) & !(nCY & 1);
@@ -1898,24 +1898,24 @@ void CKarte::DumpMap(const std::string& sTarget, int nCX, int nCY, int nB, int n
     sx = (log10((double)abs(x1)) > log10((double)abs(x2))) ? (int)log10((double)abs(x1)) : (int)log10((double)abs(x2));
 
     if (pcPref)
-        COutput::TPrintf(sTarget, "%s ", pcPref);
-    COutput::TPrintf(sTarget, "    ");
+        COutput::TPrint(sTarget, "{} ", pcPref);
+    COutput::TWrite(sTarget, "    ");
     if ((y & 1) ^ (nCY & 1))
-        COutput::TPrintf(sTarget, " ");
+        COutput::TWrite(sTarget, " ");
     e = ((y & 1) ^ (nCY & 1)) ? 0 : 1;
     for (x = nCX - nB + h; x <= nCX + nB + h + e; x++)
-        COutput::TPrintf(sTarget, "%c ", (x - ((y > 0) ? y + 1 : y) / 2) < 0 ? '-' : ((x - ((y > 0) ? y + 1 : y) / 2) ? '+' : '|'));
-    COutput::TPrintf(sTarget, "\n");
+        COutput::TPrint(sTarget, "{} ", (x - ((y > 0) ? y + 1 : y) / 2) < 0 ? '-' : ((x - ((y > 0) ? y + 1 : y) / 2) ? '+' : '|'));
+    COutput::TWrite(sTarget, "\n");
 
     for (z = (int)pow((double)10, (double)sx); z > 0; z /= 10) {
         if (pcPref)
-            COutput::TPrintf(sTarget, "%s ", pcPref);
+            COutput::TPrint(sTarget, "{} ", pcPref);
         COutput::TPrintf(sTarget, fmt2, "");
         if ((y & 1) ^ (nCY & 1))
-            COutput::TPrintf(sTarget, " ");
+            COutput::TWrite(sTarget, " ");
         for (x = nCX - nB + h; x <= nCX + nB + h + e; x++)
-            COutput::TPrintf(sTarget, "%c ", ((abs(x - ((y > 0) ? y + 1 : y) / 2) / z) % 10) + '0');
-        COutput::TPrintf(sTarget, "\n");
+            COutput::TPrint(sTarget, "{} ", ((abs(x - ((y > 0) ? y + 1 : y) / 2) / z) % 10) + '0');
+        COutput::TWrite(sTarget, "\n");
     }
 }
 
@@ -5171,20 +5171,20 @@ void CEinheit::Kapazitaeten(const std::string& sTarget) const
     double fKapReiten, fFKapReiten, fKapGehen, fFKapGehen;
     int32_t nRHO, nGHO;
 
-    COutput::TPrintf(sTarget, "  ; Gew: %sGE", ToString(Gewicht()).c_str());
+    COutput::TPrint(sTarget, "  ; Gew: {}GE", ToString(Gewicht()).c_str());
 
     CalcKapazitaeten(fKapReiten, fFKapReiten, nRHO, fKapGehen, fFKapGehen, nGHO);
 
     if (!nRHO && ((CEinheit*)this)->GetValue(std::string("Pferd"), std::string("")).asLong()) {
-        COutput::TPrintf(sTarget, "  Reiten: %sGE/%sGE", ToString(fFKapReiten).c_str(), ToString(fKapReiten).c_str());
+        COutput::TPrint(sTarget, "  Reiten: {}GE/{}GE", ToString(fFKapReiten).c_str(), ToString(fKapReiten).c_str());
     }
     if (nGHO) {
-        COutput::TPrintf(sTarget, "  (%d Pferd%s zuviel!)", nGHO, (nGHO > 1) ? "e" : "");
+        COutput::TPrint(sTarget, "  ({} Pferd{} zuviel!)", nGHO, (nGHO > 1) ? "e" : "");
     }
     else {
-        COutput::TPrintf(sTarget, "  Gehen: %sGE/%sGE", ToString(fFKapGehen).c_str(), ToString(fKapGehen).c_str());
+        COutput::TPrint(sTarget, "  Gehen: {}GE/{}GE", ToString(fFKapGehen).c_str(), ToString(fKapGehen).c_str());
     }
-    COutput::TPrintf(sTarget, "\n");
+    COutput::TWrite(sTarget, "\n");
 }
 
 double CEinheit::Gewicht() const

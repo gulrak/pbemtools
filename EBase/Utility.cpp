@@ -1781,24 +1781,24 @@ void COutputTable::Output(const std::string& sTarget, const std::string& sPfx)
     Format();
 
     for (iT = m_coTable.begin(); iT != m_coTable.end(); iT++) {
-        COutput::TPrintf(sTarget, "%s", sPfx.c_str());
+        COutput::TPrint(sTarget, "{}", sPfx.c_str());
         bBorder = false;
         for (size_t c = 0; c < (*iT).size(); c++) {
             if (!strcmp((*iT)[c].second.c_str(), "|")) {
-                COutput::TPrintf(sTarget, "|");
+                COutput::TWrite(sTarget, "|");
                 bBorder = true;
             }
             else {
                 if (c && !bBorder) {
-                    COutput::TPrintf(sTarget, " %s", (*iT)[c].second.c_str());
+                    COutput::TPrint(sTarget, " {}", (*iT)[c].second.c_str());
                 }
                 else {
-                    COutput::TPrintf(sTarget, "%s", (*iT)[c].second.c_str());
+                    COutput::TPrint(sTarget, "{}", (*iT)[c].second.c_str());
                 }
                 bBorder = false;
             }
         }
-        COutput::TPrintf(sTarget, "\n");
+        COutput::TWrite(sTarget, "\n");
     }
 }
 
