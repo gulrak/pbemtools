@@ -2193,18 +2193,15 @@ void CVorlage::Einheitenvorlage(CEinheit* poUnit, CReport* poRep2)
     else {
         //	if( IsFlag( VF_BASE36 ) )
         if (IsFlag(VF_SHOWVERBOSEINFO)) {
-            target->Print("\n  EINHEIT {};  {} [{},{}${}] {}{}{}{}{}{}\n", itoan(poUnit->m_nNummer, g_poCurrentReport->ENrBase()), poUnit->m_sName, poUnit->m_nAnzahl, poUnit->m_nSilber, getAndReset(out),
+            WrapOut("  ;              ", fmt::format("EINHEIT {};  {} [{},{}${}] {}{}{}{}{}{}", itoan(poUnit->m_nNummer, g_poCurrentReport->ENrBase()), poUnit->m_sName, poUnit->m_nAnzahl, poUnit->m_nSilber, getAndReset(out),
                             !poUnit->WahrerTyp().empty() ? poUnit->Typ() + ", " : "", poUnit->m_nParteitarnung ? "parteigetarnt, " : "", poUnit->m_nBewacht ? "bewacht, " : "",
-                            poUnit->m_shp.empty() ? std::string{} : poUnit->m_shp + ", ", pcKampf, poUnit->m_nHunger ? ", hungert" : "");
+                            poUnit->m_shp.empty() ? std::string{} : poUnit->m_shp + ", ", pcKampf, poUnit->m_nHunger ? ", hungert" : ""), g_nLineSize, "\n  ");
             if (poUnit->m_nVerkleidung) {
                 target->Print("  ; Verkleidet als {} ({})\n", poUnit->Region()->Map()->Report()->Parteiname(poUnit->m_nVerkleidung).substr(1), itoan(poUnit->m_nVerkleidung, g_poCurrentReport->PNrBase()));
             }
             if (poUnit->m_nVerraeter) {
                 target->Write("  ; VERR\xC4TER!\n");
             }
-            //	else
-            //	    COutput::TPrintf( "vorlage", "\n  EINHEIT %6d;  %s [%d,%d$%s] %s%s%s%s%s%s\n", poUnit->m_nNummer, poUnit->m_sName.c_str(), poUnit->m_nAnzahl, poUnit->m_nSilber, Buff, (!poUnit->m_sWahrerTyp.empty())?poUnit->m_sTyp.c_str():"",
-            // poUnit->m_nParteitarnung?"parteigetarnt, ":"", poUnit->m_nBewacht?"bewacht, ":"", poUnit->m_shp.empty()?"":std::string( poUnit->m_shp + ", " ).c_str(), pcKampf, (poUnit->m_nHunger)?", hungert":"" );
         }
         else {
             target->Print("  EINHEIT {};  {} [{},{}${}]\n", itoan(poUnit->m_nNummer, g_poCurrentReport->ENrBase()), poUnit->m_sName, poUnit->m_nAnzahl, poUnit->m_nSilber, getAndReset(out));
