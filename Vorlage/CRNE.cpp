@@ -72,7 +72,7 @@ void CRNENode::AddToPool(const std::string& sName, const std::string& sRNE)
 void CRNENode::DumpRNEPool()
 {
     for (RNEPOOL::iterator i = m_cpoRNEPool.begin(); i != m_cpoRNEPool.end(); i++) {
-        printf("$%s = %s\n", (*i).first.c_str(), (*i).second->String().c_str());
+        std::cout << "$" << (*i).first << " = " << (*i).second->String() << "\n";
     }
 }
 
@@ -282,11 +282,11 @@ int main( int argc, char* argv[] )
 		}
 		catch(CRNEException e)
 		{
-			puts("Error in expression!");
+			std::cerr << "Error in expression!\n";
 			poRNE = 0;
 		}
 		if( poRNE )
-			for( i=0 ; i<nCount;  i++ ) printf("%s\n", poRNE->GenAVal().c_str() );
+			for( i=0 ; i<nCount;  i++ ) std::cout << poRNE->GenAVal() << "\n";
 	}
 
 	return 0;

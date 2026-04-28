@@ -54,6 +54,8 @@
 #include <string>
 #include <vector>
 
+#include <fmt/format.h>
+
 #define IsAlpha(c) isalpha((unsigned char)(c))
 #define IsAlNum(c) isalnum((unsigned char)(c))
 #define IsDigit(c) isdigit((unsigned char)(c))
@@ -334,12 +336,22 @@ public:
 
     void Write(const char* pcTxt);
     void Write(const std::string& sTxt);
-    void Printf(const char* msg, ...);
+    template <typename... Args>
+    void Print(fmt::format_string<Args...> fmt, Args&&... args)
+    {
+        Write(fmt::format(fmt, std::forward<Args>(args)...));
+    }
 
     bool Disconnect(bool bSuicide = true);
 
     static void TWrite(const std::string& sID, const std::string& sTxt);
-    static void TPrintf(const std::string& sID, const char* msg, ...);
+
+    template <typename... Args>
+    static void TPrint(const std::string& sID, fmt::format_string<Args...> fmt, Args&&... args)
+    {
+        Target(sID)->Write(fmt::format(fmt, std::forward<Args>(args)...));
+    }
+
     static void CloseTargets();
     static void SetTarget(const std::string& sID, COutput* poTrace);
     static void SetFilter(const std::string& sID, const std::string& sFilter);

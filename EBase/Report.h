@@ -320,8 +320,6 @@ public:
 class CMessage : public CBlockBase
 {
 public:
-    typedef std::shared_ptr<CMessage> Ptr;
-
     enum RENDERER { NONE, ERESSEA1, ERESSEA2 };
 
     CMessage(int32_t round);
@@ -536,7 +534,7 @@ public:
     friend class CRegion;
     friend class CVorlage;
 
-    typedef std::map<size_t, CMessage::Ptr> Messages;
+    using Messages = std::vector<std::unique_ptr<CMessage>>;
     typedef std::pair<int, std::string> Nachricht;
     typedef std::map<int32_t, std::string> Parteien;
     typedef std::map<int32_t, CPartei::Ptr> ParteiInfos;
@@ -674,17 +672,11 @@ public:
 
     size_t NumMessage() const { return m_cpoMessages.size(); }
 
-    void AddMessage(CMessage::Ptr pMsg) { m_cpoMessages[m_cpoMessages.size()] = pMsg; }
+    void AddMessage(std::unique_ptr<CMessage> pMsg) { m_cpoMessages.push_back(std::move(pMsg)); }
 
-    CMessage::Ptr GetMessage(size_t nID)
+    CMessage* GetMessage(size_t nID)
     {
-        Messages::iterator mi = m_cpoMessages.find(nID);
-        if (mi != m_cpoMessages.end()) {
-            return (*mi).second;
-        }
-        else {
-            return CMessage::Ptr();
-        }
+        return nID < m_cpoMessages.size() ? m_cpoMessages[nID].get() : nullptr;
     }
 
     size_t NumNachrichten() const { return m_csNachrichten.size(); }
@@ -890,7 +882,7 @@ class DummyRegion : public CBlockBase
     typedef std::vector<CResource*> VResourcen;
     typedef std::vector<std::string> Durchreisen;
     typedef std::list<std::string> Botschaften;
-    typedef std::list<CMessage::Ptr> Messages;
+    using Messages = std::vector<CMessage*>;
     typedef std::pair<std::string, int32_t> Luxusgut;
     typedef std::vector<Luxusgut> Luxusgueter;
     typedef std::map<std::string, int> Materialpool;
@@ -973,7 +965,7 @@ public:
     typedef std::vector<CResource*> VResourcen;
     typedef std::vector<std::string> Durchreisen;
     typedef std::list<std::string> Botschaften;
-    typedef std::list<CMessage::Ptr> Messages;
+    using Messages = std::vector<CMessage*>;
     typedef std::pair<std::string, int32_t> Luxusgut;
     typedef std::vector<Luxusgut> Luxusgueter;
     typedef std::map<std::string, int32_t> Materialpool;
@@ -1165,23 +1157,13 @@ public:
 
     void AddMessage(const std::string& sTxt) { m_coBotschaften.push_back(sTxt); }
 
-    void AddMessage(CMessage::Ptr pMsg) { m_cpoMessages.push_back(pMsg); }
+    void AddMessage(CMessage* pMsg) { m_cpoMessages.push_back(pMsg); }
 
     size_t NumMessage() const { return m_cpoMessages.size(); }
 
-    CMessage::Ptr GetMessage(int32_t nID)
+    CMessage* GetMessage(int32_t nID)
     {
-        Messages::iterator mi = m_cpoMessages.begin();
-        while (mi != m_cpoMessages.end() && nID) {
-            nID--;
-            mi++;
-        }
-        if (mi != m_cpoMessages.end()) {
-            return (*mi);
-        }
-        else {
-            return CMessage::Ptr();
-        }
+        return (nID >= 0 && size_t(nID) < m_cpoMessages.size()) ? m_cpoMessages[nID] : nullptr;
     }
 
     const Effects& GetEffects() const { return m_coEffects; }
@@ -1550,7 +1532,7 @@ public:
     typedef std::vector<CGegenstand> Gegenstaende;
     typedef std::vector<std::string> Botschaften;
     typedef std::vector<std::string> Sprueche;
-    typedef std::list<CMessage::Ptr> Messages;
+    using Messages = std::vector<CMessage*>;
     typedef std::vector<CKampfzauber::Ptr> Kampfzauber;
 
     CEinheit(CReportStream& oRS, CRegion* poRegion);
@@ -1632,7 +1614,7 @@ public:
 
     void AddMessage(std::string sMsg) { m_coBotschaften.push_back(sMsg); }
 
-    void AddMessage(CMessage::Ptr pMsg) { m_cpoMessages.push_back(pMsg); }
+    void AddMessage(CMessage* pMsg) { m_cpoMessages.push_back(pMsg); }
 
     void AddMaterialpool(CRegion::Materialpool& coPool, bool bSearchable);
 

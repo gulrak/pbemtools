@@ -1079,31 +1079,29 @@ void CBlockBase::ReadConfigObjects(const std::string& sFile, const std::string& 
 
 void CBlockBase::Dump(unsigned int lvl)
 {
-    char spc[16];
-    snprintf(spc, sizeof(spc), "%%%ds", lvl * 2);
-    fprintf(stderr, spc, "");
-    fprintf(stderr, "<%s", g_stringTable.i2s(m_nName).c_str());
+    fmt::print(stderr, "{:{}}", "", lvl * 2);
+    fmt::print(stderr, "<{}", g_stringTable.i2s(m_nName));
     if (m_oKey1.getType() != VT_EMPTY) {
-        fprintf(stderr, " k1=%c%s%c", 34, m_oKey1.asString().c_str(), 34);
+        fmt::print(stderr, " k1=\"{}\"", m_oKey1.asString());
         if (m_oKey2.getType() != VT_EMPTY) {
-            fprintf(stderr, " k2=%c%s%c", 34, m_oKey2.asString().c_str(), 34);
+            fmt::print(stderr, " k2=\"{}\"", m_oKey2.asString());
             if (m_oKey3.getType() != VT_EMPTY) {
-                fprintf(stderr, " k3=%c%s%c", 34, m_oKey3.asString().c_str(), 34);
+                fmt::print(stderr, " k3=\"{}\"", m_oKey3.asString());
             }
         }
     }
-    fprintf(stderr, ">\n");
+    fmt::print(stderr, ">\n");
     for (NamedValues::iterator ai = m_coNamedValues.begin(); ai != m_coNamedValues.end(); ai++) {
-        fprintf(stderr, spc, "");
-        fprintf(stderr, "  <%s>%s</%s>\n", CStringDB::SID2Str((*ai).first).c_str(), (*ai).second.asString().c_str(), CStringDB::SID2Str((*ai).first).c_str());
+        fmt::print(stderr, "{:{}}", "", lvl * 2);
+        fmt::print(stderr, "  <{}>{}</{}>\n", CStringDB::SID2Str((*ai).first), (*ai).second.asString(), CStringDB::SID2Str((*ai).first));
     }
     for (NamedSubblocks::iterator bi = m_coSubblocks.begin(); bi != m_coSubblocks.end(); bi++) {
         for (BlockGroup::iterator bgi = (*bi).second.begin(); bgi != (*bi).second.end(); bgi++) {
             (*bgi).second->Dump(lvl + 1);
         }
     }
-    fprintf(stderr, spc, "");
-    fprintf(stderr, "</%s>\n", g_stringTable.i2s(m_nName).c_str());
+    fmt::print(stderr, "{:{}}", "", lvl * 2);
+    fmt::print(stderr, "</{}>\n", g_stringTable.i2s(m_nName));
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -1830,7 +1828,6 @@ void CKarte::DumpMap(const std::string& sTarget, int nCX, int nCY, int nB, int n
 {
     int h, x, y, z;
     int x1, x2, sx, sy;
-    char fmt[16], fmt2[16];
     char c, o;
     int e;
     nB >>= 1;
@@ -1846,36 +1843,35 @@ void CKarte::DumpMap(const std::string& sTarget, int nCX, int nCY, int nB, int n
     sx = (log10((double)abs(x1)) > log10((double)abs(x2))) ? (int)log10((double)abs(x1)) : (int)log10((double)abs(x2));
     sy = (log10((double)abs(y)) > log10((double)abs(nCY - nH))) ? (int)log10((double)abs(y)) : (int)log10((double)abs(nCY - nH));
     sy++;
-    snprintf(fmt, sizeof(fmt), "%%+%dd ", sy + 1);
-    snprintf(fmt2, sizeof(fmt2), "%%%ds ", sy + 1);
+    int yLabelWidth = sy + 1;
 
     if (pcPref)
-        COutput::TPrintf(sTarget, "%s ", pcPref);
-    COutput::TPrintf(sTarget, "    ");
+        COutput::TPrint(sTarget, "{} ", pcPref);
+    COutput::TWrite(sTarget, "    ");
     if ((y & 1) ^ (nCY & 1))
-        COutput::TPrintf(sTarget, " ");
+        COutput::TWrite(sTarget, " ");
     e = ((y & 1) ^ (nCY & 1)) ? 0 : 1;
     for (x = nCX - nB + h; x <= nCX + nB + h + e; x++)
-        COutput::TPrintf(sTarget, "%c ", (x - ((y > 0) ? y + 1 : y) / 2) < 0 ? '-' : ((x - ((y > 0) ? y + 1 : y) / 2) ? '+' : '|'));
-    COutput::TPrintf(sTarget, "\n");
+        COutput::TPrint(sTarget, "{} ", (x - ((y > 0) ? y + 1 : y) / 2) < 0 ? '-' : ((x - ((y > 0) ? y + 1 : y) / 2) ? '+' : '|'));
+    COutput::TWrite(sTarget, "\n");
 
     for (z = (int)pow((double)10, (double)sx); z > 0; z /= 10) {
         if (pcPref)
-            COutput::TPrintf(sTarget, "%s ", pcPref);
-        COutput::TPrintf(sTarget, fmt2, "");
+            COutput::TPrint(sTarget, "{} ", pcPref);
+        COutput::TPrint(sTarget, "{:>{}} ", "", yLabelWidth);
         if ((y & 1) ^ (nCY & 1))
-            COutput::TPrintf(sTarget, " ");
+            COutput::TWrite(sTarget, " ");
         for (x = nCX - nB + h; x <= nCX + nB + h + e; x++)
-            COutput::TPrintf(sTarget, "%c ", ((abs(x - ((y > 0) ? y + 1 : y) / 2) / z) % 10) + '0');
-        COutput::TPrintf(sTarget, "\n");
+            COutput::TPrint(sTarget, "{} ", ((abs(x - ((y > 0) ? y + 1 : y) / 2) / z) % 10) + '0');
+        COutput::TWrite(sTarget, "\n");
     }
 
     for (--y; y >= nCY - nH; y--) {
         if (pcPref)
-            COutput::TPrintf(sTarget, "%s ", pcPref);
-        COutput::TPrintf(sTarget, fmt, y);
+            COutput::TPrint(sTarget, "{} ", pcPref);
+        COutput::TPrint(sTarget, "{:+{}} ", y, yLabelWidth);
         if ((y & 1) ^ (nCY & 1))
-            COutput::TPrintf(sTarget, " ");
+            COutput::TWrite(sTarget, " ");
         h = (y & 1) & !(nCY & 1);
         for (x = nCX - nB + h; x <= nCX + nB + h; x++) {
             c = GetFromDCords(x, y, 0, true)->GetRegionChar();
@@ -1884,12 +1880,12 @@ void CKarte::DumpMap(const std::string& sTarget, int nCX, int nCY, int nB, int n
                 c = ' ';
             if (c == ' ' && !(y % 10))
                 c = '-';
-            COutput::TPrintf(sTarget, "%c%c", c, o);
+            COutput::TPrint(sTarget, "{}{}", c, o);
         }
         if (!((y & 1) ^ (nCY & 1)))
-            COutput::TPrintf(sTarget, " ");
-        COutput::TPrintf(sTarget, fmt, y);
-        COutput::TPrintf(sTarget, "\n");
+            COutput::TWrite(sTarget, " ");
+        COutput::TPrint(sTarget, "{:+{}} ", y, yLabelWidth);
+        COutput::TWrite(sTarget, "\n");
     }
 
     h = (y & 1) & !(nCY & 1);
@@ -1898,24 +1894,24 @@ void CKarte::DumpMap(const std::string& sTarget, int nCX, int nCY, int nB, int n
     sx = (log10((double)abs(x1)) > log10((double)abs(x2))) ? (int)log10((double)abs(x1)) : (int)log10((double)abs(x2));
 
     if (pcPref)
-        COutput::TPrintf(sTarget, "%s ", pcPref);
-    COutput::TPrintf(sTarget, "    ");
+        COutput::TPrint(sTarget, "{} ", pcPref);
+    COutput::TWrite(sTarget, "    ");
     if ((y & 1) ^ (nCY & 1))
-        COutput::TPrintf(sTarget, " ");
+        COutput::TWrite(sTarget, " ");
     e = ((y & 1) ^ (nCY & 1)) ? 0 : 1;
     for (x = nCX - nB + h; x <= nCX + nB + h + e; x++)
-        COutput::TPrintf(sTarget, "%c ", (x - ((y > 0) ? y + 1 : y) / 2) < 0 ? '-' : ((x - ((y > 0) ? y + 1 : y) / 2) ? '+' : '|'));
-    COutput::TPrintf(sTarget, "\n");
+        COutput::TPrint(sTarget, "{} ", (x - ((y > 0) ? y + 1 : y) / 2) < 0 ? '-' : ((x - ((y > 0) ? y + 1 : y) / 2) ? '+' : '|'));
+    COutput::TWrite(sTarget, "\n");
 
     for (z = (int)pow((double)10, (double)sx); z > 0; z /= 10) {
         if (pcPref)
-            COutput::TPrintf(sTarget, "%s ", pcPref);
-        COutput::TPrintf(sTarget, fmt2, "");
+            COutput::TPrint(sTarget, "{} ", pcPref);
+        COutput::TPrint(sTarget, "{:>{}} ", "", yLabelWidth);
         if ((y & 1) ^ (nCY & 1))
-            COutput::TPrintf(sTarget, " ");
+            COutput::TWrite(sTarget, " ");
         for (x = nCX - nB + h; x <= nCX + nB + h + e; x++)
-            COutput::TPrintf(sTarget, "%c ", ((abs(x - ((y > 0) ? y + 1 : y) / 2) / z) % 10) + '0');
-        COutput::TPrintf(sTarget, "\n");
+            COutput::TPrint(sTarget, "{} ", ((abs(x - ((y > 0) ? y + 1 : y) / 2) / z) % 10) + '0');
+        COutput::TWrite(sTarget, "\n");
     }
 }
 
@@ -2203,7 +2199,7 @@ void CReport::Import(const std::string& sFName)
             int32_t nUnit = -1;
             int nBuilding = -1;
             bool bDrop = false;
-            CMessage::Ptr pMsg(new CMessage(oRS, m_nRunde));
+            auto pMsg = std::make_unique<CMessage>(oRS, m_nRunde);
             if (inBattle && pMsg->GetValue("region", Value("")).asString().empty()) {
                 pMsg->SetValue("region", Value(battle_x));
                 pMsg->SetValue("region:1", Value(battle_y));
@@ -2297,7 +2293,7 @@ void CReport::Import(const std::string& sFName)
                 z = pMsg->GetValue("region:2").asLong();
                 bRegion = true;
             }
-            m_cpoMessages.insert(std::make_pair(m_cpoMessages.size(), pMsg));
+            m_cpoMessages.push_back(std::move(pMsg));
             if (!bDrop && (nAmount || (nBuilding > 0 && ((m_nRunde < 227 && nType == 7835) || (m_nRunde == 227 && nType == -1376149197L) || (m_nRunde > 227 && nType == 761324692L))))) {
                 if (nFrom == Partei())
                     nAmount = -nAmount;
@@ -2537,9 +2533,9 @@ void CReport::Import(const std::string& sFName)
         }
         else if (oRS.GetType() == CReportStream::enBLOCK && (oRS.GetValue() == "REGION" || oRS.GetValue() == "DURCHREISEREGION" || oRS.GetValue() == "SPEZIALREGION")) {
             if (bFirstRegion) {
-                CMessage::Ptr pMsg(new CMessage(m_nRunde));
+                auto pMsg = std::make_unique<CMessage>(m_nRunde);
                 pMsg->SetValue("type", Value(-2));
-                m_cpoMessages[m_cpoMessages.size()] = pMsg;
+                m_cpoMessages.push_back(std::move(pMsg));
                 bFirstRegion = false;
             }
 
@@ -2550,12 +2546,12 @@ void CReport::Import(const std::string& sFName)
             battle_x = oRS.GetDat(0);
             battle_y = oRS.GetDat(1);
             battle_z = oRS.GetDat(2);
-            CMessage::Ptr pMsg(new CMessage(m_nRunde));
+            auto pMsg = std::make_unique<CMessage>(m_nRunde);
             pMsg->SetValue("region", Value(battle_x));
             pMsg->SetValue("region:1", Value(battle_y));
             pMsg->SetValue("region:2", Value(battle_z));
             pMsg->SetValue("type", Value(-1));
-            m_cpoMessages[m_cpoMessages.size()] = pMsg;
+            m_cpoMessages.push_back(std::move(pMsg));
             oRS.Next();
             while (!oRS.EOS() && (oRS.GetType() != CReportStream::enBLOCK || oRS.GetValue() != "MESSAGE"))
                 oRS.Next();
@@ -2599,72 +2595,72 @@ void CReport::Import(const std::string& sFName)
     SetMessageSection(-1, "battle");
     SetMessageSection(-2, "dummy");
 
-    for (Messages::const_iterator mi = m_cpoMessages.begin(); mi != m_cpoMessages.end(); mi++) {
+    for (const auto& mi : m_cpoMessages) {
+        CMessage* pMsg = mi.get();
         bUsed = false;
-        // TRACEMSG(( "%s\n", ((CMessage*)((*mi).second.get()))->Render( this ).c_str() ));
-        en1 = (*mi).second->GetValue("unit", Value("")).asLong();
-        en2 = (*mi).second->GetValue("target", Value("")).asLong();
-        en3 = (*mi).second->GetValue("teacher", Value("")).asLong();
-        en4 = (*mi).second->GetValue("student", Value("")).asLong();
+        en1 = pMsg->GetValue("unit", Value("")).asLong();
+        en2 = pMsg->GetValue("target", Value("")).asLong();
+        en3 = pMsg->GetValue("teacher", Value("")).asLong();
+        en4 = pMsg->GetValue("student", Value("")).asLong();
         if (en1) {
             ui = m_cpoGEinheiten.find(en1);
             if (ui != m_cpoGEinheiten.end() && (*ui).second->Partei() == Partei()) {
-                (*ui).second->AddMessage((*mi).second);
+                (*ui).second->AddMessage(pMsg);
                 bUsed = true;
             }
         }
         if (en2) {
             ui = m_cpoGEinheiten.find(en2);
             if (ui != m_cpoGEinheiten.end() && (*ui).second->Partei() == Partei()) {
-                (*ui).second->AddMessage((*mi).second);
+                (*ui).second->AddMessage(pMsg);
                 bUsed = true;
             }
         }
         if (en3) {
             ui = m_cpoGEinheiten.find(en3);
             if (ui != m_cpoGEinheiten.end() && (*ui).second->Partei() == Partei()) {
-                (*ui).second->AddMessage((*mi).second);
+                (*ui).second->AddMessage(pMsg);
                 bUsed = true;
             }
         }
         if (en4) {
             ui = m_cpoGEinheiten.find(en4);
             if (ui != m_cpoGEinheiten.end() && (*ui).second->Partei() == Partei()) {
-                (*ui).second->AddMessage((*mi).second);
+                (*ui).second->AddMessage(pMsg);
                 bUsed = true;
             }
         }
         if (!bUsed) {
-            if (!(*mi).second->GetValue("region", Value("")).asString().empty()) {
+            if (!pMsg->GetValue("region", Value("")).asString().empty()) {
                 int32_t x, y, z;
-                ((CMessage*)((*mi).second.get()))->GetCoords(/*(*mi).second->GetValue(*/ "region" /*, Value( "" ) ).asString()*/, x, y, z);
+                pMsg->GetCoords("region", x, y, z);
                 CRegion* pReg = GetMap()->GetFromECords(x, y, z);
                 if (pReg) {
-                    pReg->AddMessage((*mi).second);
+                    pReg->AddMessage(pMsg);
                     bUsed = true;
                 }
             }
-            if (!(*mi).second->GetValue("start", Value("")).asString().empty()) {
+            if (!pMsg->GetValue("start", Value("")).asString().empty()) {
                 int32_t x, y, z;
-                ((CMessage*)((*mi).second.get()))->GetCoords(/*(*mi).second->GetValue(*/ "start" /*, Value( "" ) ).asString()*/, x, y, z);
+                pMsg->GetCoords("start", x, y, z);
                 CRegion* pReg = GetMap()->GetFromECords(x, y, z);
                 if (pReg) {
-                    pReg->AddMessage((*mi).second);
+                    pReg->AddMessage(pMsg);
                     bUsed = true;
                 }
             }
-            if (!(*mi).second->GetValue("end", Value("")).asString().empty()) {
+            if (!pMsg->GetValue("end", Value("")).asString().empty()) {
                 int32_t x, y, z;
-                ((CMessage*)((*mi).second.get()))->GetCoords(/*(*mi).second->GetValue( */ "end" /*, Value( "" ) ).asString()*/, x, y, z);
+                pMsg->GetCoords("end", x, y, z);
                 CRegion* pReg = GetMap()->GetFromECords(x, y, z);
                 if (pReg) {
-                    pReg->AddMessage((*mi).second);
+                    pReg->AddMessage(pMsg);
                     bUsed = true;
                 }
             }
         }
         if (bUsed) {
-            (*mi).second->SetValue("_used", Value(1));
+            pMsg->SetValue("_used", Value(1));
         }
     }
 
@@ -2821,52 +2817,53 @@ void CReport::CalculateStatistics()
     m_nEinkommen = m_nMsgEinkommen;
     m_nAusgaben = m_nMsgAusgaben;
 
-    for (Messages::const_iterator mi = m_cpoMessages.begin(); mi != m_cpoMessages.end(); mi++) {
+    for (const auto& mi : m_cpoMessages) {
+        const CMessage* pMsg = mi.get();
         if (m_nRunde < 227) {
-            switch ((*mi).second->GetValue("type").asLong()) {
+            switch (pMsg->GetValue("type").asLong()) {
                 case 581:
-                    nP1 = PNrFromENr((*mi).second->GetValue("unit").asLong());
-                    nP2 = PNrFromENr((*mi).second->GetValue("target").asLong());
+                    nP1 = PNrFromENr(pMsg->GetValue("unit").asLong());
+                    nP2 = PNrFromENr(pMsg->GetValue("target").asLong());
                     if (nP1 != nP2) {
                         if (nP1 == m_nPartei)
-                            InsertHandel(nP2, -(*mi).second->GetValue("amount").asLong(), (*mi).second->GetValue("resource").asString());
+                            InsertHandel(nP2, -pMsg->GetValue("amount").asLong(), pMsg->GetValue("resource").asString());
                         else
-                            InsertHandel(nP1, (*mi).second->GetValue("amount").asLong(), (*mi).second->GetValue("resource").asString());
+                            InsertHandel(nP1, pMsg->GetValue("amount").asLong(), pMsg->GetValue("resource").asString());
                     }
                     break;
                 case 9386:
-                    nP1 = (*mi).second->GetValue("from").asLong();
-                    nP2 = (*mi).second->GetValue("to").asLong();
+                    nP1 = pMsg->GetValue("from").asLong();
+                    nP2 = pMsg->GetValue("to").asLong();
                     if (nP1 != nP2) {
                         if (nP1 == m_nPartei)
-                            InsertHandel(nP2, -(*mi).second->GetValue("amount").asLong(), (*mi).second->GetValue("resource", Value("Silber")).asString());
+                            InsertHandel(nP2, -pMsg->GetValue("amount").asLong(), pMsg->GetValue("resource", Value("Silber")).asString());
                         else
-                            InsertHandel(nP1, (*mi).second->GetValue("amount").asLong(), (*mi).second->GetValue("resource", Value("Silber")).asString());
+                            InsertHandel(nP1, pMsg->GetValue("amount").asLong(), pMsg->GetValue("resource", Value("Silber")).asString());
                     }
                     break;
             }
         }
         else if (m_nRunde >= 227) {
-            switch ((*mi).second->GetValue("type").asLong()) {
+            switch (pMsg->GetValue("type").asLong()) {
                 case 5281483:
                 case 1235024123:
-                    nP1 = PNrFromENr((*mi).second->GetValue("unit").asLong());
-                    nP2 = PNrFromENr((*mi).second->GetValue("target").asLong());
+                    nP1 = PNrFromENr(pMsg->GetValue("unit").asLong());
+                    nP2 = PNrFromENr(pMsg->GetValue("target").asLong());
                     if (nP1 != nP2) {
                         if (nP1 == m_nPartei)
-                            InsertHandel(nP2, -(*mi).second->GetValue("amount").asLong(), (*mi).second->GetValue("resource").asString());
+                            InsertHandel(nP2, -pMsg->GetValue("amount").asLong(), pMsg->GetValue("resource").asString());
                         else
-                            InsertHandel(nP1, (*mi).second->GetValue("amount").asLong(), (*mi).second->GetValue("resource").asString());
+                            InsertHandel(nP1, pMsg->GetValue("amount").asLong(), pMsg->GetValue("resource").asString());
                     }
                     break;
                 case 1682429624:
-                    nP1 = (*mi).second->GetValue("from").asLong();
-                    nP2 = (*mi).second->GetValue("to").asLong();
+                    nP1 = pMsg->GetValue("from").asLong();
+                    nP2 = pMsg->GetValue("to").asLong();
                     if (nP1 != nP2) {
                         if (nP1 == m_nPartei)
-                            InsertHandel(nP2, -(*mi).second->GetValue("amount").asLong(), (*mi).second->GetValue("resource", Value("Silber")).asString());
+                            InsertHandel(nP2, -pMsg->GetValue("amount").asLong(), pMsg->GetValue("resource", Value("Silber")).asString());
                         else
-                            InsertHandel(nP1, (*mi).second->GetValue("amount").asLong(), (*mi).second->GetValue("resource", Value("Silber")).asString());
+                            InsertHandel(nP1, pMsg->GetValue("amount").asLong(), pMsg->GetValue("resource", Value("Silber")).asString());
                     }
                     break;
             }
@@ -3624,9 +3621,9 @@ CRegion::CRegion(CReportStream& oRS, CKarte* poMap, int nRunde, int32_t nPos)
                     oRS.Next();
             }
             else if (oRS.GetValue() == "MESSAGE") {
-                CMessage::Ptr pMsg(new CMessage(oRS, m_nRunde));
-                //                m_cpoMessages.push_back( pMsg );
-                Map()->Report()->AddMessage(pMsg);
+                auto pMsgOwned = std::make_unique<CMessage>(oRS, m_nRunde);
+                CMessage* pMsg = pMsgOwned.get();
+                Map()->Report()->AddMessage(std::move(pMsgOwned));
                 if (IsEqual(Map()->Report()->m_sSpiel, "eressea") && pMsg->GetValue("type").asLong() == 1638122429)
                     m_bVerorkt = true;
                 pMsg->SetValue(std::string("localmsg"), Value(1));
@@ -5170,20 +5167,20 @@ void CEinheit::Kapazitaeten(const std::string& sTarget) const
     double fKapReiten, fFKapReiten, fKapGehen, fFKapGehen;
     int32_t nRHO, nGHO;
 
-    COutput::TPrintf(sTarget, "  ; Gew: %sGE", ToString(Gewicht()).c_str());
+    COutput::TPrint(sTarget, "  ; Gew: {}GE", ToString(Gewicht()).c_str());
 
     CalcKapazitaeten(fKapReiten, fFKapReiten, nRHO, fKapGehen, fFKapGehen, nGHO);
 
     if (!nRHO && ((CEinheit*)this)->GetValue(std::string("Pferd"), std::string("")).asLong()) {
-        COutput::TPrintf(sTarget, "  Reiten: %sGE/%sGE", ToString(fFKapReiten).c_str(), ToString(fKapReiten).c_str());
+        COutput::TPrint(sTarget, "  Reiten: {}GE/{}GE", ToString(fFKapReiten).c_str(), ToString(fKapReiten).c_str());
     }
     if (nGHO) {
-        COutput::TPrintf(sTarget, "  (%d Pferd%s zuviel!)", nGHO, (nGHO > 1) ? "e" : "");
+        COutput::TPrint(sTarget, "  ({} Pferd{} zuviel!)", nGHO, (nGHO > 1) ? "e" : "");
     }
     else {
-        COutput::TPrintf(sTarget, "  Gehen: %sGE/%sGE", ToString(fFKapGehen).c_str(), ToString(fKapGehen).c_str());
+        COutput::TPrint(sTarget, "  Gehen: {}GE/{}GE", ToString(fFKapGehen).c_str(), ToString(fKapGehen).c_str());
     }
-    COutput::TPrintf(sTarget, "\n");
+    COutput::TWrite(sTarget, "\n");
 }
 
 double CEinheit::Gewicht() const

@@ -1015,9 +1015,8 @@ int32_t Random(int32_t seed)
                 nCount++;
             // nSeedStart = 0x42C123E6;
             // nCount = 0x15555E;
-            char pcSeed[1024];
-            snprintf(pcSeed, sizeof(pcSeed), "%s, %ld, %ld", ctime(&nSeedStart), (long)nSeedStart, nCount);
-            nSeed = Hash((const unsigned char*)pcSeed, (uint32_t)strlen(pcSeed), 4711);
+            std::string sSeed = fmt::format("{}, {}, {}", ctime(&nSeedStart), (long)nSeedStart, nCount);
+            nSeed = Hash((const unsigned char*)sSeed.c_str(), (uint32_t)sSeed.size(), 4711);
         }
         TRACEMSG(("Random used, seed: 0x%lX\n", nSeed));
         prng.seed((mt11213b_t::result_type)nSeed);
@@ -1718,15 +1717,11 @@ COutputTable& COutputTable::Col(int32_t nNum, COutputTable::FORMAT enFormat)
 
 COutputTable& COutputTable::Col(double fNum, int nScale, COutputTable::FORMAT enFormat)
 {
-    char Fmt[16];
-    char Buff[80];
     m_nCol++;
     if (m_nCol > m_nMaxCols) {
         m_nMaxCols = m_nCol;
     }
-    snprintf(Fmt, sizeof(Fmt), "%%.%df", nScale < 10 ? nScale : 10);
-    snprintf(Buff, sizeof(Buff), Fmt, fNum);
-    m_pRow->push_back(TABENTRY(enFormat, std::string(Buff)));
+    m_pRow->push_back(TABENTRY(enFormat, fmt::format("{:.{}f}", fNum, nScale < 10 ? nScale : 10)));
     return *this;
 }
 
@@ -1781,24 +1776,24 @@ void COutputTable::Output(const std::string& sTarget, const std::string& sPfx)
     Format();
 
     for (iT = m_coTable.begin(); iT != m_coTable.end(); iT++) {
-        COutput::TPrintf(sTarget, "%s", sPfx.c_str());
+        COutput::TPrint(sTarget, "{}", sPfx.c_str());
         bBorder = false;
         for (size_t c = 0; c < (*iT).size(); c++) {
             if (!strcmp((*iT)[c].second.c_str(), "|")) {
-                COutput::TPrintf(sTarget, "|");
+                COutput::TWrite(sTarget, "|");
                 bBorder = true;
             }
             else {
                 if (c && !bBorder) {
-                    COutput::TPrintf(sTarget, " %s", (*iT)[c].second.c_str());
+                    COutput::TPrint(sTarget, " {}", (*iT)[c].second.c_str());
                 }
                 else {
-                    COutput::TPrintf(sTarget, "%s", (*iT)[c].second.c_str());
+                    COutput::TPrint(sTarget, "{}", (*iT)[c].second.c_str());
                 }
                 bBorder = false;
             }
         }
-        COutput::TPrintf(sTarget, "\n");
+        COutput::TWrite(sTarget, "\n");
     }
 }
 
@@ -2083,7 +2078,7 @@ COutput::COutput(const std::string& sFileName, bool bFlushed)
     , m_hFile(0)
     , m_poRoute(0)
 {
-    std::map<std::string, COutput*>::const_iterator di = g_cpoDestinations.find(sFileName);
+    auto di = g_cpoDestinations.find(sFileName);
     if (di == g_cpoDestinations.end()) {
         m_hFile = fopen(sFileName.c_str(), "w");
         if (m_hFile) {
@@ -2215,7 +2210,7 @@ extern bool DoUserFunction(const std::string& sName, ArgumentList& coArgs, Value
 
 void COutput::FilterWrite(const char* pcTxt)
 {
-    std::map<std::string, std::string>::iterator i = g_csFilter.find(m_sTargetName);
+    auto i = g_csFilter.find(m_sTargetName);
     if (i != g_csFilter.end()) {
         ArgumentList coArgs;
         Value oVal;
@@ -2239,7 +2234,7 @@ void COutput::FilterWrite(const char* pcTxt)
 
 void COutput::Write(const char* pcTxt)
 {
-    std::map<std::string, std::string>::iterator i = g_csFilter.find(m_sTargetName);
+    auto i = g_csFilter.find(m_sTargetName);
     if (i == g_csFilter.end()) {
         DoWrite(pcTxt);
         return;
@@ -2266,34 +2261,14 @@ void COutput::Write(const std::string& sTxt)
     Write(sTxt.c_str());
 }
 
-void COutput::Printf(const char* msg, ...)
-{
-    static char pcBuff[4096];
-    va_list list;
-    va_start(list, msg);
-    _vsnprintf(pcBuff, 4095, msg, list);
-    pcBuff[4095] = 0;
-    Write(pcBuff);
-}
-
 void COutput::TWrite(const std::string& sID, const std::string& sTxt)
 {
     Target(sID)->Write(sTxt.c_str());
 }
 
-void COutput::TPrintf(const std::string& sID, const char* msg, ...)
-{
-    static char pcBuff[4096];
-    va_list list;
-    va_start(list, msg);
-    _vsnprintf(pcBuff, 4095, msg, list);
-    pcBuff[4095] = 0;
-    Target(sID)->Write(pcBuff);
-}
-
 void COutput::CloseTargets()
 {
-    std::map<std::string, COutput*>::iterator ti = g_cpoTargets.begin();
+    auto ti = g_cpoTargets.begin();
     std::list<COutput*> cpoHelp;
 
     while (ti != g_cpoTargets.end()) {
@@ -2305,7 +2280,7 @@ void COutput::CloseTargets()
         }
     }
     g_cpoTargets.clear();
-    std::list<COutput*>::iterator hi = cpoHelp.begin();
+    auto hi = cpoHelp.begin();
     while (hi != cpoHelp.end()) {
         delete (*hi++);
     }
@@ -2315,7 +2290,7 @@ void COutput::CloseTargets()
 
 void COutput::SetTarget(const std::string& sID, COutput* poTarget)
 {
-    std::map<std::string, COutput*>::iterator ti = g_cpoTargets.find(sID);
+    auto ti = g_cpoTargets.find(sID);
     poTarget->m_sTargetName = sID;
 
     if (ti == g_cpoTargets.end()) {
@@ -2341,7 +2316,7 @@ void COutput::SetFilter(const std::string& sID, const std::string& sFilter)
 
 void COutput::RenameTarget(const std::string& sIDOld, const std::string& sIDNew)
 {
-    std::map<std::string, COutput*>::iterator ti = g_cpoTargets.find(sIDOld);
+    auto ti = g_cpoTargets.find(sIDOld);
     COutput* poTarget;
     if (ti != g_cpoTargets.end()) {
         poTarget = (*ti).second;
@@ -2352,7 +2327,7 @@ void COutput::RenameTarget(const std::string& sIDOld, const std::string& sIDNew)
 
 COutput* COutput::Target(const std::string& sID)
 {
-    std::map<std::string, COutput*>::const_iterator ti = g_cpoTargets.find(sID);
+    auto ti = g_cpoTargets.find(sID);
     if (ti == g_cpoTargets.end()) {
         SetTarget(sID, new COutput(stderr));
         ERRMSG(0, ("FEHLER: Der interne Ausgabekanal '%s' wurde nicht gefunden!", sID.c_str()));
