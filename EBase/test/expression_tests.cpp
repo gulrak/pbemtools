@@ -74,7 +74,7 @@ Value FStatusText(Expression*, ArgumentList&) { return Value(); }
 Value FSystem(Expression*, ArgumentList&) { return Value(); }
 bool DoUserFunction(const std::string&, ArgumentList&, Value*) { return false; }
 
-std::string GetConfigFileName() { return ""; }
+std::string GetConfigFileName() { return EBASE_TEST_CONFIG_FILE; }
 void SetConfigFileName(const std::string&) {}
 bool ExistUserFunction(const std::string&) { return false; }
 
