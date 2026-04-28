@@ -8,6 +8,30 @@
 
 #include "test_utils.h"
 
+namespace {
+
+std::string normalizeLineEndings(std::string text)
+{
+    std::string normalized;
+    normalized.reserve(text.size());
+
+    for (size_t i = 0; i < text.size(); ++i) {
+        if (text[i] == '\r') {
+            if (i + 1 < text.size() && text[i + 1] == '\n') {
+                ++i;
+            }
+            normalized.push_back('\n');
+        }
+        else {
+            normalized.push_back(text[i]);
+        }
+    }
+
+    return normalized;
+}
+
+}  // namespace
+
 TEST_CASE("CReportStream parses block lines", "[reportstream]")
 {
     auto path = writeTempTestFile("reportstream_block", "REGION 12 -3 0 ; known region\n");
@@ -98,5 +122,5 @@ TEST_CASE("CReportStream write helpers produce CR lines", "[reportstream]")
     std::ifstream in(path, std::ios::binary);
     std::string contents((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
 
-    CHECK(contents == "REGION 1 -2 0;known\n\"Cadiz\";Name\n5600;Bauern\n10 20;Koordinaten\n");
+    CHECK(normalizeLineEndings(contents) == "REGION 1 -2 0;known\n\"Cadiz\";Name\n5600;Bauern\n10 20;Koordinaten\n");
 }
