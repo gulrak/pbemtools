@@ -1015,9 +1015,8 @@ int32_t Random(int32_t seed)
                 nCount++;
             // nSeedStart = 0x42C123E6;
             // nCount = 0x15555E;
-            char pcSeed[1024];
-            snprintf(pcSeed, sizeof(pcSeed), "%s, %ld, %ld", ctime(&nSeedStart), (long)nSeedStart, nCount);
-            nSeed = Hash((const unsigned char*)pcSeed, (uint32_t)strlen(pcSeed), 4711);
+            std::string sSeed = fmt::format("{}, {}, {}", ctime(&nSeedStart), (long)nSeedStart, nCount);
+            nSeed = Hash((const unsigned char*)sSeed.c_str(), (uint32_t)sSeed.size(), 4711);
         }
         TRACEMSG(("Random used, seed: 0x%lX\n", nSeed));
         prng.seed((mt11213b_t::result_type)nSeed);
@@ -1718,15 +1717,11 @@ COutputTable& COutputTable::Col(int32_t nNum, COutputTable::FORMAT enFormat)
 
 COutputTable& COutputTable::Col(double fNum, int nScale, COutputTable::FORMAT enFormat)
 {
-    char Fmt[16];
-    char Buff[80];
     m_nCol++;
     if (m_nCol > m_nMaxCols) {
         m_nMaxCols = m_nCol;
     }
-    snprintf(Fmt, sizeof(Fmt), "%%.%df", nScale < 10 ? nScale : 10);
-    snprintf(Buff, sizeof(Buff), Fmt, fNum);
-    m_pRow->push_back(TABENTRY(enFormat, std::string(Buff)));
+    m_pRow->push_back(TABENTRY(enFormat, fmt::format("{:.{}f}", fNum, nScale < 10 ? nScale : 10)));
     return *this;
 }
 
@@ -2266,29 +2261,9 @@ void COutput::Write(const std::string& sTxt)
     Write(sTxt.c_str());
 }
 
-void COutput::Printf(const char* msg, ...)
-{
-    static char pcBuff[4096];
-    va_list list;
-    va_start(list, msg);
-    _vsnprintf(pcBuff, 4095, msg, list);
-    pcBuff[4095] = 0;
-    Write(pcBuff);
-}
-
 void COutput::TWrite(const std::string& sID, const std::string& sTxt)
 {
     Target(sID)->Write(sTxt.c_str());
-}
-
-void COutput::TPrintf(const std::string& sID, const char* msg, ...)
-{
-    static char pcBuff[4096];
-    va_list list;
-    va_start(list, msg);
-    _vsnprintf(pcBuff, 4095, msg, list);
-    pcBuff[4095] = 0;
-    Target(sID)->Write(pcBuff);
 }
 
 void COutput::CloseTargets()

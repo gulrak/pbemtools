@@ -249,9 +249,9 @@ double Value::asReal() const noexcept
     return 0.0;
 }
 
-void Value::error(const char* pcMsg)
+void Value::error(std::string sMsg)
 {
-    self()._data = detail::ErrorState{pcMsg};
+    self()._data = detail::ErrorState{std::move(sMsg)};
 }
 
 std::string Value::asString(bool bForceLiteral) const

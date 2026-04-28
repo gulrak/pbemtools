@@ -475,7 +475,7 @@ void CVorlage::Islandize(CKarte::IslandQueue& cpoQueue, RegionDB& coRDB)
 
 #define PIPRINT         \
     g_bForceEOL = true; \
-    COutput::Target("console")->Printf
+    COutput::Target("console")->Print
 
 void CVorlage::RunMetacommands(CReport& oReport)
 {
@@ -484,7 +484,7 @@ void CVorlage::RunMetacommands(CReport& oReport)
     CEinheit* poUnit = nullptr;
     int32_t nUnitCnt = 0;
     bool bDoneReg = false;
-    char pcPass[16];
+    std::string pcPass;
     //	Expression::clearAllVars();
 
     m_nPlayer = oReport.Partei();
@@ -493,14 +493,14 @@ void CVorlage::RunMetacommands(CReport& oReport)
     g_poKarte = m_poKarte;
 
     if (g_nMinPasses)
-        snprintf(pcPass, sizeof(pcPass), "Pass %ld: ", g_nPassNum);
+        pcPass = fmt::format("Pass {}: ", g_nPassNum);
     else
-        pcPass[0] = 0;
+        pcPass.clear();
 
     if (IsFlag(VF_PROGRESSINFO)) {
         if (g_nPassNum <= 1)
             TRACEMSG(("\n"));
-        PIPRINT("\r%sEinheiten: %3d%% - OnInit", pcPass, nUnitCnt * 100 / m_nUnits);
+        PIPRINT("\r{}Einheiten: {:3}% - OnInit", pcPass, nUnitCnt * 100 / m_nUnits);
     }
     Value vCurrentMeta(-1);
     Expression::setGlobal("$CURRENTMETA", &vCurrentMeta);
@@ -529,10 +529,10 @@ void CVorlage::RunMetacommands(CReport& oReport)
             if (IsFlag(VF_RUNALLVISIBLEREGIONS)) {
                 if (IsFlag(VF_PROGRESSINFO)) {
                     if (poReg->GetEZ()) {
-                        PIPRINT("\r%sEinheiten: %3d%% - OnRegion(%d,%d,%d)", pcPass, nUnitCnt * 100 / m_nUnits, poReg->GetEX(), poReg->GetEY(), poReg->GetEZ());
+                        PIPRINT("\r{}Einheiten: {:3}% - OnRegion({},{},{})", pcPass, nUnitCnt * 100 / m_nUnits, poReg->GetEX(), poReg->GetEY(), poReg->GetEZ());
                     }
                     else {
-                        PIPRINT("\r%sEinheiten: %3d%% - OnRegion(%d,%d)", pcPass, nUnitCnt * 100 / m_nUnits, poReg->GetEX(), poReg->GetEY());
+                        PIPRINT("\r{}Einheiten: {:3}% - OnRegion({},{})", pcPass, nUnitCnt * 100 / m_nUnits, poReg->GetEX(), poReg->GetEY());
                     }
                 }
                 CMetaCommand::Call(std::string("OnRegion"), poReg->GetKommandos());
@@ -560,10 +560,10 @@ void CVorlage::RunMetacommands(CReport& oReport)
                     if (!bDoneReg) {
                         if (IsFlag(VF_PROGRESSINFO)) {
                             if (poReg->GetEZ()) {
-                                PIPRINT("\r%sEinheiten: %3d%% - OnRegion(%d,%d,%d)", pcPass, nUnitCnt * 100 / m_nUnits, poReg->GetEX(), poReg->GetEY(), poReg->GetEZ());
+                                PIPRINT("\r{}Einheiten: {:3}% - OnRegion({},{},{})", pcPass, nUnitCnt * 100 / m_nUnits, poReg->GetEX(), poReg->GetEY(), poReg->GetEZ());
                             }
                             else {
-                                PIPRINT("\r%sEinheiten: %3d%% - OnRegion(%d,%d)", pcPass, nUnitCnt * 100 / m_nUnits, poReg->GetEX(), poReg->GetEY());
+                                PIPRINT("\r{}Einheiten: {:3}% - OnRegion({},{})", pcPass, nUnitCnt * 100 / m_nUnits, poReg->GetEX(), poReg->GetEY());
                             }
                         }
                         CMetaCommand::Call(std::string("OnRegion"), poReg->GetKommandos());
@@ -592,14 +592,14 @@ void CVorlage::RunMetacommands(CReport& oReport)
                     g_poCurrentUnit = poUnit;
 
                     if (IsFlag(VF_PROGRESSINFO)) {
-                        PIPRINT("\r%sEinheiten: %3d%% - OnUnit(%s)      ", pcPass, nUnitCnt * 100 / m_nUnits, itoan(poUnit->m_nNummer, g_poCurrentReport->ENrBase()));
+                        PIPRINT("\r{}Einheiten: {:3}% - OnUnit({})      ", pcPass, nUnitCnt * 100 / m_nUnits, itoan(poUnit->m_nNummer, g_poCurrentReport->ENrBase()));
                     }
 
                     CMetaCommand::Call(std::string("OnUnit"), poUnit->m_csMetaOut);
 
                     if (Expression::getGlobal("$EXECINLINE").asLong()) {
                         if (IsFlag(VF_PROGRESSINFO)) {
-                            PIPRINT("\r%sEinheiten: %3d%% - [%s]            ", pcPass, nUnitCnt * 100 / m_nUnits, itoan(poUnit->m_nNummer, g_poCurrentReport->ENrBase()));
+                            PIPRINT("\r{}Einheiten: {:3}% - [{}]            ", pcPass, nUnitCnt * 100 / m_nUnits, itoan(poUnit->m_nNummer, g_poCurrentReport->ENrBase()));
                         }
 
                         if (IsFlag(VF_PRIVATMETA)) {
@@ -678,7 +678,7 @@ void CVorlage::RunMetacommands(CReport& oReport)
                     }
 
                     if (IsFlag(VF_PROGRESSINFO)) {
-                        PIPRINT("\r%sEinheiten: %3d%% - EndUnit(%s)     ", pcPass, nUnitCnt * 100 / m_nUnits, itoan(poUnit->m_nNummer, g_poCurrentReport->ENrBase()));
+                        PIPRINT("\r{}Einheiten: {:3}% - EndUnit({})     ", pcPass, nUnitCnt * 100 / m_nUnits, itoan(poUnit->m_nNummer, g_poCurrentReport->ENrBase()));
                         nUnitCnt++;
                     }
                     CMetaCommand::Call(std::string("EndUnit"), poUnit->m_csMetaOut);
@@ -689,10 +689,10 @@ void CVorlage::RunMetacommands(CReport& oReport)
         if (bDoneReg) {
             if (IsFlag(VF_PROGRESSINFO)) {
                 if (poReg->GetEZ()) {
-                    PIPRINT("\r%sEinheiten: %3d%% - EndRegion(%d,%d,%d)", pcPass, nUnitCnt * 100 / m_nUnits, poReg->GetEX(), poReg->GetEY(), poReg->GetEZ());
+                    PIPRINT("\r{}Einheiten: {:3}% - EndRegion({},{},{})", pcPass, nUnitCnt * 100 / m_nUnits, poReg->GetEX(), poReg->GetEY(), poReg->GetEZ());
                 }
                 else {
-                    PIPRINT("\r%sEinheiten: %3d%% - EndRegion(%d,%d)", pcPass, nUnitCnt * 100 / m_nUnits, poReg->GetEX(), poReg->GetEY());
+                    PIPRINT("\r{}Einheiten: {:3}% - EndRegion({},{})", pcPass, nUnitCnt * 100 / m_nUnits, poReg->GetEX(), poReg->GetEY());
                 }
             }
             CMetaCommand::Call(std::string("EndRegion"), poReg->GetEndKommandos());
@@ -703,12 +703,12 @@ void CVorlage::RunMetacommands(CReport& oReport)
     }
 
     if (IsFlag(VF_PROGRESSINFO)) {
-        PIPRINT("\r%sEinheiten: %3d%% - OnExit", pcPass, nUnitCnt * 100 / m_nUnits);
+        PIPRINT("\r{}Einheiten: {:3}% - OnExit", pcPass, nUnitCnt * 100 / m_nUnits);
     }
     CMetaCommand::Call(std::string("OnExit"), m_coExitCmd);
 
     if (IsFlag(VF_PROGRESSINFO)) {
-        PIPRINT("\r%sEinheiten: %3d%% \n", pcPass, nUnitCnt * 100 / m_nUnits);
+        PIPRINT("\r{}Einheiten: {:3}% \n", pcPass, nUnitCnt * 100 / m_nUnits);
     }
 }
 
@@ -828,8 +828,8 @@ void CVorlage::Vorlage(CReport& oReport, CReport* poRep2, bool bTime)
     if (poRep2) {
         for (CReport::Einheiten::iterator ei = poRep2->GEinheiten().begin(); ei != poRep2->GEinheiten().end(); ei++) {
             if ((*ei).second->Partei() == m_nPlayer) {
-                nUnits++;
-                nPersons += (*ei).second->Anzahl();
+                //nUnits2++;
+                //nPersons2 += (*ei).second->Anzahl();
                 if (0 != CRasse::Lookup((*ei).second->RealType()).GetValue(std::string("Unterhalt")).asLong()) {
                     nNeededFood2 += CRasse::Lookup((*ei).second->RealType()).GetValue(std::string("Unterhalt")).asLong() * (*ei).second->Anzahl();
                 }
@@ -991,13 +991,13 @@ void CVorlage::Vorlage(CReport& oReport, CReport* poRep2, bool bTime)
     if (IsFlag(VF_SHOWHANDEL)) {
         target->Write("\n ; Wirtschaftsbilanz:\n");
         if (poRep2 && poRep2->m_nEinkommen > 0)
-            target->Print(" ; Gesamteinkommen:{:9} ({:+}) Silber\n", oReport.m_nEinkommen, oReport.m_nEinkommen - poRep2->m_nEinkommen);
+            target->Print(" ; Gesamteinkommen:{:12} ({:+}) Silber\n", oReport.m_nEinkommen, oReport.m_nEinkommen - poRep2->m_nEinkommen);
         else
-            target->Print(" ; Gesamteinkommen:{:9} Silber\n", oReport.m_nEinkommen);
+            target->Print(" ; Gesamteinkommen:{:12} Silber\n", oReport.m_nEinkommen);
         if (poRep2 && poRep2->m_nAusgaben > 0)
-            target->Print(" ; Gesamtausgaben: {:9} ({:+}) Silber {}\n", oReport.m_nAusgaben + nNeededFood /*Eater*10*/, (oReport.m_nAusgaben + nNeededFood) - (poRep2->m_nAusgaben + nNeededFood2), oReport.Version() > 40 ? "" : "(z.Zt. ohne kostenpfl. Talente)");
+            target->Print(" ; Gesamtausgaben: {:12} ({:+}) Silber {}\n", oReport.m_nAusgaben + nNeededFood /*Eater*10*/, (oReport.m_nAusgaben + nNeededFood) - (poRep2->m_nAusgaben + nNeededFood2), oReport.Version() > 40 ? "" : "(z.Zt. ohne kostenpfl. Talente)");
         else
-            target->Print(" ; Gesamtausgaben: {:9} Silber {}\n", oReport.m_nAusgaben + nNeededFood /*Eater*10*/, oReport.Version() > 40 ? "" : "(z.Zt. ohne kostenpfl. Talente)");
+            target->Print(" ; Gesamtausgaben: {:12} Silber {}\n", oReport.m_nAusgaben + nNeededFood /*Eater*10*/, oReport.Version() > 40 ? "" : "(z.Zt. ohne kostenpfl. Talente)");
         int64_t nVermoegen = 0, nVermoegen2 = 0;
         for (auto rmi = m_poKarte->Regions().begin(); rmi != m_poKarte->Regions().end(); rmi++) {
             nVermoegen += (*rmi).second->SilverOf(oReport.Partei());
@@ -1008,9 +1008,9 @@ void CVorlage::Vorlage(CReport& oReport, CReport* poRep2, bool bTime)
             }
         }
         if (poRep2 && nVermoegen2 > 0)
-            target->Print(" ; Gesamtverm\xF6gen: {:9} ({:+}) Silber\n", nVermoegen, nVermoegen - nVermoegen2);
+            target->Print(" ; Gesamtverm\xF6gen: {:12} ({:+}) Silber\n", nVermoegen, nVermoegen - nVermoegen2);
         else
-            target->Print(" ; Gesamtverm\xF6gen: {:9} Silber\n", nVermoegen);
+            target->Print(" ; Gesamtverm\xF6gen: {:12} Silber\n", nVermoegen);
 
         if (oReport.m_cpoHPartner.size())
             target->Write("\n ; Warenaustausch:\n");
@@ -1617,15 +1617,15 @@ void CVorlage::Regionsvorlage(CRegion* poReg, CRegion* poReg2, CReport* poRep2)
                         OT.Output("vorlage", std::string(" ; "));
 
                         if (IsFlag(VF_SHOWLUXUS) || IsFlag(VF_SHOWLPROD)) {
-                            static char Delta[32];
+                            static std::string Delta;
                             if (poReg->GetVerkauf() >= 0 && size_t(poReg->GetVerkauf()) < poReg->GetLuxusgueter().size()) {
                                 target->Write(" ; Prod.: ");
                                 if (bDiff) {
-                                    snprintf(Delta, sizeof(Delta), "%+5ld",
+                                    Delta = fmt::format("{:+5}",
                                              (poReg2->GetLuxusgueter().size() > size_t(poReg2->GetVerkauf())) ? poReg->GetLuxusgueter()[size_t(poReg->GetVerkauf())].second - poReg2->GetLuxusgueter()[size_t(poReg2->GetVerkauf())].second : 0);
                                 }
                                 else {
-                                    Delta[0] = 0;
+                                    Delta.clear();
                                 }
                                 target->Print("{:<10}{:4}{}    max. handelbar: {}\n", poReg->GetLuxusgueter()[size_t(poReg->GetVerkauf())].first + ":", poReg->GetLuxusgueter()[size_t(poReg->GetVerkauf())].second, Delta,
                                                poReg->GetBauern() / 100);
@@ -3540,7 +3540,7 @@ int main(int argc, char* argv[])
             pTarget = COutput::Target("stderr");
         }
         //                01234567890123456789012345678901234567890123456789012345678901234567890123456789
-        pTarget->Printf("\nAufruf: VORLAGE [Optionen] [CR-Datei1] { [CR-Datei2] {...} } { [> Vorlagendatei] }\n\n");
+        pTarget->Write("\nAufruf: VORLAGE [Optionen] [CR-Datei1] { [CR-Datei2] {...} } { [> Vorlagendatei] }\n\n");
         pTarget->Write("    -b        Beschreibungen der Einheiten mit in die Vorlage uebernehmen\n");
         pTarget->Write("    -cfg s    Gibt den Basisnamen der Konfigurationsdatei an\n");
         pTarget->Write("   --cfgpath p Pfad in dem die Konfig-Dateien gesucht werden\n");

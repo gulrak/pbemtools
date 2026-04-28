@@ -1079,31 +1079,29 @@ void CBlockBase::ReadConfigObjects(const std::string& sFile, const std::string& 
 
 void CBlockBase::Dump(unsigned int lvl)
 {
-    char spc[16];
-    snprintf(spc, sizeof(spc), "%%%ds", lvl * 2);
-    fprintf(stderr, spc, "");
-    fprintf(stderr, "<%s", g_stringTable.i2s(m_nName).c_str());
+    fmt::print(stderr, "{:{}}", "", lvl * 2);
+    fmt::print(stderr, "<{}", g_stringTable.i2s(m_nName));
     if (m_oKey1.getType() != VT_EMPTY) {
-        fprintf(stderr, " k1=%c%s%c", 34, m_oKey1.asString().c_str(), 34);
+        fmt::print(stderr, " k1=\"{}\"", m_oKey1.asString());
         if (m_oKey2.getType() != VT_EMPTY) {
-            fprintf(stderr, " k2=%c%s%c", 34, m_oKey2.asString().c_str(), 34);
+            fmt::print(stderr, " k2=\"{}\"", m_oKey2.asString());
             if (m_oKey3.getType() != VT_EMPTY) {
-                fprintf(stderr, " k3=%c%s%c", 34, m_oKey3.asString().c_str(), 34);
+                fmt::print(stderr, " k3=\"{}\"", m_oKey3.asString());
             }
         }
     }
-    fprintf(stderr, ">\n");
+    fmt::print(stderr, ">\n");
     for (NamedValues::iterator ai = m_coNamedValues.begin(); ai != m_coNamedValues.end(); ai++) {
-        fprintf(stderr, spc, "");
-        fprintf(stderr, "  <%s>%s</%s>\n", CStringDB::SID2Str((*ai).first).c_str(), (*ai).second.asString().c_str(), CStringDB::SID2Str((*ai).first).c_str());
+        fmt::print(stderr, "{:{}}", "", lvl * 2);
+        fmt::print(stderr, "  <{}>{}</{}>\n", CStringDB::SID2Str((*ai).first), (*ai).second.asString(), CStringDB::SID2Str((*ai).first));
     }
     for (NamedSubblocks::iterator bi = m_coSubblocks.begin(); bi != m_coSubblocks.end(); bi++) {
         for (BlockGroup::iterator bgi = (*bi).second.begin(); bgi != (*bi).second.end(); bgi++) {
             (*bgi).second->Dump(lvl + 1);
         }
     }
-    fprintf(stderr, spc, "");
-    fprintf(stderr, "</%s>\n", g_stringTable.i2s(m_nName).c_str());
+    fmt::print(stderr, "{:{}}", "", lvl * 2);
+    fmt::print(stderr, "</{}>\n", g_stringTable.i2s(m_nName));
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -1830,7 +1828,6 @@ void CKarte::DumpMap(const std::string& sTarget, int nCX, int nCY, int nB, int n
 {
     int h, x, y, z;
     int x1, x2, sx, sy;
-    char fmt[16], fmt2[16];
     char c, o;
     int e;
     nB >>= 1;
@@ -1846,8 +1843,7 @@ void CKarte::DumpMap(const std::string& sTarget, int nCX, int nCY, int nB, int n
     sx = (log10((double)abs(x1)) > log10((double)abs(x2))) ? (int)log10((double)abs(x1)) : (int)log10((double)abs(x2));
     sy = (log10((double)abs(y)) > log10((double)abs(nCY - nH))) ? (int)log10((double)abs(y)) : (int)log10((double)abs(nCY - nH));
     sy++;
-    snprintf(fmt, sizeof(fmt), "%%+%dd ", sy + 1);
-    snprintf(fmt2, sizeof(fmt2), "%%%ds ", sy + 1);
+    int yLabelWidth = sy + 1;
 
     if (pcPref)
         COutput::TPrint(sTarget, "{} ", pcPref);
@@ -1862,7 +1858,7 @@ void CKarte::DumpMap(const std::string& sTarget, int nCX, int nCY, int nB, int n
     for (z = (int)pow((double)10, (double)sx); z > 0; z /= 10) {
         if (pcPref)
             COutput::TPrint(sTarget, "{} ", pcPref);
-        COutput::TPrintf(sTarget, fmt2, "");
+        COutput::TPrint(sTarget, "{:>{}} ", "", yLabelWidth);
         if ((y & 1) ^ (nCY & 1))
             COutput::TWrite(sTarget, " ");
         for (x = nCX - nB + h; x <= nCX + nB + h + e; x++)
@@ -1873,7 +1869,7 @@ void CKarte::DumpMap(const std::string& sTarget, int nCX, int nCY, int nB, int n
     for (--y; y >= nCY - nH; y--) {
         if (pcPref)
             COutput::TPrint(sTarget, "{} ", pcPref);
-        COutput::TPrintf(sTarget, fmt, y);
+        COutput::TPrint(sTarget, "{:+{}} ", y, yLabelWidth);
         if ((y & 1) ^ (nCY & 1))
             COutput::TWrite(sTarget, " ");
         h = (y & 1) & !(nCY & 1);
@@ -1888,7 +1884,7 @@ void CKarte::DumpMap(const std::string& sTarget, int nCX, int nCY, int nB, int n
         }
         if (!((y & 1) ^ (nCY & 1)))
             COutput::TWrite(sTarget, " ");
-        COutput::TPrintf(sTarget, fmt, y);
+        COutput::TPrint(sTarget, "{:+{}} ", y, yLabelWidth);
         COutput::TWrite(sTarget, "\n");
     }
 
@@ -1910,7 +1906,7 @@ void CKarte::DumpMap(const std::string& sTarget, int nCX, int nCY, int nB, int n
     for (z = (int)pow((double)10, (double)sx); z > 0; z /= 10) {
         if (pcPref)
             COutput::TPrint(sTarget, "{} ", pcPref);
-        COutput::TPrintf(sTarget, fmt2, "");
+        COutput::TPrint(sTarget, "{:>{}} ", "", yLabelWidth);
         if ((y & 1) ^ (nCY & 1))
             COutput::TWrite(sTarget, " ");
         for (x = nCX - nB + h; x <= nCX + nB + h + e; x++)

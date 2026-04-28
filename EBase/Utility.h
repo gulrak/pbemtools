@@ -336,7 +336,6 @@ public:
 
     void Write(const char* pcTxt);
     void Write(const std::string& sTxt);
-    void Printf(const char* msg, ...);
     template <typename... Args>
     void Print(fmt::format_string<Args...> fmt, Args&&... args)
     {
@@ -346,7 +345,6 @@ public:
     bool Disconnect(bool bSuicide = true);
 
     static void TWrite(const std::string& sID, const std::string& sTxt);
-    static void TPrintf(const std::string& sID, const char* msg, ...);
 
     template <typename... Args>
     static void TPrint(const std::string& sID, fmt::format_string<Args...> fmt, Args&&... args)

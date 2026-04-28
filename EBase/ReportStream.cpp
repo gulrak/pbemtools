@@ -216,9 +216,6 @@ void CReportStream::PrepareLine()
             m_enType = enINTEGER;
         }
         else {
-            char Buff[256];
-            snprintf(Buff, sizeof(Buff), "Systax error in line %ld!\n", m_nLineNumber);
-            //			Message( Buff );
             m_enType = enERROR;
         }
         if (m_enType != enERROR) {

@@ -99,7 +99,7 @@ public:
 
     bool isProtectedType() const { return cself()._protectType; }
 
-    void error(const char* pcMsg);
+    void error(string sMsg);
     int32_t asLong() const noexcept;
     double asReal() const noexcept;
     std::string asString(bool bForceLiteral = false) const;

@@ -80,7 +80,6 @@
 
 #include "CRNE.h"
 
-using namespace std;
 
 extern std::string GetConfigFileName();
 extern FILE* g_hErr;
@@ -3227,9 +3226,7 @@ bool DoUserFunction(const std::string& sName, ArgumentList& coArgs, Value* poVal
 
     sStackInfo = std::string("#func ") + sName;
     if (!pMC->IsFunction()) {
-        char Buff[256];
-        snprintf(Buff, sizeof(Buff), "Die Prozedur '#proc %s' kann nicht als Funktion aufgerufen werden!", sName.c_str());
-        poVal->error(std::string(Buff).c_str());
+        poVal->error(fmt::format("Die Prozedur '#proc {}' kann nicht als Funktion aufgerufen werden!", sName));
         return false;
     }
 
@@ -3246,9 +3243,7 @@ bool DoUserFunction(const std::string& sName, ArgumentList& coArgs, Value* poVal
             //              coRefs[argi-2] = m_pvRef; m_pvRef = 0;
         }
         else {
-            char Buff[256];
-            snprintf(Buff, sizeof(Buff), "Ueberzaehliges Argument '%s' fuer Funktion '%s'!", coArgs[nTC].asString().c_str(), sName.c_str());
-            poVal->error(std::string(Buff).c_str());
+            poVal->error(fmt::format("Ueberzaehliges Argument '{}' fuer Funktion '{}'!", coArgs[nTC].asString().c_str(), sName));
             return false;
         }
         nTC++;
@@ -3274,9 +3269,7 @@ bool DoUserFunction(const std::string& sName, ArgumentList& coArgs, Value* poVal
         }
 #ifdef ROCK_SOLID_CATCH
         catch (...) {
-            char Buff[256];
-            snprintf(Buff, sizeof(Buff), "Unerwartete Ausnahmebehandlung in Funktion '%s'!", sName.c_str());
-            poVal->error(std::string(Buff).c_str());
+            poVal->error(fmt::format("Unerwartete Ausnahmebehandlung in Funktion '{}'!", sName));
             if (g_poStepOut == &oMCI)
                 CMetaCommand::SetTrace(2);
             g_coCallStack.pop_back();
@@ -3308,9 +3301,7 @@ bool DoUserFunction(const std::string& sName, ArgumentList& coArgs, Value* poVal
     }
     else {
         if (argi - 1 < nPArgs) {
-            char Buff[256];
-            snprintf(Buff, sizeof(Buff), "Zu wenig Argumente fuer Funktion '%s'!", sName.c_str());
-            poVal->error(std::string(Buff).c_str());
+            poVal->error(fmt::format("Zu wenig Argumente fuer Funktion '{}'!", sName));
             return false;
         }
     }
@@ -4095,7 +4086,6 @@ void CMetaCommand::RunScript(CMCI& oMCI, Expression::Variables& oContext, std::s
                         int n;
                         if (oMCI.m_nTC <= (int)Args()) {
                             CReference* pRef;
-                            char Buff[16];
                             size_t nPos = (size_t)oMCI.m_nTC;
                             Parse(oMCI, oContext, coCmd);
                             n = atoi(oMCI.m_sArg.c_str());
@@ -4115,8 +4105,7 @@ void CMetaCommand::RunScript(CMCI& oMCI, Expression::Variables& oContext, std::s
                             }
                             else {
                                 if (psCom) {
-                                    snprintf(Buff, sizeof(Buff), "%d", n < 0 ? 0 : n);
-                                    (*this)[nPos] = Buff;
+                                    (*this)[nPos] = std::to_string(n < 0 ? 0 : n);
                                     if (n <= 0 && nPos >= 2)
                                         (*this)[nPos - 2] = ";";
                                     *psCom = AsString();
@@ -4132,7 +4121,6 @@ void CMetaCommand::RunScript(CMCI& oMCI, Expression::Variables& oContext, std::s
                         int n;
                         if (oMCI.m_nTC <= (int)Args()) {
                             CReference* pRef;
-                            char Buff[16];
                             size_t nPos = (size_t)oMCI.m_nTC;
                             Parse(oMCI, oContext, coCmd);
                             n = atoi(oMCI.m_sArg.c_str());
@@ -4153,8 +4141,7 @@ void CMetaCommand::RunScript(CMCI& oMCI, Expression::Variables& oContext, std::s
                             }
                             else {
                                 if (psCom) {
-                                    snprintf(Buff, sizeof(Buff), "%d", n);
-                                    (*this)[nPos] = Buff;
+                                    (*this)[nPos] = std::to_string(n);
                                     *psCom = AsString();
                                 }
                                 else {
@@ -4168,7 +4155,6 @@ void CMetaCommand::RunScript(CMCI& oMCI, Expression::Variables& oContext, std::s
                         int n, m;
                         if (oMCI.m_nTC <= (int)Args()) {
                             CReference* pRef;
-                            char Buff[16];
                             size_t nPos;
                             Parse(oMCI, oContext, coCmd);
                             m = atoi(oMCI.m_sArg.c_str());
@@ -4190,8 +4176,7 @@ void CMetaCommand::RunScript(CMCI& oMCI, Expression::Variables& oContext, std::s
                             }
                             else {
                                 if (psCom) {
-                                    snprintf(Buff, sizeof(Buff), "%d", n);
-                                    (*this)[nPos] = Buff;
+                                    (*this)[nPos] = std::to_string(n);
                                     *psCom = AsString();
                                 }
                                 else {
@@ -5456,9 +5441,7 @@ int32_t CScriptBase::AddProc(const CharacterMapper* pMapper, const std::string& 
         i++;
     }
 
-    char Buff[8];
-    snprintf(Buff, sizeof(Buff), "%d", bVArg ? -(i - 1) : i - 1);
-    (*pMC)[0] = Buff;
+    (*pMC)[0] = fmt::format("{}", bVArg ? -(i - 1) : i - 1);
 
     if (pMC->Args() >= 2) {
         COMMANDBASE::iterator cbi = m_cpoSubs.find((*pMC)[1]);

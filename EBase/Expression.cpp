@@ -409,10 +409,7 @@ bool Expression::getValue(const char* name, Value* value)
         return true;
     }
     else {
-        char Buff[512];
-        snprintf(Buff, sizeof(Buff), "Undeklarierte Variable '%s' verwendet.", name);
-        value->error(Buff);
-        //		*value = Value( name );
+        value->error(fmt::format("Undeklarierte Variable '{}' verwendet.", name));
         return false;
     }
 }
@@ -821,18 +818,14 @@ int Expression::parseAssignment(Value* r)
                     poContainer->remove(poObject->index[0]);
                 }
                 else {
-                    char Buff[512];
-                    snprintf(Buff, sizeof(Buff), "Falsche Indizierung im Behaelter '%s'.", poObject->label.c_str());
-                    r->error(Buff);
+                    r->error(fmt::format("Falsche Indizierung im Behaelter '{}'.", poObject->label));
                     ERR(E_BADINDEX);
                 }
             }
             else {
                 Value oV;
                 if (!setValue(sT.c_str(), &oV, _force)) {
-                    char Buff[512];
-                    snprintf(Buff, sizeof(Buff), "Zuweisung an undefinierte Variable '%s'.", sT.c_str());
-                    r->error(Buff);
+                    r->error(fmt::format("Zuweisung an undefinierte Variable '{}'.", sT));
                     ERR(E_UNKNOWN);
                 }
             }
@@ -842,9 +835,7 @@ int Expression::parseAssignment(Value* r)
         if (poContainer) {
             if (poObject->index.size() == 1) {
                 if (!poContainer->setAt(poObject->index[0], *r)) {
-                    char Buff[512];
-                    snprintf(Buff, sizeof(Buff), "Falsche Indizierung im Behaelter '%s'.", poObject->label.c_str());
-                    r->error(Buff);
+                    r->error(fmt::format("Falsche Indizierung im Behaelter '{}'.", poObject->label));
                     ERR(E_BADINDEX);
                 }
             }
@@ -853,9 +844,7 @@ int Expression::parseAssignment(Value* r)
                     *poContainer = *r;
                 }
                 else if (poObject->index.size()) {
-                    char Buff[512];
-                    snprintf(Buff, sizeof(Buff), "Falsche Indizierung im Behaelter '%s'.", poObject->label.c_str());
-                    r->error(Buff);
+                    r->error(fmt::format("Falsche Indizierung im Behaelter '{}'.", poObject->label));
                     ERR(E_BADINDEX);
                 }
                 else {
@@ -889,16 +878,12 @@ int Expression::parseAssignment(Value* r)
             }
         }
         else if (sT[0] == '$' && (!poObject->index.empty() || poObject->next)) {
-            char Buff[512];
-            snprintf(Buff, sizeof(Buff), "Zuweisung ueber Behaelter/Objekt-Zugriff an Variable '%s'.", sT.c_str());
-            r->error(Buff);
+            r->error(fmt::format("Zuweisung ueber Behaelter/Objekt-Zugriff an Variable '{}'.", sT));
             ERR(E_BADINDEX);
         }
         else if (sT[0] == '$') {
             if (!setValue(sT.c_str(), r, _force)) {
-                char Buff[512];
-                snprintf(Buff, sizeof(Buff), "Zuweisung an undefinierte Variable '%s'.", sT.c_str());
-                r->error(Buff);
+                r->error(fmt::format("Zuweisung an undefinierte Variable '{}'.", sT));
                 ERR(E_UNKNOWN);
             }
         }
@@ -906,9 +891,7 @@ int Expression::parseAssignment(Value* r)
             oRef.self() = *r;
         }
         else {
-            char Buff[512];
-            snprintf(Buff, sizeof(Buff), "Fehlerhafte Zuweisung, '%s' ist kein gueltiges Zuweisungsziel.", sT.c_str());
-            r->error(Buff);
+            r->error(fmt::format("Fehlerhafte Zuweisung, '{}' ist kein gueltiges Zuweisungsziel.", sT));
             ERR(E_SYNTAX);
         }
         return 1;
@@ -1098,9 +1081,7 @@ void Expression::parsePrimary(Value* r, CReference* pRef)
                     nextToken();
                     evalExpr(&oIdx);
                     if (_token[0] != ')' || (oIdx.asLong() < 0 && oIdx.asLong() > poContainer->size())) {
-                        char Buff[512];
-                        snprintf(Buff, sizeof(Buff), "Falsche Indizierung im Behaelter '%s'.", _object->label.c_str());
-                        r->error(Buff);
+                        r->error(fmt::format("Falsche Indizierung im Behaelter '{}'.", _object->label));
                         ERR(E_SYNTAX);
                     }
                     *r = poContainer->getNth(oIdx.asLong());
@@ -1109,9 +1090,7 @@ void Expression::parsePrimary(Value* r, CReference* pRef)
                     *r = *_container;
                 }
                 else {
-                    char Buff[512];
-                    snprintf(Buff, sizeof(Buff), "Falsche Indizierung im Behaelter '%s'.", _object->label.c_str());
-                    r->error(Buff);
+                    r->error(fmt::format("Falsche Indizierung im Behaelter '{}'.", _object->label));
                     ERR(E_SYNTAX);
                 }
                 nextToken();
