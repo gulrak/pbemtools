@@ -1,14 +1,39 @@
----[Vorlage V2.0.0]---
 
-* Bugfix, Returncode manchmal 0 trotz Fehlern. (#30)
-* CValue-Klasse durch eine neue Value-Klasse mit std::variant ersetzt.
-* CExpression durch eine neue Expression-Klasse mit Shunting-Yard-Parser
-  ersetzt
-* C++ auc C++20 gehoben
-* Diverse abgekündigte C++-Features ersetzt
-* Vorlage ist nun OpenSource!!!!
+---[Vorlage V1.9.0]---
 
+* Vorlage steht nun unter MIT-Lizenz als Open-Source-Projekt zur
+  Verfuegung.
+* Bugfix: Vorlage liefert bei Fehlern nun zuverlaessiger einen von 0
+  verschiedenen Returncode. (GH #30)
+* Wechsel auf C++20 und Modernisierung groesserer Teile der Codebasis.
+  Dabei wurden u.a. alte C++-Konstrukte ersetzt, globale Definitionen
+  bereinigt und Null-Zeiger auf nullptr umgestellt. PCRE wurde auf
+  PCRE2, Version 10.40 aktualisiert.
+* Die Ausdrucksauswertung wurde intern ueberarbeitet, die Behandlung
+  von Operatoren vereinfacht und die Suche nach Operatoren beschleunigt.
+* Die Behandlung von Zuweisungen in Metabefehlen wurde ueberarbeitet
+  und interne Hinweis- und Fehlermeldungen wurden verbessert.
+* Die Ausgabeformatierung wurde umfassend auf typsichere fmt-basierte
+  Funktionen umgestellt. Dabei wurden alte printf-Varianten ersetzt und
+  lange Detailausgaben in EINHEIT-Zeilen werden nun umgebrochen.
+  (GH #14, GH #33)
+* Das Ownership-Modell der Nachrichten wurde vereinfacht; CMessage wird
+  intern nun mit eindeutigem Besitz verwaltet.
+* Die Build-Konfiguration wurde fuer die Open-Source-Version bereinigt:
+  PCRE2 wird nicht mehr unnoetig mehrfach gelinkt, die
+  Versions- und Buildnummer-Erzeugung wurde repariert und die
+  Konfigurationsdateien werden in den Build-Artefakten mit ausgeliefert.
+* Die GitHub-Actions-Builds wurden erweitert und fuer Windows angepasst;
+  README und Repository-Metadaten zeigen nun Build-, Release- und
+  Lizenzinformationen.
+* Es wurden weitere automatische Tests fuer CBlockBase, CR-Parsing,
+  CReportStream und Metascript-Funktionalitaet ergaenzt. (GH #34)
+* Entwicklungsdateien wie .cache/clangd werden nun von git ignoriert.
+  (GH #35)
 
+---------------------------
+  PRE-OPEN-SOURCE-VORLAGE
+---------------------------
 
 ---[Vorlage V1.7.6]---
 

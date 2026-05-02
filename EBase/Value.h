@@ -184,7 +184,7 @@ protected:
 #endif
 };
 
-// Non-owning reference to a Value. Standalone class — does not inherit Value.
+// Non-owning reference to a Value. Standalone class - does not inherit Value.
 class CReference
 {
 public:
@@ -215,7 +215,7 @@ private:
     Value* _ptr;
 };
 
-// Resizable array of Value. Standalone class — does not inherit Value.
+// Resizable array of Value. Standalone class - does not inherit Value.
 // Used as VKommandos throughout the project.
 class CValArray
 {

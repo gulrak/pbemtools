@@ -93,11 +93,12 @@ jobs:
         shell: bash
         run: |
           STAGE=$(mktemp -d)
-          cp build/Vorlage/vorlage  "$STAGE/"
-          cp build/VPP/vpp          "$STAGE/"
+          cp build/Vorlage/vorlage   "$STAGE/"
+          cp build/VPP/vpp           "$STAGE/"
           cp README.md LICENSE       "$STAGE/"
-          cp config/.*rc            "$STAGE/"
-          cp config/*.vms           "$STAGE/"
+          cp Vorlage/history.txt     "$STAGE/"
+          cp config/.*rc             "$STAGE/"
+          cp config/*.vms            "$STAGE/"
           tar czf "$ARCHIVE_NAME" -C "$STAGE" .
 
       # ── Package (Windows) ─────────────────────────────────────────────────
@@ -108,9 +109,10 @@ jobs:
           $stage = New-Item -ItemType Directory -Path "$env:RUNNER_TEMP\stage"
           Copy-Item "build\Vorlage\Release\vorlage.exe" $stage
           Copy-Item "build\VPP\Release\vpp.exe"         $stage
-          Copy-Item "README.md", "LICENSE"               $stage
-          Copy-Item "config\*.cfg"                       $stage
-          Copy-Item "config\*.vms"                       $stage
+          Copy-Item "README.md", "LICENSE"              $stage
+          Copy-Item "Vorlage\history.txt"               $stage
+          Copy-Item "config\*.cfg"                      $stage
+          Copy-Item "config\*.vms"                      $stage
           Compress-Archive -Path "$stage\*" -DestinationPath "$env:ARCHIVE_NAME"
 
       # ── Upload artifact ───────────────────────────────────────────────────
