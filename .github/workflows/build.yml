@@ -182,10 +182,10 @@ jobs:
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
           git archive \
-            --format=tar.bz2 \
+            --format=tar \
             --prefix="vorlage-${VERSION}/" \
             HEAD \
-            > "vorlage-${VERSION}-source.tar.bz2"
+            | bzip2 -9 > "vorlage-${VERSION}-source.tar.bz2"
           echo "SOURCE_TARBALL=vorlage-${VERSION}-source.tar.bz2" >> "$GITHUB_ENV"
 
       - name: Publish release
