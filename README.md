@@ -1,4 +1,4 @@
-# Vorlage V2.0.0 rc 1
+# Vorlage v1.9.0
 
 [![Build Status](https://github.com/gulrak/pbemtools/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/gulrak/pbemtools/actions/workflows/build.yml)
 [![GitHub release](https://img.shields.io/github/v/release/gulrak/pbemtools)](https://github.com/gulrak/pbemtools/releases/latest)
@@ -14,7 +14,8 @@ Copyright (C) 1999-2026 by Steffen Schümann
 **Dokumentation:** https://github.com/gulrak/pbemtools/wiki/VorlageDokuAllgemeines \
 **Alte Binaries:** https://gulrak.de/pbemtools/#downloads
 
-**NEU: [Nightly Builds](https://github.com/gulrak/pbemtools/releases/tag/nightly) for die kommende v2.x verfügbar!**
+**[Aktuelle Releases](https://github.com/gulrak/pbemtools/releases/latest)** basierend auf der Open-Source-Variante \
+([Nightly Builds](https://github.com/gulrak/pbemtools/releases/tag/nightly) für den den aktuellen Stand verfügbar!)
 
 _Metabefehle inspiriert durch Georg Edelmayers PERL-Vorlagen-Generator._
 
