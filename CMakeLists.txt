@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "Minimum OS X deployment version" FORCE)
-project(PBEMTools VERSION 1.9.1)
+project(PBEMTools VERSION 1.9.0)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 set(PBEMTOOLS_MSVC_STATIC_RUNTIME ON)
